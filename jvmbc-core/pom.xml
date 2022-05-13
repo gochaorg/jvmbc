@@ -13,32 +13,45 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+        </dependency>
+        <dependency>
             <groupId>xyz.cofe</groupId>
             <artifactId>iofun</artifactId>
-            <version>[1.0,2.0)</version>
         </dependency>
         <dependency>
             <groupId>xyz.cofe</groupId>
             <artifactId>fs</artifactId>
-            <version>[1.2,2.0)</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>xyz.cofe</groupId>
             <artifactId>ecolls</artifactId>
-            <version>[1.10,2.0)</version>
-            <!--            <scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>xyz.cofe</groupId>
             <artifactId>text</artifactId>
-            <version>[1.0,2.0)</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>xyz.cofe</groupId>
             <artifactId>text-out</artifactId>
-            <version>[1.0,2.0)</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -50,18 +63,18 @@
             </testResource>
         </testResources>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                <version>3.8.1</version>-->
-<!--                <configuration>-->
-<!--                    <source>${java.version}</source>-->
-<!--                    <target>${java.version}</target>-->
-<!--                    <compilerArgs>-->
-<!--                        <arg>-Xlint:deprecation</arg>-->
-<!--                    </compilerArgs>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <compilerArgs>
+                        <arg>-Xlint:deprecation</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
