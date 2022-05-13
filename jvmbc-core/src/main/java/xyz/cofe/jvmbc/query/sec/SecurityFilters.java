@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc.sec;
+package xyz.cofe.jvmbc.query.sec;
 
 import java.util.ArrayList;
 import java.util.Collections;

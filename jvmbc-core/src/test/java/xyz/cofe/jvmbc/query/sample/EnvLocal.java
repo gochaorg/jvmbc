@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc.sample;
+package xyz.cofe.jvmbc.query.sample;
 
 import java.util.ArrayList;
 import java.util.List;

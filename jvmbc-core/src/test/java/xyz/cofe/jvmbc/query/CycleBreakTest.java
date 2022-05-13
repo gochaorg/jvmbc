@@ -1,10 +1,11 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.query;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.Test;
 import xyz.cofe.fn.Fn1;
-import xyz.cofe.jvmbc.sample.IEnv;
+import xyz.cofe.jvmbc.LambdaDump;
+import xyz.cofe.jvmbc.query.sample.IEnv;
 
 public class CycleBreakTest {
     public static void debug( String label ){}

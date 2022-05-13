@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.query;
 
 import xyz.cofe.fn.Fn1;
 

@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.query;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -7,12 +7,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
 import xyz.cofe.fn.Fn1;
 import xyz.cofe.io.fs.File;
+import xyz.cofe.jvmbc.LambdaDump;
+import xyz.cofe.jvmbc.query.AsmQuery;
 
 public class AsmQueryTest {
     @Test
     public void test01(){
         System.out.println("test01======================");
-        new AsmQuery<String>().apply( env -> env.contains("yuui") );
+        new AsmQuery<String>().apply(env -> env.contains("yuui") );
     }
 
     @Test

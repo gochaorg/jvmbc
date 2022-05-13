@@ -1,14 +1,15 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.query;
 
 import java.lang.invoke.SerializedLambda;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
 import xyz.cofe.fn.Fn1;
-import xyz.cofe.jvmbc.sample.EnvLocal;
-import xyz.cofe.jvmbc.sample.IEnv;
-import xyz.cofe.jvmbc.sec.MethodDescTypes;
-import xyz.cofe.jvmbc.sec.SecurAccess;
-import xyz.cofe.jvmbc.sec.SecurityFilters;
+import xyz.cofe.jvmbc.LambdaDump;
+import xyz.cofe.jvmbc.query.sample.EnvLocal;
+import xyz.cofe.jvmbc.query.sample.IEnv;
+import xyz.cofe.jvmbc.query.sec.MethodDescTypes;
+import xyz.cofe.jvmbc.query.sec.SecurAccess;
+import xyz.cofe.jvmbc.query.sec.SecurityFilters;
 
 public class SecurTest {
     @Test

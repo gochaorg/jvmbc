@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc.sec;
+package xyz.cofe.jvmbc.query.sec;
 
 /**
  * Поддержка клонирования объекта

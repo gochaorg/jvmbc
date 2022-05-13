@@ -17,7 +17,7 @@ import xyz.cofe.jvmbc.bc.bm.MHandle;
 import xyz.cofe.jvmbc.bc.mth.*;
 
 /**
- * Создает дамп байт кода метода, используется в {@link AsmQuery}.
+ * Создает дамп байт кода метода, используется в AsmQuery.
  *
  * <p>
  *

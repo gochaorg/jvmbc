@@ -1,17 +1,19 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.query;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import xyz.cofe.fn.Fn1;
-import xyz.cofe.jvmbc.sample.EnvLocal;
-import xyz.cofe.jvmbc.sample.IEnv;
-import xyz.cofe.jvmbc.sample.User;
+import xyz.cofe.jvmbc.LambdaDump;
+import xyz.cofe.jvmbc.Serializer;
+import xyz.cofe.jvmbc.query.sample.EnvLocal;
+import xyz.cofe.jvmbc.query.sample.IEnv;
+import xyz.cofe.jvmbc.query.sample.User;
 
 public class LambdaDumpTest {
     @Test
     public void test01(){
-        var dump = new LambdaDump().dump( (String string) -> string );
+        var dump = new LambdaDump().dump( ( String string) -> string );
         System.out.println(dump);
 
         var bytes = Serializer.toBytes(dump);

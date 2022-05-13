@@ -1,10 +1,12 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.query;
 
 import java.lang.invoke.SerializedLambda;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.cofe.fn.Fn1;
+import xyz.cofe.jvmbc.LambdaDump;
+import xyz.cofe.jvmbc.MethodDump;
 
 /**
  * Сериализация Java лямбды.

@@ -1,9 +1,9 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.query;
 
 import java.util.function.Function;
 import org.junit.jupiter.api.Test;
-import xyz.cofe.jvmbc.sample.EnvLocal;
-import xyz.cofe.jvmbc.sample.IEnv;
+import xyz.cofe.jvmbc.query.sample.EnvLocal;
+import xyz.cofe.jvmbc.query.sample.IEnv;
 
 public class SampleCallTest {
     @Test

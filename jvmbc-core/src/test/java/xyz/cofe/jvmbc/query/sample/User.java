@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc.sample;
+package xyz.cofe.jvmbc.query.sample;
 
 public class User {
     public User(){}
