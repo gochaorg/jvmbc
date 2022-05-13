@@ -1,8 +1,8 @@
 package xyz.cofe.jvmbc.query.sec;
 
 import xyz.cofe.fn.Tuple2;
-import xyz.cofe.jvmbc.LambdaDump;
-import xyz.cofe.jvmbc.LambdaNode;
+import xyz.cofe.jvmbc.query.LambdaDump;
+import xyz.cofe.jvmbc.query.LambdaNode;
 
 import java.util.ArrayList;
 import java.util.Collections;

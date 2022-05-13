@@ -3,7 +3,6 @@ package xyz.cofe.jvmbc.query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.cofe.fn.Fn1;
-import xyz.cofe.jvmbc.LambdaDump;
 import xyz.cofe.jvmbc.MethodDump;
 
 import java.lang.invoke.SerializedLambda;

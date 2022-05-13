@@ -2,7 +2,6 @@ package xyz.cofe.jvmbc.query;
 
 import org.junit.jupiter.api.Test;
 import xyz.cofe.fn.Fn1;
-import xyz.cofe.jvmbc.LambdaDump;
 import xyz.cofe.jvmbc.query.sample.IEnv;
 
 import java.lang.invoke.SerializedLambda;

@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc.query.sec;
+package xyz.cofe.jvmbc;
 
 import java.util.ArrayList;
 
@@ -26,7 +26,7 @@ public class MethodDescTypes {
      * @param params Тип аргументов
      * @param returns Тип результата
      */
-    public MethodDescTypes(TypeDesc[] params, TypeDesc returns){
+    public MethodDescTypes( TypeDesc[] params, TypeDesc returns){
         if( params == null ) throw new IllegalArgumentException("params==null");
         if( returns == null ) throw new IllegalArgumentException("returns==null");
         this.params = params;

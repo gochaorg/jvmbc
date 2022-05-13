@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc.query.sec;
+package xyz.cofe.jvmbc;
 
 /**
  * Описание типа поля/параметра/...
@@ -29,7 +29,7 @@ public class TypeDesc {
      * @param name Имя типа
      * @param dimension Размерность массива, 0 - не является массивом
      */
-    public TypeDesc(String name, int dimension){
+    public TypeDesc( String name, int dimension){
         if( name == null ) throw new IllegalArgumentException("name==null");
         if( dimension < 0 ) throw new IllegalArgumentException("dimension<0");
         this.name = name;
@@ -41,7 +41,7 @@ public class TypeDesc {
      * Конструктор
      * @param name Имя типа
      */
-    public TypeDesc(String name){
+    public TypeDesc( String name){
         this(name,0);
     }
 

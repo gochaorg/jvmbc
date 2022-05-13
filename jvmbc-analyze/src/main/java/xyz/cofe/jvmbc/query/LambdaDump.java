@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.query;
 
 import java.io.IOError;
 import java.io.IOException;
@@ -22,6 +22,8 @@ import xyz.cofe.fn.Fn1;
 import xyz.cofe.fn.Tuple;
 import xyz.cofe.fn.Tuple2;
 import xyz.cofe.fn.Tuple4;
+import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.JavaClassName;
 import xyz.cofe.jvmbc.bm.HandleArg;
 import xyz.cofe.jvmbc.bm.MHandle;
 import xyz.cofe.jvmbc.cls.CBegin;
@@ -570,7 +572,7 @@ public class LambdaDump implements Serializable {
 
             return rootClass;
         }
-        private static void traceByteCode(ByteCode begin){
+        private static void traceByteCode( ByteCode begin){
             if( begin==null )throw new IllegalArgumentException( "begin==null" );
             dump(rlog::trace,begin);
         }

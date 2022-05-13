@@ -3,7 +3,6 @@ package xyz.cofe.jvmbc.query;
 import org.junit.jupiter.api.Test;
 import xyz.cofe.fn.Fn1;
 import xyz.cofe.io.fs.File;
-import xyz.cofe.jvmbc.LambdaDump;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
