@@ -22,6 +22,7 @@ import xyz.cofe.fn.Fn1;
 import xyz.cofe.fn.Tuple;
 import xyz.cofe.fn.Tuple2;
 import xyz.cofe.fn.Tuple4;
+import xyz.cofe.iter.Eterable;
 import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.JavaClassName;
 import xyz.cofe.jvmbc.bm.HandleArg;
@@ -682,7 +683,10 @@ public class LambdaDump implements Serializable {
     public static void dump(Consumer<String> log, ByteCode byteCode){
         if( log==null )throw new IllegalArgumentException( "log==null" );
         if( byteCode==null )throw new IllegalArgumentException( "byteCode==null" );
-        byteCode.walk().tree().forEach( ts -> {
+
+        var treeWalk = Eterable.tree(byteCode, ByteCode::nodes);
+
+        treeWalk.go().forEach( ts -> {
             var pref = "";
             if( ts.getLevel()>0 ){
                 pref = ts.nodes().limit(ts.getLevel()).map( b -> {

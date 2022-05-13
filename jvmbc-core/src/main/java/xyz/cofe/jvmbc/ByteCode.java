@@ -1,20 +1,17 @@
 package xyz.cofe.jvmbc;
 
 import java.io.Serializable;
-import xyz.cofe.collection.ImTree;
-import xyz.cofe.collection.ImTreeWalk;
-import xyz.cofe.iter.Eterable;
+import java.util.List;
 
 /**
  * Байт-код инструкция
  */
-public interface ByteCode extends Serializable, ImTree<ByteCode>, ImTreeWalk<ByteCode> {
+public interface ByteCode extends Serializable {
     /**
      * Возвращает дочерние узлы
      * @return дочерние узлы
      */
-    @Override
-    default Eterable<ByteCode> nodes(){
-        return Eterable.empty();
+    default List<ByteCode> nodes(){
+        return List.of();
     }
 }

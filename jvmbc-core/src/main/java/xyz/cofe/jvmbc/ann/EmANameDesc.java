@@ -1,9 +1,10 @@
 package xyz.cofe.jvmbc.ann;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.objectweb.asm.AnnotationVisitor;
-import xyz.cofe.iter.Eterable;
 import xyz.cofe.jvmbc.ByteCode;
 
 public class EmANameDesc extends EmbededAnnotation implements AnnotationWriter {
@@ -73,9 +74,9 @@ public class EmANameDesc extends EmbededAnnotation implements AnnotationWriter {
      * @return дочерние узлы
      */
     @Override
-    public Eterable<ByteCode> nodes(){
-        if( annotationByteCodes!=null )return Eterable.of(annotationByteCodes);
-        return Eterable.empty();
+    public List<ByteCode> nodes(){
+        if( annotationByteCodes!=null )return Collections.unmodifiableList(annotationByteCodes);
+        return List.of();
     }
 
     @Override

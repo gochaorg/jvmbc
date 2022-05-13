@@ -1,7 +1,6 @@
 package xyz.cofe.jvmbc;
 
 import java.util.Optional;
-import xyz.cofe.fn.Tuple2;
 
 /**
  * Кодирование - декодирование строчных литералов
@@ -64,13 +63,29 @@ public class StringLiteral {
         return sb.toString();
     }
 
+    public static class Parsed {
+        public final int begin;
+
+        /** конец исключительно */
+        public final int end;
+
+        /** может содержать null */
+        public final String value;
+
+        public Parsed( int begin, int end, String value ){
+            this.begin = begin;
+            this.end = end;
+            this.value = value;
+        }
+    }
+
     /**
      * Декодирование литерала
      * @param text текст
      * @param offset смещение в тексте
      * @return литерал и смещение - конец литерала
      */
-    public static Optional<Tuple2<String,Integer>> parse( String text, int offset ){
+    public static Optional<Parsed> parse( String text, int offset ){
         if( text==null )throw new IllegalArgumentException( "text==null" );
         if( offset<0 )throw new IllegalArgumentException( "offset<0" );
         if( offset>=text.length() ){
@@ -78,7 +93,7 @@ public class StringLiteral {
         }
 
         String str = text.substring(offset);
-        if( str.startsWith("null") )return Optional.of(Tuple2.of(null,offset+4));
+        if( str.startsWith("null") )return Optional.of( new Parsed(offset,offset+4, null));
         if( !str.startsWith("\"") )return Optional.empty();
 
         StringBuilder sb = new StringBuilder();
@@ -148,6 +163,6 @@ public class StringLiteral {
         }
 
         int next = ptr+offset;
-        return Optional.of(Tuple2.of(sb.toString(),next));
+        return Optional.of( new Parsed(offset,next,sb.toString()));
     }
 }

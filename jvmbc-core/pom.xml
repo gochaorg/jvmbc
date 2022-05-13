@@ -27,10 +27,6 @@
         </dependency>
         <dependency>
             <groupId>xyz.cofe</groupId>
-            <artifactId>ecolls</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>xyz.cofe</groupId>
             <artifactId>text</artifactId>
             <scope>test</scope>
         </dependency>

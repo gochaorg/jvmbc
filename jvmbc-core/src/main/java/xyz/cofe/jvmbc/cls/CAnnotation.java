@@ -1,10 +1,10 @@
 package xyz.cofe.jvmbc.cls;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import org.objectweb.asm.ClassWriter;
-import xyz.cofe.iter.Eterable;
 import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
@@ -200,9 +200,9 @@ public class CAnnotation implements
      * @return дочерние узлы
      */
     @Override
-    public Eterable<ByteCode> nodes(){
-        if( annotationByteCodes!=null )return Eterable.of(annotationByteCodes);
-        return Eterable.empty();
+    public List<ByteCode> nodes(){
+        if( annotationByteCodes!=null )return Collections.unmodifiableList(annotationByteCodes);
+        return List.of();
     }
 
     @Override

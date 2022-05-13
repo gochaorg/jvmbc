@@ -3,17 +3,13 @@ package xyz.cofe.jvmbc.cls;
 import java.io.IOError;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import xyz.cofe.collection.ImTree;
 import xyz.cofe.io.fn.IOFun;
-import xyz.cofe.iter.Eterable;
 import xyz.cofe.jvmbc.ClassDump;
 import xyz.cofe.jvmbc.JavaClassName;
 import xyz.cofe.jvmbc.AccFlags;
@@ -24,7 +20,7 @@ import xyz.cofe.jvmbc.ClassFlags;
 /**
  * Описывает класс / модуль
  */
-public class CBegin implements ClsByteCode, ImTree<ByteCode>, ClazzWriter, AccFlagsProperty, ClassFlags {
+public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, ClassFlags {
     /**
      * Идентификатор версии при сериализации/де-сериализации
      */
@@ -612,18 +608,33 @@ public class CBegin implements ClsByteCode, ImTree<ByteCode>, ClazzWriter, AccFl
      */
     @SuppressWarnings("unchecked")
     @Override
-    public Eterable<ByteCode> nodes(){
-        Eterable<ByteCode> e = Eterable.of(
-            source, outerClass, nestHost, permittedSubclass
-        );
-        if( annotations!=null && !annotations.isEmpty() ) e = e.union( Eterable.of( annotations ) );
-        if( typeAnnotations!=null && !typeAnnotations.isEmpty() ) e = e.union( Eterable.of( typeAnnotations ) );
-        if( nestMembers!=null && !nestMembers.isEmpty() ) e = e.union( Eterable.of( nestMembers ) );
-        if( innerClasses!=null && !innerClasses.isEmpty() ) e = e.union( Eterable.of( innerClasses ) );
-        if( fields!=null && !fields.isEmpty() ) e = e.union( Eterable.of( fields ) );
-        if( methods!=null && !methods.isEmpty() ) e = e.union( Eterable.of( methods ) );
+    public List<ByteCode> nodes(){
+        ArrayList<ByteCode> r = new ArrayList<>(List.of(source, outerClass, nestHost, permittedSubclass));
 
-        return e.notNull();
+        if( annotations!=null && !annotations.isEmpty() ) {
+            r.addAll( annotations );
+        }
+
+        if( typeAnnotations!=null && !typeAnnotations.isEmpty() ){
+            r.addAll( typeAnnotations );
+        }
+        if( nestMembers!=null && !nestMembers.isEmpty() ) {
+            r.addAll( nestMembers );
+        }
+
+        if( innerClasses!=null && !innerClasses.isEmpty() ) {
+            r.addAll( innerClasses );
+        }
+
+        if( fields!=null && !fields.isEmpty() ) {
+            r.addAll( fields );
+        }
+
+        if( methods!=null && !methods.isEmpty() ) {
+            r.addAll( methods );
+        }
+
+        return r.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     //region toByteCode(), parseByteCode()

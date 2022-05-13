@@ -2,10 +2,10 @@ package xyz.cofe.jvmbc.cls;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import org.objectweb.asm.ClassWriter;
-import xyz.cofe.iter.Eterable;
 import xyz.cofe.jvmbc.AccFlags;
 import xyz.cofe.jvmbc.AccFlagsProperty;
 import xyz.cofe.jvmbc.ByteCode;
@@ -225,9 +225,9 @@ public class CMethod implements ClsByteCode, ClazzWriter, AccFlagsProperty, Meth
      * @return дочерние узлы
      */
     @Override
-    public Eterable<ByteCode> nodes(){
-        if( methodByteCodes!=null )return Eterable.of(methodByteCodes);
-        return Eterable.empty();
+    public List<ByteCode> nodes(){
+        if( methodByteCodes!=null )return Collections.unmodifiableList(methodByteCodes);
+        return List.of();
     }
 
     @Override

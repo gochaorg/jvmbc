@@ -1,9 +1,9 @@
 package xyz.cofe.jvmbc.fld;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.objectweb.asm.FieldVisitor;
-import xyz.cofe.iter.Eterable;
 import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
@@ -85,9 +85,9 @@ public class FAnnotation implements FieldByteCode, AnnotationDef, GetAnnotationB
      * @return дочерние узлы
      */
     @Override
-    public Eterable<ByteCode> nodes(){
-        if( annotationByteCodes!=null )return Eterable.of(annotationByteCodes);
-        return Eterable.empty();
+    public List<ByteCode> nodes(){
+        if( annotationByteCodes!=null )return Collections.unmodifiableList(annotationByteCodes);
+        return List.of();
     }
 
     @Override
