@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 import xyz.cofe.collection.ImTree;
 import xyz.cofe.collection.ImTreeWalk;
 import xyz.cofe.iter.Eterable;
-import xyz.cofe.jvmbc.bc.cls.CBegin;
-import xyz.cofe.jvmbc.bc.cls.CMethod;
+import xyz.cofe.jvmbc.cls.CBegin;
+import xyz.cofe.jvmbc.cls.CMethod;
 
 /**
  * Узел дерева лямд, описывает одну лямбду и связанные с ней лямбды.

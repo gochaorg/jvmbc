@@ -6,14 +6,13 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import xyz.cofe.jvmbc.bc.ByteCode;
-import xyz.cofe.jvmbc.bc.ann.AEnd;
-import xyz.cofe.jvmbc.bc.ann.AEnum;
-import xyz.cofe.jvmbc.bc.ann.APair;
-import xyz.cofe.jvmbc.bc.ann.AnnotationByteCode;
-import xyz.cofe.jvmbc.bc.ann.EmAArray;
-import xyz.cofe.jvmbc.bc.ann.EmANameDesc;
-import xyz.cofe.jvmbc.bc.ann.GetAnnotationByteCodes;
+import xyz.cofe.jvmbc.ann.AEnd;
+import xyz.cofe.jvmbc.ann.AEnum;
+import xyz.cofe.jvmbc.ann.APair;
+import xyz.cofe.jvmbc.ann.AnnotationByteCode;
+import xyz.cofe.jvmbc.ann.EmAArray;
+import xyz.cofe.jvmbc.ann.EmANameDesc;
+import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
 
 /**
  * Создание дампа байт-кода аннотаций

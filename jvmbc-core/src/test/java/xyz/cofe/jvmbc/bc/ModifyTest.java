@@ -1,7 +1,7 @@
 package xyz.cofe.jvmbc.bc;
 
 import org.junit.jupiter.api.Test;
-import xyz.cofe.jvmbc.bc.cls.CBegin;
+import xyz.cofe.jvmbc.cls.CBegin;
 
 public class ModifyTest {
     // будем модифицировать ее

@@ -3,7 +3,7 @@ package xyz.cofe.jvmbc.query.sec;
 import xyz.cofe.fn.Tuple2;
 import xyz.cofe.jvmbc.LambdaDump;
 import xyz.cofe.jvmbc.LambdaNode;
-import xyz.cofe.jvmbc.bc.mth.MMethodInsn;
+import xyz.cofe.jvmbc.mth.MMethodInsn;
 
 /**
  * Инструкция вызова метода

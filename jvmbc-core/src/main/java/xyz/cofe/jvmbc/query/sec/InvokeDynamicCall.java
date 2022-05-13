@@ -3,7 +3,7 @@ package xyz.cofe.jvmbc.query.sec;
 import xyz.cofe.fn.Tuple2;
 import xyz.cofe.jvmbc.LambdaDump;
 import xyz.cofe.jvmbc.LambdaNode;
-import xyz.cofe.jvmbc.bc.mth.MInvokeDynamicInsn;
+import xyz.cofe.jvmbc.mth.MInvokeDynamicInsn;
 
 /**
  * Инструкция вызова bootstrap метода

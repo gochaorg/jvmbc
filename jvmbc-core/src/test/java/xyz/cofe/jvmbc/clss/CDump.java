@@ -1,8 +1,8 @@
 package xyz.cofe.jvmbc.clss;
 
-import xyz.cofe.jvmbc.bc.ByteCode;
-import xyz.cofe.jvmbc.bc.cls.CField;
-import xyz.cofe.jvmbc.bc.cls.CMethod;
+import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.cls.CField;
+import xyz.cofe.jvmbc.cls.CMethod;
 
 public class CDump {
     public static void dump(ByteCode begin){

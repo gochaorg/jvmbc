@@ -5,9 +5,9 @@ import java.util.List;
 import xyz.cofe.fn.Tuple2;
 import xyz.cofe.jvmbc.LambdaDump;
 import xyz.cofe.jvmbc.LambdaNode;
-import xyz.cofe.jvmbc.bc.ByteCode;
-import xyz.cofe.jvmbc.bc.mth.MInvokeDynamicInsn;
-import xyz.cofe.jvmbc.bc.mth.MMethodInsn;
+import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.mth.MInvokeDynamicInsn;
+import xyz.cofe.jvmbc.mth.MMethodInsn;
 
 /**
  * Вызов метода / конструктора / BootStrap

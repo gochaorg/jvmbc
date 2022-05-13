@@ -1,13 +1,13 @@
 package xyz.cofe.jvmbc.bc;
 
 import org.junit.jupiter.api.Test;
-import xyz.cofe.jvmbc.bc.bm.LdcType;
-import xyz.cofe.jvmbc.bc.cls.CBegin;
-import xyz.cofe.jvmbc.bc.cls.CMethod;
-import xyz.cofe.jvmbc.bc.mth.MLdcInsn;
-import xyz.cofe.jvmbc.bc.mth.MMethodInsn;
-import xyz.cofe.jvmbc.bc.mth.MethodByteCode;
-import xyz.cofe.jvmbc.bc.mth.OpCode;
+import xyz.cofe.jvmbc.bm.LdcType;
+import xyz.cofe.jvmbc.cls.CBegin;
+import xyz.cofe.jvmbc.cls.CMethod;
+import xyz.cofe.jvmbc.mth.MLdcInsn;
+import xyz.cofe.jvmbc.mth.MMethodInsn;
+import xyz.cofe.jvmbc.mth.MethodByteCode;
+import xyz.cofe.jvmbc.mth.OpCode;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

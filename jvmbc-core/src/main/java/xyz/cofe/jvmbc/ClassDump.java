@@ -11,22 +11,20 @@ import org.objectweb.asm.ModuleVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.RecordComponentVisitor;
 import org.objectweb.asm.TypePath;
-import xyz.cofe.jvmbc.bc.AccFlags;
-import xyz.cofe.jvmbc.bc.ByteCode;
-import xyz.cofe.jvmbc.bc.cls.CAnnotation;
-import xyz.cofe.jvmbc.bc.cls.CBegin;
-import xyz.cofe.jvmbc.bc.cls.CEnd;
-import xyz.cofe.jvmbc.bc.cls.CField;
-import xyz.cofe.jvmbc.bc.cls.CInnerClass;
-import xyz.cofe.jvmbc.bc.cls.CMethod;
-import xyz.cofe.jvmbc.bc.cls.CPermittedSubclass;
-import xyz.cofe.jvmbc.bc.cls.CSource;
-import xyz.cofe.jvmbc.bc.cls.CNestHost;
-import xyz.cofe.jvmbc.bc.cls.CNestMember;
-import xyz.cofe.jvmbc.bc.cls.COuterClass;
-import xyz.cofe.jvmbc.bc.cls.CTypeAnnotation;
-import xyz.cofe.jvmbc.bc.fld.FieldByteCode;
-import xyz.cofe.jvmbc.bc.mth.MethodByteCode;
+import xyz.cofe.jvmbc.cls.CAnnotation;
+import xyz.cofe.jvmbc.cls.CBegin;
+import xyz.cofe.jvmbc.cls.CEnd;
+import xyz.cofe.jvmbc.cls.CField;
+import xyz.cofe.jvmbc.cls.CInnerClass;
+import xyz.cofe.jvmbc.cls.CMethod;
+import xyz.cofe.jvmbc.cls.CPermittedSubclass;
+import xyz.cofe.jvmbc.cls.CSource;
+import xyz.cofe.jvmbc.cls.CNestHost;
+import xyz.cofe.jvmbc.cls.CNestMember;
+import xyz.cofe.jvmbc.cls.COuterClass;
+import xyz.cofe.jvmbc.cls.CTypeAnnotation;
+import xyz.cofe.jvmbc.fld.FieldByteCode;
+import xyz.cofe.jvmbc.mth.MethodByteCode;
 
 /**
  * Дамп байт-кода класса

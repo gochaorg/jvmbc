@@ -20,8 +20,8 @@ import org.objectweb.asm.TypePath;
 import xyz.cofe.io.fn.IOFun;
 import xyz.cofe.text.out.Output;
 import xyz.cofe.jvmbc.ClassDump;
-import xyz.cofe.jvmbc.bc.AccFlags;
-import xyz.cofe.jvmbc.bc.cls.CBegin;
+import xyz.cofe.jvmbc.AccFlags;
+import xyz.cofe.jvmbc.cls.CBegin;
 
 public class ClassSerTest {
     private final Output out = new Output();

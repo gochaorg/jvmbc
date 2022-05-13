@@ -1,7 +1,7 @@
 package xyz.cofe.jvmbc.kotlin;
 
 import org.junit.jupiter.api.Test;
-import xyz.cofe.jvmbc.bc.cls.CBegin;
+import xyz.cofe.jvmbc.cls.CBegin;
 import xyz.cofe.jvmbc.clss.CDump;
 
 public class Kotlin1Test {

@@ -22,13 +22,12 @@ import xyz.cofe.fn.Fn1;
 import xyz.cofe.fn.Tuple;
 import xyz.cofe.fn.Tuple2;
 import xyz.cofe.fn.Tuple4;
-import xyz.cofe.jvmbc.bc.ByteCode;
-import xyz.cofe.jvmbc.bc.bm.HandleArg;
-import xyz.cofe.jvmbc.bc.bm.MHandle;
-import xyz.cofe.jvmbc.bc.cls.CBegin;
-import xyz.cofe.jvmbc.bc.cls.CField;
-import xyz.cofe.jvmbc.bc.cls.CMethod;
-import xyz.cofe.jvmbc.bc.mth.MInvokeDynamicInsn;
+import xyz.cofe.jvmbc.bm.HandleArg;
+import xyz.cofe.jvmbc.bm.MHandle;
+import xyz.cofe.jvmbc.cls.CBegin;
+import xyz.cofe.jvmbc.cls.CField;
+import xyz.cofe.jvmbc.cls.CMethod;
+import xyz.cofe.jvmbc.mth.MInvokeDynamicInsn;
 
 /**
  * Дамп лямбды, со всеми зависимыми лямбдами.

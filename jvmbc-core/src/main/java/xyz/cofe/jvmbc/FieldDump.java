@@ -9,11 +9,10 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.TypePath;
 import org.objectweb.asm.TypeReference;
-import xyz.cofe.jvmbc.bc.ByteCode;
-import xyz.cofe.jvmbc.bc.fld.FAnnotation;
-import xyz.cofe.jvmbc.bc.fld.FieldEnd;
-import xyz.cofe.jvmbc.bc.fld.FieldByteCode;
-import xyz.cofe.jvmbc.bc.fld.FTypeAnnotation;
+import xyz.cofe.jvmbc.fld.FAnnotation;
+import xyz.cofe.jvmbc.fld.FieldEnd;
+import xyz.cofe.jvmbc.fld.FieldByteCode;
+import xyz.cofe.jvmbc.fld.FTypeAnnotation;
 
 /**
  * Создание дампа поля класса

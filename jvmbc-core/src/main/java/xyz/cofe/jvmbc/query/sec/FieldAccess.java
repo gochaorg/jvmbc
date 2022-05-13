@@ -5,8 +5,8 @@ import java.util.List;
 import xyz.cofe.fn.Tuple2;
 import xyz.cofe.jvmbc.LambdaDump;
 import xyz.cofe.jvmbc.LambdaNode;
-import xyz.cofe.jvmbc.bc.mth.MFieldInsn;
-import xyz.cofe.jvmbc.bc.mth.OpCode;
+import xyz.cofe.jvmbc.mth.MFieldInsn;
+import xyz.cofe.jvmbc.mth.OpCode;
 
 /**
  * Инструкция доступа к полю JVM класса

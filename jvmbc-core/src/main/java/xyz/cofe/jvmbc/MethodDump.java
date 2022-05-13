@@ -11,10 +11,9 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.TypePath;
-import xyz.cofe.jvmbc.bc.ByteCode;
-import xyz.cofe.jvmbc.bc.bm.LdcType;
-import xyz.cofe.jvmbc.bc.bm.MHandle;
-import xyz.cofe.jvmbc.bc.mth.*;
+import xyz.cofe.jvmbc.bm.LdcType;
+import xyz.cofe.jvmbc.bm.MHandle;
+import xyz.cofe.jvmbc.mth.*;
 
 /**
  * Создает дамп байт кода метода, используется в AsmQuery.
