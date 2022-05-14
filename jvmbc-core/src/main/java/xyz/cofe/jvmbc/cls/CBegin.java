@@ -9,13 +9,13 @@ import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import xyz.cofe.io.fn.IOFun;
 import xyz.cofe.jvmbc.ClassDump;
 import xyz.cofe.jvmbc.JavaClassName;
 import xyz.cofe.jvmbc.AccFlags;
 import xyz.cofe.jvmbc.AccFlagsProperty;
 import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.ClassFlags;
+import xyz.cofe.jvmbc.io.IOFun;
 
 /**
  * Описывает класс / модуль

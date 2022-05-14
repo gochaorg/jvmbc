@@ -15,10 +15,7 @@
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>xyz.cofe</groupId>
-            <artifactId>iofun</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

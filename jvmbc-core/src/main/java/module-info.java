@@ -1,7 +1,5 @@
 module xyz.cofe.jvmbc.core {
     requires org.objectweb.asm;
-    requires xyz.cofe.io.fn;
-    //requires xyz.cofe.ecolls;
     requires org.slf4j;
 
     exports xyz.cofe.jvmbc;
