@@ -8,6 +8,7 @@ import java.util.List;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.TypePath;
 import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
@@ -34,7 +35,7 @@ public class MLocalVariableAnnotation extends MAbstractBC
         if( sample.startLabels!=null )startLabels = Arrays.copyOf(sample.startLabels, sample.startLabels.length);
         if( sample.endLabels!=null )endLabels = Arrays.copyOf(sample.endLabels, sample.endLabels.length);
         if( sample.index!=null )index = Arrays.copyOf(sample.index, sample.index.length);
-        descriptor = sample.descriptor;
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         visible = sample.visible;
 
         if( sample.annotationByteCodes!=null ){
@@ -101,14 +102,20 @@ public class MLocalVariableAnnotation extends MAbstractBC
         this.index = index;
     }
     //endregion
-    //region descriptor : String
-    protected String descriptor;
-    public String getDescriptor(){
-        return descriptor;
-    }
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
 
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region visible : boolean
@@ -130,7 +137,7 @@ public class MLocalVariableAnnotation extends MAbstractBC
             " startLabels="+ Arrays.toString(startLabels) +
             " endLabels="+ Arrays.toString(endLabels) +
             " index="+ Arrays.toString(index) +
-            " descriptor="+descriptor+
+            " descriptor="+desc()+
             " visible="+visible;
     }
 
@@ -168,7 +175,7 @@ public class MLocalVariableAnnotation extends MAbstractBC
             ctx.labelsGet(getStartLabels()),
             ctx.labelsGet(getEndLabels()),
             getIndex(),
-            getDescriptor(),
+            desc().getRaw(),
             isVisible()
         );
 

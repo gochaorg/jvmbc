@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.objectweb.asm.AnnotationVisitor;
 import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.TDesc;
 
 public class EmANameDesc extends EmbededAnnotation implements AnnotationWriter {
     private static final long serialVersionUID = 1;
@@ -24,7 +25,7 @@ public class EmANameDesc extends EmbededAnnotation implements AnnotationWriter {
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
 
         name = sample.getName();
-        descriptor = sample.getDescriptor();
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
 
         if( sample.annotationByteCodes!=null ){
             annotationByteCodes = new ArrayList<>();
@@ -53,20 +54,25 @@ public class EmANameDesc extends EmbededAnnotation implements AnnotationWriter {
         this.name = name;
     }
     //endregion
-    //region descriptor : String
-    protected String descriptor;
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
 
-    public String getDescriptor(){
-        return descriptor;
-    }
-
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
 
     public String toString(){
-        return EmANameDesc.class.getSimpleName()+" name="+name+" descriptor="+descriptor;
+        return EmANameDesc.class.getSimpleName()+" name="+name+" descriptor="+desc();
     }
 
     /**
@@ -82,7 +88,7 @@ public class EmANameDesc extends EmbededAnnotation implements AnnotationWriter {
     @Override
     public void write(AnnotationVisitor v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        var nv = v.visitAnnotation(getName(),getDescriptor());
+        var nv = v.visitAnnotation(getName(), desc().getRaw());
         var body = annotationByteCodes;
         if( body!=null ){
             for( var b : body ){

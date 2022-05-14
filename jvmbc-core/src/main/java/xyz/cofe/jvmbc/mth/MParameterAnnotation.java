@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import org.objectweb.asm.MethodVisitor;
 import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
@@ -29,7 +30,7 @@ public class MParameterAnnotation extends MAbstractBC
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
 
         parameter = sample.parameter;
-        descriptor = sample.descriptor;
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         visible = sample.visible;
 
         if( sample.annotationByteCodes!=null ){
@@ -55,14 +56,20 @@ public class MParameterAnnotation extends MAbstractBC
         this.parameter = parameter;
     }
     //endregion
-    //region descriptor : String
-    protected String descriptor;
-    public String getDescriptor(){
-        return descriptor;
-    }
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
 
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region visible : boolean
@@ -80,7 +87,7 @@ public class MParameterAnnotation extends MAbstractBC
     public String toString(){
         return MParameterAnnotation.class.getSimpleName()+
             " parameter="+parameter+
-            " descriptor="+descriptor+
+            " descriptor="+desc()+
             " visible="+visible;
     }
 
@@ -110,7 +117,7 @@ public class MParameterAnnotation extends MAbstractBC
         if( v==null )throw new IllegalArgumentException( "v==null" );
 
         var av = v.visitParameterAnnotation(
-            getParameter(), getDescriptor(), isVisible()
+            getParameter(), desc().getRaw(), isVisible()
         );
 
         var abody = annotationByteCodes;

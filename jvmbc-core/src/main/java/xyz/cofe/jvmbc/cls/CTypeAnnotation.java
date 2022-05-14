@@ -9,6 +9,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.TypePath;
 import org.objectweb.asm.TypeReference;
 import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
@@ -28,7 +29,7 @@ public class CTypeAnnotation
     public CTypeAnnotation(int typeRef, String typePath, String descriptor, boolean visible){
         this.typeRef = typeRef;
         this.typePath = typePath;
-        this.descriptor = descriptor;
+        this.desc().setRaw(descriptor);
         this.visible = visible;
     }
 
@@ -41,7 +42,7 @@ public class CTypeAnnotation
 
         typePath = sample.typePath;
         typeRef = sample.typeRef;
-        descriptor = sample.descriptor;
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         visible = sample.visible;
 
         if( sample.annotationByteCodes!=null ){
@@ -102,13 +103,20 @@ public class CTypeAnnotation
         this.typePath = typePath;
     }
     //endregion
-    //region descriptor : String
-    protected String descriptor;
-    public String getDescriptor(){
-        return descriptor;
-    }
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
+
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region visible : boolean
@@ -123,7 +131,7 @@ public class CTypeAnnotation
 
     public String toString(){
         return CTypeAnnotation.class.getSimpleName()+
-            " typeRef="+typeRef+" typePath="+typePath+" descriptor="+descriptor+" visible="+visible;
+            " typeRef="+typeRef+" typePath="+typePath+" descriptor="+desc()+" visible="+visible;
     }
 
     //region annotationByteCodes : List<AnnotationByteCode>
@@ -155,7 +163,7 @@ public class CTypeAnnotation
         var av = v.visitTypeAnnotation(
             getTypeRef(),
             tp!=null ? TypePath.fromString(tp) : null,
-            getDescriptor(),
+            desc().getRaw(),
             isVisible()
         );
 

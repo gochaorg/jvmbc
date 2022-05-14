@@ -6,6 +6,7 @@ import java.util.List;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.TypePath;
 import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
@@ -26,7 +27,7 @@ public class MTypeAnnotation extends MAbstractBC
     public MTypeAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible){
         this.typeRef = typeRef;
         this.typePath = typePath!=null ? typePath.toString() : null;
-        this.descriptor = descriptor;
+        desc().setRaw(descriptor);
         this.visible = visible;
     }
 
@@ -38,7 +39,7 @@ public class MTypeAnnotation extends MAbstractBC
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         this.typeRef = sample.typeRef;
         this.typePath = sample.typePath;
-        this.descriptor = sample.descriptor;
+        this.descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         this.visible = sample.visible;
 
         if( sample.annotationByteCodes!=null ){
@@ -74,14 +75,20 @@ public class MTypeAnnotation extends MAbstractBC
         this.typePath = typePath;
     }
     //endregion
-    //region descriptor : String
-    protected String descriptor;
-    public String getDescriptor(){
-        return descriptor;
-    }
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
 
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region visible : boolean
@@ -100,7 +107,7 @@ public class MTypeAnnotation extends MAbstractBC
         return MTypeAnnotation.class.getSimpleName()+
             " typeRef="+typeRef+
             " typePath="+typePath+
-            " descriptor="+descriptor+
+            " descriptor="+desc()+
             " visible="+visible;
     }
 
@@ -132,7 +139,7 @@ public class MTypeAnnotation extends MAbstractBC
         var av = v.visitTypeAnnotation(
             getTypeRef(),
             tp!=null ? TypePath.fromString(tp) : null,
-            getDescriptor(),
+            desc().getRaw(),
             isVisible()
         );
         var abody = annotationByteCodes;

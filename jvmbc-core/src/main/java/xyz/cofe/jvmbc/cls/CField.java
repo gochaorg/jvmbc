@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import org.objectweb.asm.ClassWriter;
 import xyz.cofe.jvmbc.AccFlags;
 import xyz.cofe.jvmbc.AccFlagsProperty;
+import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.FieldFlags;
 import xyz.cofe.jvmbc.fld.FieldByteCode;
 import xyz.cofe.jvmbc.fld.FieldEnd;
@@ -71,7 +72,7 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
     public CField(int access, String name, String descriptor, String signature, Object value){
         this.access = access;
         this.name = name;
-        this.descriptor = descriptor;
+        desc().setRaw(descriptor);
         this.signature = signature;
         this.value = value;
     }
@@ -84,7 +85,7 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         access = sample.getAccess();
         name = sample.getName();
-        descriptor = sample.getDescriptor();
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         signature = sample.getSignature();
         value = sample.getValue();
     }
@@ -149,26 +150,20 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
         this.name = name;
     }
     //endregion
-    //region descriptor - дескриптор типа
+    //region desc() - дескриптор типа
     /**
      * Дескриптор типа данных
      */
-    protected String descriptor;
+    protected TDesc descProperty;
 
     /**
      * Возвращает дескриптор типа данных
-     * @return дескриптор
+     * @return Дескриптор типа данных
      */
-    public String getDescriptor(){
-        return descriptor;
-    }
-
-    /**
-     * Указывает дескриптор типа данных
-     * @param descriptor дескриптор
-     */
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region signature - сигнатура, в случае Generic
@@ -221,7 +216,7 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
         return CField.class.getSimpleName() +
             " access="+access+("#"+new AccFlags(access).flags())+
             " name=" + name +
-            " descriptor=" + descriptor +
+            " desc=" + desc() +
             " signature=" + signature +
             " value=" + value ;
     }
@@ -253,7 +248,7 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
     @Override
     public void write(ClassWriter v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        var fv = v.visitField(getAccess(),getName(),getDescriptor(),getSignature(),getValue());
+        var fv = v.visitField(getAccess(),getName(), desc().getRaw(), getSignature(),getValue());
         var body = fieldByteCodes;
         if( body!=null ){
             for( var b : body ){

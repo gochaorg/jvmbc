@@ -6,6 +6,7 @@ import java.util.List;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.TypePath;
 import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
@@ -22,7 +23,7 @@ public class FTypeAnnotation implements FieldByteCode, AnnotationDef, GetAnnotat
     public FTypeAnnotation(int typeRef, String typePath, String descriptor, boolean visible){
         this.typeRef = typeRef;
         this.typePath = typePath;
-        this.descriptor = descriptor;
+        this.desc().setRaw(descriptor);
         this.visible = visible;
     }
 
@@ -34,7 +35,7 @@ public class FTypeAnnotation implements FieldByteCode, AnnotationDef, GetAnnotat
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         typeRef = sample.getTypeRef();
         typePath = sample.getTypePath();
-        descriptor = sample.getDescriptor();
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         visible = sample.isVisible();
 
         if( sample.annotationByteCodes!=null ){
@@ -72,13 +73,20 @@ public class FTypeAnnotation implements FieldByteCode, AnnotationDef, GetAnnotat
         this.typePath = typePath;
     }
     //endregion
-    //region descriptor : String
-    protected String descriptor;
-    public String getDescriptor(){
-        return descriptor;
-    }
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
+
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region visible : boolean
@@ -92,7 +100,7 @@ public class FTypeAnnotation implements FieldByteCode, AnnotationDef, GetAnnotat
     //endregion
 
     public String toString(){
-        return FTypeAnnotation.class.getSimpleName()+" typeRef="+typeRef+" typePath="+typePath+" descriptor="+descriptor+" visible="+visible;
+        return FTypeAnnotation.class.getSimpleName()+" typeRef="+typeRef+" typePath="+typePath+" descriptor="+desc()+" visible="+visible;
     }
 
     //region annotationByteCodes : List<AnnotationByteCode>
@@ -124,7 +132,7 @@ public class FTypeAnnotation implements FieldByteCode, AnnotationDef, GetAnnotat
         var av = v.visitTypeAnnotation(
             getTypeRef(),
             tp!=null ? TypePath.fromString(tp) : null,
-            getDescriptor(),
+            desc().getRaw(),
             isVisible()
         );
 

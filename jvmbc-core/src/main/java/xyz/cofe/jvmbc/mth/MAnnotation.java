@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import org.objectweb.asm.MethodVisitor;
 import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
@@ -13,7 +14,7 @@ import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
  * Visits an annotation of this method.
  *
  * <p>
- * {@link #descriptor} the class descriptor of the annotation class.
+ * {@link #desc()} the class descriptor of the annotation class.
  *
  * <p>
  * {@link #visible}  {@literal true} if the annotation is visible at runtime.
@@ -33,7 +34,7 @@ public class MAnnotation
      */
     public MAnnotation(){}
     public MAnnotation(String descriptor, boolean visible){
-        this.descriptor = descriptor;
+        this.desc().setRaw(descriptor);
         this.visible = visible;
     }
 
@@ -43,7 +44,7 @@ public class MAnnotation
      */
     public MAnnotation(MAnnotation sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
-        this.descriptor = sample.getDescriptor();
+        this.descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         this.visible = sample.isVisible();
         if( sample.annotationByteCodes!=null ){
             annotationByteCodes = new ArrayList<>();
@@ -59,13 +60,20 @@ public class MAnnotation
 
     public MAnnotation clone(){ return new MAnnotation(this); }
 
-    //region descriptor : String
-    protected String descriptor;
-    public String getDescriptor(){
-        return descriptor;
-    }
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
+
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region visible : boolean
@@ -80,7 +88,7 @@ public class MAnnotation
 
     public String toString(){
         return MAnnotation.class.getSimpleName()+
-            " descriptor="+descriptor+
+            " descriptor="+desc()+
             " visible="+visible;
     }
 
@@ -109,7 +117,7 @@ public class MAnnotation
     public void write(MethodVisitor v, MethodWriterCtx ctx){
         if( v==null )throw new IllegalArgumentException( "v==null" );
 
-        var av = v.visitAnnotation(getDescriptor(),isVisible());
+        var av = v.visitAnnotation(desc().getRaw(), isVisible());
 
         var abody = annotationByteCodes;
         if( abody!=null ){

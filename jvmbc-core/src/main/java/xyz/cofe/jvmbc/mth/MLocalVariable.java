@@ -1,6 +1,7 @@
 package xyz.cofe.jvmbc.mth;
 
 import org.objectweb.asm.MethodVisitor;
+import xyz.cofe.jvmbc.TDesc;
 
 /**
  * Определение локальной переменной
@@ -24,7 +25,7 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
      */
     public MLocalVariable(String name, String descriptor, String signature, String labelStart, String labelEnd, int index){
         this.name = name;
-        this.descriptor = descriptor;
+        this.desc().setRaw(descriptor);
         this.signature = signature;
         this.labelStart = labelStart;
         this.labelEnd = labelEnd;
@@ -38,7 +39,7 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
     public MLocalVariable(MLocalVariable sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         name = sample.name;
-        descriptor = sample.descriptor;
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         signature = sample.signature;
         labelStart = sample.labelStart;
         labelEnd = sample.labelEnd;
@@ -66,23 +67,20 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
         this.name = name;
     }
     //endregion
-    //region descriptor : String - дескриптор типа локальной переменной
-    private String descriptor;
-    
+    //region desc() - дескриптор типа локальной переменной
     /**
-     * Возвращает дескриптор типа локальной переменной
-     * @return дескриптор типа
+     * Дескриптор типа данных
      */
-    public String getDescriptor(){
-        return descriptor;
-    }
-    
+    protected TDesc descProperty;
+
     /**
-     * Указывает дескриптор типа локальной переменной
-     * @param descriptor дескриптор типа
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
      */
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region signature : String - сигнатура для Generic типа локальной переменной или null
@@ -165,7 +163,7 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
     public String toString(){
         return MLocalVariable.class.getSimpleName()+
             " name="+name+
-            " descriptor="+descriptor+
+            " descriptor="+desc()+
             " signature="+signature+
             " start="+labelStart+
             " end="+labelEnd+
@@ -182,7 +180,7 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
 
         v.visitLocalVariable(
             getName(),
-            getDescriptor(),
+            desc().getRaw(),
             getSignature(),
             ls!=null ? ctx.labelGet(ls) : null,
             le!=null ? ctx.labelGet(le) : null,

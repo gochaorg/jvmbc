@@ -6,6 +6,7 @@ import java.util.List;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.TypePath;
 import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
@@ -24,7 +25,7 @@ public class MInsnAnnotation extends MAbstractBC
     public MInsnAnnotation(int typeRef, String typePath, String descriptor, boolean visible){
         this.typeRef = typeRef;
         this.typePath = typePath;
-        this.descriptor = descriptor;
+        this.desc().setRaw(descriptor);
         this.visible = visible;
     }
 
@@ -37,7 +38,7 @@ public class MInsnAnnotation extends MAbstractBC
 
         typeRef = sample.getTypeRef();
         typePath = sample.getTypePath();
-        descriptor = sample.getDescriptor();
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         visible = sample.isVisible();
 
         if( sample.annotationByteCodes!=null ){
@@ -74,14 +75,20 @@ public class MInsnAnnotation extends MAbstractBC
         this.typePath = typePath;
     }
     //endregion
-    //region descriptor : String
-    protected String descriptor;
-    public String getDescriptor(){
-        return descriptor;
-    }
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
 
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region visible : boolean
@@ -100,7 +107,7 @@ public class MInsnAnnotation extends MAbstractBC
         return MInsnAnnotation.class.getSimpleName()+
             " typeRef="+typeRef+
             " typePath="+typePath+
-            " descriptor="+descriptor+
+            " descriptor="+desc()+
             " visible="+visible;
     }
 
@@ -133,7 +140,7 @@ public class MInsnAnnotation extends MAbstractBC
         var av = v.visitInsnAnnotation(
             getTypeRef(),
             tp!=null ? TypePath.fromString(tp) : null,
-            getDescriptor(),
+            desc().getRaw(),
             isVisible()
         );
 

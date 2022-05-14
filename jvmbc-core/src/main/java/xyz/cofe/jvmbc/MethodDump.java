@@ -191,7 +191,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
 
         ta.setTypeRef(typeRef);
         ta.setTypePath(typePath!=null ? typePath.toString() : null);
-        ta.setDescriptor(descriptor);
+        ta.desc().setRaw(descriptor);
         ta.setVisible(visible);
 
         emit(ta);
@@ -238,7 +238,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
         dump.byteCode( this.byteCodeConsumer,pa );
 
         pa.setParameter(parameter);
-        pa.setDescriptor(descriptor);
+        pa.desc().setRaw(descriptor);
         pa.setVisible(visible);
 
         emit(pa);
@@ -645,7 +645,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
 
         ia.setTypeRef(typeRef);
         ia.setTypePath(typePath!=null ? typePath.toString() : null);
-        ia.setDescriptor(descriptor);
+        ia.desc().setRaw(descriptor);
         ia.setVisible(visible);
 
         emit(ia);
@@ -755,7 +755,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
             a.setEndLabels(Arrays.stream(end).map(s -> s!=null ? s.toString() : null).toArray(String[]::new));
         }
         a.setIndex(index);
-        a.setDescriptor(descriptor);
+        a.desc().setRaw(descriptor);
         a.setVisible(visible);
 
         emit(a);

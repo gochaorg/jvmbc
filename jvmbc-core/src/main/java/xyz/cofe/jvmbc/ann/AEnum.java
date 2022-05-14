@@ -1,6 +1,7 @@
 package xyz.cofe.jvmbc.ann;
 
 import org.objectweb.asm.AnnotationVisitor;
+import xyz.cofe.jvmbc.TDesc;
 
 public class AEnum extends AAbstractBC implements AnnotationWriter {
     private static final long serialVersionUID = 1;
@@ -11,7 +12,7 @@ public class AEnum extends AAbstractBC implements AnnotationWriter {
     public AEnum(){}
     public AEnum(String name, String descriptor, String value){
         this.name = name;
-        this.descriptor = descriptor;
+        this.desc().setRaw(descriptor);
         this.value = value;
     }
 
@@ -22,7 +23,7 @@ public class AEnum extends AAbstractBC implements AnnotationWriter {
     public AEnum(AEnum sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         this.name = sample.getName();
-        this.descriptor = sample.getDescriptor();
+        this.descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         this.value = sample.getValue();
     }
 
@@ -42,15 +43,20 @@ public class AEnum extends AAbstractBC implements AnnotationWriter {
         this.name = name;
     }
     //endregion
-    //region descriptor : String
-    protected String descriptor;
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
 
-    public String getDescriptor(){
-        return descriptor;
-    }
-
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region value : String
@@ -66,13 +72,13 @@ public class AEnum extends AAbstractBC implements AnnotationWriter {
 
     public String toString(){
         return AEnum.class.getSimpleName()+" name="+name+
-            " descriptor="+descriptor+
+            " descriptor="+desc()+
             " value="+(value != null ? "\""+value+"\"" : "null" );
     }
 
     @Override
     public void write(AnnotationVisitor v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        v.visitEnum(getName(),getDescriptor(),getValue());
+        v.visitEnum(getName(), desc().getRaw(), getValue());
     }
 }

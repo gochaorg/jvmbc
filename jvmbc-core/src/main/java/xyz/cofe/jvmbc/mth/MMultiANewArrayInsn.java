@@ -1,6 +1,7 @@
 package xyz.cofe.jvmbc.mth;
 
 import org.objectweb.asm.MethodVisitor;
+import xyz.cofe.jvmbc.TDesc;
 
 /**
  * multianewarray
@@ -61,7 +62,7 @@ public class MMultiANewArrayInsn extends MAbstractBC implements MethodWriter {
     public MMultiANewArrayInsn(){
     }
     public MMultiANewArrayInsn(String descriptor, int numDimensions){
-        this.descriptor = descriptor;
+        desc().setRaw(descriptor);
         this.numDimensions = numDimensions;
     }
 
@@ -71,21 +72,26 @@ public class MMultiANewArrayInsn extends MAbstractBC implements MethodWriter {
      */
     public MMultiANewArrayInsn(MMultiANewArrayInsn sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
-        descriptor = sample.descriptor;
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         numDimensions = sample.numDimensions;
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod") public MMultiANewArrayInsn clone(){ return new MMultiANewArrayInsn(this); }
 
-    //region descriptor
-    private String descriptor;
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
 
-    public String getDescriptor(){
-        return descriptor;
-    }
-
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region numDimensions
@@ -102,13 +108,13 @@ public class MMultiANewArrayInsn extends MAbstractBC implements MethodWriter {
 
     public String toString(){
         return MMultiANewArrayInsn.class.getSimpleName()+
-            " descriptor="+descriptor+
+            " descriptor="+desc()+
             " numDimensions="+numDimensions;
     }
 
     @Override
     public void write(MethodVisitor v, MethodWriterCtx ctx){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        v.visitMultiANewArrayInsn(getDescriptor(),getNumDimensions());
+        v.visitMultiANewArrayInsn(desc().getRaw(), getNumDimensions());
     }
 }

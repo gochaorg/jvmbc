@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import org.objectweb.asm.FieldVisitor;
 import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
@@ -17,7 +18,7 @@ public class FAnnotation implements FieldByteCode, AnnotationDef, GetAnnotationB
      */
     public FAnnotation(){}
     public FAnnotation(String descriptor, boolean visible){
-        this.descriptor = descriptor;
+        this.desc().setRaw(descriptor);
         this.visible = visible;
     }
 
@@ -27,7 +28,7 @@ public class FAnnotation implements FieldByteCode, AnnotationDef, GetAnnotationB
      */
     public FAnnotation(FAnnotation sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
-        descriptor = sample.getDescriptor();
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         visible = sample.isVisible();
 
         if( sample.annotationByteCodes!=null ){
@@ -46,13 +47,20 @@ public class FAnnotation implements FieldByteCode, AnnotationDef, GetAnnotationB
         return new FAnnotation(this);
     }
 
-    //region descriptor : String
-    protected String descriptor;
-    public String getDescriptor(){
-        return descriptor;
-    }
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
+
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region visible : boolean
@@ -66,7 +74,7 @@ public class FAnnotation implements FieldByteCode, AnnotationDef, GetAnnotationB
     //endregion
 
     public String toString(){
-        return FAnnotation.class.getSimpleName()+" descriptor="+descriptor+" visible="+visible;
+        return FAnnotation.class.getSimpleName()+" descriptor="+desc()+" visible="+visible;
     }
 
     //region annotationByteCodes : List<AnnotationByteCode>
@@ -94,7 +102,7 @@ public class FAnnotation implements FieldByteCode, AnnotationDef, GetAnnotationB
     public void write(FieldVisitor v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
 
-        var av = v.visitAnnotation(getDescriptor(),isVisible());
+        var av = v.visitAnnotation(desc().getRaw(), isVisible());
 
         var abody = annotationByteCodes;
         if( abody!=null ){

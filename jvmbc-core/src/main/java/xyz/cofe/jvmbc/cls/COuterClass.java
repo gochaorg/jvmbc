@@ -3,6 +3,7 @@ package xyz.cofe.jvmbc.cls;
 import java.util.function.Consumer;
 
 import org.objectweb.asm.ClassWriter;
+import xyz.cofe.jvmbc.TDesc;
 
 public class COuterClass implements ClsByteCode, ClazzWriter {
     private static final long serialVersionUID = 1;
@@ -14,7 +15,7 @@ public class COuterClass implements ClsByteCode, ClazzWriter {
     public COuterClass(String owner, String name, String descriptor){
         this.owner = owner;
         this.name = name;
-        this.descriptor = descriptor;
+        this.desc().setRaw(descriptor);
     }
 
     /**
@@ -25,7 +26,7 @@ public class COuterClass implements ClsByteCode, ClazzWriter {
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         owner = sample.owner;
         name = sample.name;
-        descriptor = sample.descriptor;
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")
@@ -62,13 +63,20 @@ public class COuterClass implements ClsByteCode, ClazzWriter {
         this.name = name;
     }
     //endregion
-    //region descriptor : String
-    protected String descriptor;
-    public String getDescriptor(){
-        return descriptor;
-    }
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
+
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
 
@@ -77,12 +85,12 @@ public class COuterClass implements ClsByteCode, ClazzWriter {
         return COuterClass.class.getSimpleName()+" " +
             "owner=" + owner +
             " name=" + name +
-            " descriptor=" + descriptor ;
+            " descriptor=" + desc() ;
     }
 
     @Override
     public void write(ClassWriter v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        v.visitOuterClass(getOwner(),getName(),getDescriptor());
+        v.visitOuterClass(getOwner(),getName(), desc().getRaw());
     }
 }

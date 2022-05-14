@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import org.objectweb.asm.ClassWriter;
 import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
@@ -80,7 +81,7 @@ public class CAnnotation implements
      * @param visible {@literal true} если аннотация видна в runtime
      */
     public CAnnotation(String descriptor, boolean visible){
-        this.descriptor = descriptor;
+        desc().setRaw(descriptor);
         this.visible = visible;
     }
 
@@ -90,7 +91,7 @@ public class CAnnotation implements
      */
     public CAnnotation(CAnnotation sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
-        descriptor = sample.descriptor;
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         visible = sample.visible;
         if( sample.annotationByteCodes!=null ){
             annotationByteCodes = new ArrayList<>();
@@ -119,24 +120,20 @@ public class CAnnotation implements
         return this;
     }
 
-    //region descriptor : String - Имя типа аннотации (дескриптор)
-    /** Имя типа аннотации */
-    protected String descriptor;
+    //region desc() - Имя типа аннотации (дескриптор)
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
 
     /**
-     * Возвращает имя типа аннотации
-     * @return имя типа аннотации
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
      */
-    public String getDescriptor(){
-        return descriptor;
-    }
-
-    /**
-     * Указывает имя типа аннотации
-     * @param descriptor имя типа аннотации
-     */
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
     //region visible : boolean - видна ли аннотация в runtime
@@ -165,7 +162,7 @@ public class CAnnotation implements
     //region toString()
     public String toString(){
         return CAnnotation.class.getSimpleName()+
-            " descriptor="+descriptor+
+            " descriptor="+desc()+
             " visible="+visible;
     }
     //endregion
@@ -209,7 +206,7 @@ public class CAnnotation implements
     public void write(ClassWriter v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
 
-        var av = v.visitAnnotation(getDescriptor(), isVisible());
+        var av = v.visitAnnotation(desc().getRaw(), isVisible());
 
         var abody = annotationByteCodes;
         if( abody!=null ){

@@ -1,6 +1,7 @@
 package xyz.cofe.jvmbc.mth;
 
 import org.objectweb.asm.MethodVisitor;
+import xyz.cofe.jvmbc.TDesc;
 
 /**
  * Доступ к полю объекта
@@ -207,7 +208,7 @@ public class MFieldInsn extends MAbstractBC implements MethodWriter {
         this.opcode = opcode;
         this.owner = owner;
         this.name = name;
-        this.descriptor = descriptor;
+        this.desc().setRaw(descriptor);
     }
 
     /**
@@ -219,7 +220,7 @@ public class MFieldInsn extends MAbstractBC implements MethodWriter {
         this.opcode = sample.getOpcode();
         this.owner = sample.getOwner();
         this.name = sample.getName();
-        this.descriptor = sample.getDescriptor();
+        this.descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod") public MFieldInsn clone(){ return new MFieldInsn(this); }
@@ -254,15 +255,20 @@ public class MFieldInsn extends MAbstractBC implements MethodWriter {
         this.name = name;
     }
     //endregion
-    //region descriptor : String
-    private String descriptor;
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
 
-    public String getDescriptor(){
-        return descriptor;
-    }
-
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new TDesc();
+        return descProperty;
     }
     //endregion
 
@@ -272,13 +278,13 @@ public class MFieldInsn extends MAbstractBC implements MethodWriter {
             " opcode=" + OpCode.code(opcode).map(OpCode::name).orElse("?") + "#" + opcode +
             " owner='" + owner + '\'' +
             " name='" + name + '\'' +
-            " descriptor='" + descriptor + '\'' +
+            " descriptor='" + desc() + '\'' +
             '}';
     }
 
     @Override
     public void write(MethodVisitor v, MethodWriterCtx ctx){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        v.visitFieldInsn(getOpcode(),getOwner(),getName(),getDescriptor());
+        v.visitFieldInsn(getOpcode(),getOwner(),getName(), desc().getRaw());
     }
 }
