@@ -61,6 +61,14 @@ public class TypeDesc {
             this.to = to;
         }
     }
+
+    /**
+     * Парсинг raw дескриптора
+     * @param raw дескриптор, текстовое представление
+     * @param from смещение в тексте
+     * @return тип
+     * @throws Error если не смог распознать
+     */
     public static Parse parse(String raw,int from){
         if( raw==null )throw new IllegalArgumentException( "raw==null" );
         if( from<0 )throw new IllegalArgumentException( "from<0" );

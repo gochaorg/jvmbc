@@ -2,6 +2,7 @@ package xyz.cofe.jvmbc.query;
 
 import org.junit.jupiter.api.Test;
 import xyz.cofe.fn.Fn1;
+import xyz.cofe.jvmbc.MethodDescTypes;
 import xyz.cofe.jvmbc.query.sample.EnvLocal;
 import xyz.cofe.jvmbc.query.sample.IEnv;
 import xyz.cofe.jvmbc.query.sec.SecurAccess;

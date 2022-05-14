@@ -21,21 +21,6 @@
             <artifactId>iofun</artifactId>
         </dependency>
         <dependency>
-            <groupId>xyz.cofe</groupId>
-            <artifactId>fs</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>xyz.cofe</groupId>
-            <artifactId>text</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>xyz.cofe</groupId>
-            <artifactId>text-out</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
