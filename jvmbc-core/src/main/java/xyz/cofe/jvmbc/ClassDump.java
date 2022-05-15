@@ -1,5 +1,6 @@
 package xyz.cofe.jvmbc;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import org.objectweb.asm.AnnotationVisitor;
@@ -11,18 +12,7 @@ import org.objectweb.asm.ModuleVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.RecordComponentVisitor;
 import org.objectweb.asm.TypePath;
-import xyz.cofe.jvmbc.cls.CAnnotation;
-import xyz.cofe.jvmbc.cls.CBegin;
-import xyz.cofe.jvmbc.cls.CEnd;
-import xyz.cofe.jvmbc.cls.CField;
-import xyz.cofe.jvmbc.cls.CInnerClass;
-import xyz.cofe.jvmbc.cls.CMethod;
-import xyz.cofe.jvmbc.cls.CPermittedSubclass;
-import xyz.cofe.jvmbc.cls.CSource;
-import xyz.cofe.jvmbc.cls.CNestHost;
-import xyz.cofe.jvmbc.cls.CNestMember;
-import xyz.cofe.jvmbc.cls.COuterClass;
-import xyz.cofe.jvmbc.cls.CTypeAnnotation;
+import xyz.cofe.jvmbc.cls.*;
 import xyz.cofe.jvmbc.fld.FieldByteCode;
 import xyz.cofe.jvmbc.mth.MethodByteCode;
 
@@ -43,7 +33,11 @@ import xyz.cofe.jvmbc.mth.MethodByteCode;
  *     <li> visitEnd
  * </ol>
  */
-public class ClassDump extends ClassVisitor {
+public class ClassDump<
+    CBEGIN extends CBegin<CFIELD,CMETHOD>,
+    CFIELD extends CField,
+    CMETHOD extends CMethod<List<MethodByteCode>>
+    > extends ClassVisitor {
     private void dump(String message,Object...args){
         if( message==null )return;
         if( args==null || args.length==0 ){
@@ -58,18 +52,27 @@ public class ClassDump extends ClassVisitor {
         }
     }
 
+    private final ClassFactory<CBEGIN,CFIELD,CMETHOD> classFactory;
+    public static ClassDump<CBegin<CField,CMethod<List<MethodByteCode>>>,CField,CMethod<List<MethodByteCode>>> create(){
+        return new ClassDump<>(new ClassFactory.Default());
+    }
+
     /**
      * Constructs a new {@link ClassVisitor}.
      *
      * @param api the ASM API version implemented by this visitor. Must be one of {@link
      *            Opcodes#ASM4}, {@link Opcodes#ASM5}, {@link Opcodes#ASM6} or {@link Opcodes#ASM7}.
      */
-    public ClassDump(int api){
+    public ClassDump(int api, ClassFactory<CBEGIN,CFIELD,CMETHOD> cf){
         super(api);
+        if( cf==null )throw new IllegalArgumentException("cf==null");
+        classFactory = cf;
     }
 
-    public ClassDump(){
+    public ClassDump(ClassFactory<CBEGIN,CFIELD,CMETHOD> cf){
         super(Opcodes.ASM9);
+        if( cf==null )throw new IllegalArgumentException("cf==null");
+        classFactory = cf;
     }
 
     private Consumer<? super ByteCode> byteCodeConsumer;
@@ -92,15 +95,15 @@ public class ClassDump extends ClassVisitor {
         }
     }
 
-    protected final ThreadLocal<CBegin> currentClass = new ThreadLocal<>();
-    protected Optional<CBegin> currentClass(){
+    protected final ThreadLocal<CBEGIN> currentClass = new ThreadLocal<>();
+    protected Optional<CBEGIN> currentClass(){
         var v = currentClass.get();
         return v!=null ? Optional.of(v) : Optional.empty();
     }
-    protected void currentClass(CBegin begin){
+    protected void currentClass(CBEGIN begin){
         currentClass.set(begin);
     }
-    protected void currentClass(Consumer<CBegin> c){
+    protected void currentClass(Consumer<CBEGIN> c){
         if( c==null )throw new IllegalArgumentException( "c==null" );
         var v = currentClass.get();
         if( v==null ){
@@ -134,7 +137,7 @@ public class ClassDump extends ClassVisitor {
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces){
-        var c = new CBegin(version,access,name,signature,superName,interfaces);
+        var c = classFactory.cbegin(version,access,name,signature,superName,interfaces);
         currentClass(c);
         currentIndex(0);
         emit(c);
@@ -257,7 +260,7 @@ public class ClassDump extends ClassVisitor {
     @Override
     public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value){
         int ci = currentIndexGetAndInc();
-        CField c = new CField(access,name,descriptor,signature,value);
+        CFIELD c = classFactory.cfield(access,name,descriptor,signature,value);
 
         FieldDump dump = new FieldDump(api);
         dump.byteCode(b -> {

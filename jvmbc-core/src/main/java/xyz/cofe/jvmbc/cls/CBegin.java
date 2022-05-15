@@ -20,7 +20,10 @@ import xyz.cofe.jvmbc.io.IOFun;
 /**
  * Описывает класс / модуль
  */
-public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, ClassFlags {
+public class CBegin<
+    CFIELD extends CField,
+    CMETHOD extends CMethod
+> implements ClsByteCode, ClazzWriter, AccFlagsProperty, ClassFlags {
     /**
      * Идентификатор версии при сериализации/де-сериализации
      */
@@ -53,7 +56,7 @@ public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, Class
      * Конструктор копирования
      * @param sample образец для копирования
      */
-    public CBegin(CBegin sample){
+    public CBegin(CBegin<CFIELD,CMETHOD> sample){
         if( sample==null )throw new IllegalArgumentException("sample==null");
         version = sample.getVersion();
         access = sample.getAccess();
@@ -98,14 +101,14 @@ public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, Class
         if( sample.fields!=null ){
             fields = new ArrayList<>();
             for( var a : sample.fields ){
-                fields.add( a!=null ? a.clone() : null );
+                fields.add( a!=null ? clone(a) : null );
             }
         }
 
         if( sample.methods!=null ){
             methods = new ArrayList<>();
             for( var a : sample.methods ){
-                methods.add( a!=null ? a.clone() : null );
+                methods.add( a!=null ? clone(a) : null );
             }
         }
 
@@ -116,23 +119,27 @@ public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, Class
     }
 
     /**
+     * Клонирование поля класса
+     * @param field поле класса
+     * @return клон
+     */
+    public CFIELD clone(CFIELD field){
+        if( field==null )throw new IllegalArgumentException( "field==null" );
+        return (CFIELD) field.clone();
+    }
+
+    public CMETHOD clone(CMETHOD method){
+        if( method==null )throw new IllegalArgumentException( "method==null" );
+        return (CMETHOD) method.clone();
+    }
+
+    /**
      * Создает полную копию класса
      * @return копия
      */
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public CBegin clone(){
-        return new CBegin(this);
-    }
-
-    /**
-     * Конфигурация экземпляра
-     * @param conf конфигурация
-     * @return SELF ссылка
-     */
-    public CBegin configure(Consumer<CBegin> conf){
-        if( conf==null )throw new IllegalArgumentException( "conf==null" );
-        conf.accept(this);
-        return this;
+    public CBegin<CFIELD,CMETHOD> clone(){
+        return new CBegin<>(this);
     }
 
     //region version : int - версия байт-кода
@@ -508,17 +515,17 @@ public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, Class
 
     // protected List visitRecordComponent
 
-    //region fields : List<CField> - Список полней класса
+    //region fields : List<CFIELD> - Список полней класса
     /**
      * Список полней класса
      */
-    protected List<CField> fields;
+    protected List<CFIELD> fields;
 
     /**
      * Возвращает список полней класса
      * @return список полней класса
      */
-    public List<CField> getFields(){
+    public List<CFIELD> getFields(){
         if( fields==null )fields = new ArrayList<>();
         return fields;
     }
@@ -527,7 +534,7 @@ public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, Class
      * Указывает список полней класса
      * @param fields список полней класса
      */
-    public void setFields(List<CField> fields){
+    public void setFields(List<CFIELD> fields){
         this.fields = fields;
     }
     //endregion
@@ -535,13 +542,13 @@ public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, Class
     /**
      * Список методов класса
      */
-    protected List<CMethod> methods;
+    protected List<CMETHOD> methods;
 
     /**
      * Возвращает список методов класса
      * @return список методов класса
      */
-    public List<CMethod> getMethods(){
+    public List<CMETHOD> getMethods(){
         if( methods==null )methods = new ArrayList<>();
         return methods;
     }
@@ -550,7 +557,7 @@ public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, Class
      * Указывает список методов класса
      * @param methods список методов класса
      */
-    public void setMethods(List<CMethod> methods){
+    public void setMethods(List<CMETHOD> methods){
         this.methods = methods;
     }
     //endregion
@@ -720,13 +727,13 @@ public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, Class
      * @return представление класса
      */
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    public static CBegin parseByteCode(byte[] byteCode){
+    public static CBegin<CField,CMethod> parseByteCode(byte[] byteCode){
         if( byteCode==null )throw new IllegalArgumentException( "byteCode==null" );
 
         ClassReader classReader = new ClassReader(byteCode);
         List<ByteCode> byteCodes = new ArrayList<>();
 
-        ClassDump dump = new ClassDump();
+        var dump = ClassDump.create();
         dump.byteCode( byteCodes::add );
         classReader.accept(dump,0);
 
@@ -752,7 +759,7 @@ public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, Class
      * @param clazz класс
      * @return представление байт кода
      */
-    public static CBegin parseByteCode(Class<?> clazz){
+    public static CBegin<CField,CMethod> parseByteCode(Class<?> clazz){
         if( clazz==null )throw new IllegalArgumentException( "clazz==null" );
 
         var resName = "/"+clazz.getName().replace(".","/")+".class";
@@ -770,7 +777,7 @@ public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, Class
      * @param url ссылка на байт-код
      * @return представление класса
      */
-    public static CBegin parseByteCode(URL url){
+    public static CBegin<CField,CMethod> parseByteCode(URL url){
         if( url==null )throw new IllegalArgumentException( "url==null" );
         try{
             return parseByteCode(IOFun.readBytes(url));

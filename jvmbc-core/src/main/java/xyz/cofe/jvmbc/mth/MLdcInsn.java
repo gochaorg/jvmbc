@@ -121,7 +121,7 @@ public class MLdcInsn extends MAbstractBC implements MethodWriter {
             case Handle:
                 var hdl1 = (MHandle)getValue();
                 var hdl0 = new org.objectweb.asm.Handle(
-                    hdl1.getTag(), hdl1.getOwner(), hdl1.getName(), hdl1.getDesc(), hdl1.isIface()
+                    hdl1.getTag(), hdl1.getOwner(), hdl1.getName(), hdl1.desc().getRaw(), hdl1.isIface()
                 );
                 v.visitLdcInsn(hdl0);
                 break;

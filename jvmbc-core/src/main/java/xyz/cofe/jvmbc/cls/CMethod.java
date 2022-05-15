@@ -14,7 +14,9 @@ import xyz.cofe.jvmbc.mth.MethodWriterCtx;
 /**
  * Описывает метод класса
  */
-public class CMethod implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags {
+public class CMethod<LIST extends List<MethodByteCode>>
+implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
+{
     private static final long serialVersionUID = 1;
 
     /**
@@ -42,7 +44,7 @@ public class CMethod implements ClsByteCode, ClazzWriter, AccFlagsProperty, Meth
      * Конструктор копирования
      * @param sample образец
      */
-    public CMethod(CMethod sample){
+    public CMethod(CMethod<LIST> sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         access = sample.getAccess();
         name = sample.getName();
@@ -58,8 +60,8 @@ public class CMethod implements ClsByteCode, ClazzWriter, AccFlagsProperty, Meth
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public CMethod clone(){
-        return new CMethod(this);
+    public CMethod<LIST> clone(){
+        return new CMethod<>(this);
     }
 
     /**

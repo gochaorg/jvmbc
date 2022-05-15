@@ -47,7 +47,7 @@ public class MethodWriterCtx {
             targetCallArg.getTag(),
             owner,
             name,
-            targetCallArg.getDesc(),
+            targetCallArg.desc().getRaw(),
             targetCallArg.isIface()
         );
 

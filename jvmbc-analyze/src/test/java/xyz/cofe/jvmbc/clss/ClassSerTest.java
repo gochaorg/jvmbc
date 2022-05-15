@@ -530,7 +530,7 @@ public class ClassSerTest {
 
             byte[] bytes = begin.toByteCode();
 
-            ClassDump dump = new ClassDump();
+            var dump = ClassDump.create();
             dump.byteCode(System.out::println);
 
             var classReader = new ClassReader(bytes);
