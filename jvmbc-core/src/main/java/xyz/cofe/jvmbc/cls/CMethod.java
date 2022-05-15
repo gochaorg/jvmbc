@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import org.objectweb.asm.ClassWriter;
 import xyz.cofe.jvmbc.*;
 import xyz.cofe.jvmbc.mth.MEnd;
@@ -18,11 +20,15 @@ public class CMethod<LIST extends List<MethodByteCode>>
 implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
 {
     private static final long serialVersionUID = 1;
+    private final EmptyList<LIST, MethodByteCode> newList;
 
     /**
      * Конструктор по умолчанию
      */
-    public CMethod(){}
+    public CMethod( EmptyList<LIST, MethodByteCode> newList ){
+        if( newList==null )throw new IllegalArgumentException( "newList==null" );
+        this.newList = newList;
+    }
 
     /**
      * Конструктор
@@ -32,7 +38,9 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
      * @param signature сигнатура generic параметров и результата
      * @param exceptions исключения генерируемые методом
      */
-    public CMethod(int access, String name, String descriptor, String signature, String[] exceptions){
+    public CMethod( EmptyList<LIST, MethodByteCode> newList, int access, String name, String descriptor, String signature, String[] exceptions){
+        if( newList==null )throw new IllegalArgumentException( "newList==null" );
+        this.newList = newList;
         this.access = access;
         this.name = name;
         desc().setRaw(descriptor);
@@ -46,13 +54,14 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
      */
     public CMethod(CMethod<LIST> sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
+        newList = sample.newList;
         access = sample.getAccess();
         name = sample.getName();
         descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         signature = sample.getSignature();
         exceptions = sample.getExceptions();
         if( sample.methodByteCodes!=null ){
-            methodByteCodes = new ArrayList<>();
+            methodByteCodes = newList.get();
             for( var mb : sample.methodByteCodes ){
                 methodByteCodes.add( mb!=null ? mb.clone() : null );
             }
@@ -64,16 +73,16 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
         return new CMethod<>(this);
     }
 
-    /**
-     * Конфигурация экземпляра
-     * @param conf конфигурация
-     * @return SELF ссылка
-     */
-    public CMethod configure(Consumer<CMethod> conf){
-        if( conf==null )throw new IllegalArgumentException( "conf==null" );
-        conf.accept(this);
-        return this;
-    }
+//    /**
+//     * Конфигурация экземпляра
+//     * @param conf конфигурация
+//     * @return SELF ссылка
+//     */
+//    public CMethod configure(Consumer<CMethod> conf){
+//        if( conf==null )throw new IllegalArgumentException( "conf==null" );
+//        conf.accept(this);
+//        return this;
+//    }
 
     //region access : int - флаги доступа к методу
     /**
@@ -183,14 +192,14 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
     /**
      * байт-код метода
      */
-    protected List<MethodByteCode> methodByteCodes;
+    protected LIST methodByteCodes;
 
     /**
      * Возвращает байт-код метода
      * @return байт-код метода
      */
-    public List<MethodByteCode> getMethodByteCodes(){
-        if( methodByteCodes==null )methodByteCodes = new ArrayList<>();
+    public LIST getMethodByteCodes(){
+        if( methodByteCodes==null )methodByteCodes = newList.get();
         return methodByteCodes;
     }
 
@@ -198,7 +207,7 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
      * Указывает байт-код метода
      * @param ls байт-код метода
      */
-    public void setMethodByteCodes(List<MethodByteCode> ls){
+    public void setMethodByteCodes(LIST ls){
         methodByteCodes = ls;
     }
     //endregion

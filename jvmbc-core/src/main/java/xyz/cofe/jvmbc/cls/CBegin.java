@@ -16,13 +16,14 @@ import xyz.cofe.jvmbc.AccFlagsProperty;
 import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.ClassFlags;
 import xyz.cofe.jvmbc.io.IOFun;
+import xyz.cofe.jvmbc.mth.MethodByteCode;
 
 /**
  * Описывает класс / модуль
  */
 public class CBegin<
     CFIELD extends CField,
-    CMETHOD extends CMethod
+    CMETHOD extends CMethod<List<MethodByteCode>>
 > implements ClsByteCode, ClazzWriter, AccFlagsProperty, ClassFlags {
     /**
      * Идентификатор версии при сериализации/де-сериализации
@@ -727,7 +728,7 @@ public class CBegin<
      * @return представление класса
      */
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    public static CBegin<CField,CMethod> parseByteCode(byte[] byteCode){
+    public static CBegin<CField,CMethod<List<MethodByteCode>>> parseByteCode(byte[] byteCode){
         if( byteCode==null )throw new IllegalArgumentException( "byteCode==null" );
 
         ClassReader classReader = new ClassReader(byteCode);
@@ -759,7 +760,7 @@ public class CBegin<
      * @param clazz класс
      * @return представление байт кода
      */
-    public static CBegin<CField,CMethod> parseByteCode(Class<?> clazz){
+    public static CBegin<CField,CMethod<List<MethodByteCode>>> parseByteCode(Class<?> clazz){
         if( clazz==null )throw new IllegalArgumentException( "clazz==null" );
 
         var resName = "/"+clazz.getName().replace(".","/")+".class";
@@ -777,7 +778,7 @@ public class CBegin<
      * @param url ссылка на байт-код
      * @return представление класса
      */
-    public static CBegin<CField,CMethod> parseByteCode(URL url){
+    public static CBegin<CField,CMethod<List<MethodByteCode>>> parseByteCode(URL url){
         if( url==null )throw new IllegalArgumentException( "url==null" );
         try{
             return parseByteCode(IOFun.readBytes(url));

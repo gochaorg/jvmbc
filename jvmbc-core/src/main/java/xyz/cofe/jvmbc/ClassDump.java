@@ -52,8 +52,12 @@ public class ClassDump<
         }
     }
 
-    private final ClassFactory<CBEGIN,CFIELD,CMETHOD> classFactory;
-    public static ClassDump<CBegin<CField,CMethod<List<MethodByteCode>>>,CField,CMethod<List<MethodByteCode>>> create(){
+    private final ClassFactory<CBEGIN,CFIELD,CMETHOD,List<MethodByteCode>> classFactory;
+    public static ClassDump<
+        CBegin<CField,CMethod<List<MethodByteCode>>>,
+        CField,
+        CMethod<List<MethodByteCode>>
+        > create(){
         return new ClassDump<>(new ClassFactory.Default());
     }
 
@@ -63,13 +67,13 @@ public class ClassDump<
      * @param api the ASM API version implemented by this visitor. Must be one of {@link
      *            Opcodes#ASM4}, {@link Opcodes#ASM5}, {@link Opcodes#ASM6} or {@link Opcodes#ASM7}.
      */
-    public ClassDump(int api, ClassFactory<CBEGIN,CFIELD,CMETHOD> cf){
+    public ClassDump(int api, ClassFactory<CBEGIN,CFIELD,CMETHOD,List<MethodByteCode>> cf){
         super(api);
         if( cf==null )throw new IllegalArgumentException("cf==null");
         classFactory = cf;
     }
 
-    public ClassDump(ClassFactory<CBEGIN,CFIELD,CMETHOD> cf){
+    public ClassDump(ClassFactory<CBEGIN,CFIELD,CMETHOD,List<MethodByteCode>> cf){
         super(Opcodes.ASM9);
         if( cf==null )throw new IllegalArgumentException("cf==null");
         classFactory = cf;
@@ -279,7 +283,7 @@ public class ClassDump<
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions){
         int ci = currentIndexGetAndInc();
-        CMethod method = new CMethod(access,name,descriptor,signature,exceptions);
+        var method = new CMethod<>(classFactory.methodList(),access,name,descriptor,signature,exceptions);
 
         MethodDump dump = new MethodDump(api);
         dump.byteCode(b -> {

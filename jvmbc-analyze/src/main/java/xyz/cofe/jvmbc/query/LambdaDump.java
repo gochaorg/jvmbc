@@ -31,6 +31,7 @@ import xyz.cofe.jvmbc.cls.CBegin;
 import xyz.cofe.jvmbc.cls.CField;
 import xyz.cofe.jvmbc.cls.CMethod;
 import xyz.cofe.jvmbc.mth.MInvokeDynamicInsn;
+import xyz.cofe.jvmbc.mth.MethodByteCode;
 
 /**
  * Дамп лямбды, со всеми зависимыми лямбдами.
@@ -245,7 +246,7 @@ public class LambdaDump implements Serializable {
      * @return байт код
      * @throws IOException ошибка чтение байт кода
      */
-    protected CBegin classByteCode(  Class<?> baseClass, String clazz ) throws IOException {
+    protected CBegin<CField,CMethod<List<MethodByteCode>>> classByteCode( Class<?> baseClass, String clazz ) throws IOException {
         if( baseClass==null )throw new IllegalArgumentException( "baseClass==null" );
         if( clazz==null )throw new IllegalArgumentException( "clazz==null" );
 
@@ -288,17 +289,17 @@ public class LambdaDump implements Serializable {
      * @param baseClass класс для доступа к ресурсам (*.class)
      * @param implClass класс содержащий код лямбды
      * @param methName имя метода класса содержащий код лямбды
-     * @param methSign сигнатура метода класса содержащий код лямбды
+     * @param methDesc сигнатура метода класса содержащий код лямбды
      * @return узел для лямбды и связанных лямбд
      */
-    protected synchronized LambdaNode lambdaNode( Class<?> baseClass, String implClass, String methName, String methSign )
+    protected synchronized LambdaNode lambdaNode( Class<?> baseClass, String implClass, String methName, String methDesc )
     {
         if( baseClass==null )throw new IllegalArgumentException( "baseClass==null" );
         if( implClass==null )throw new IllegalArgumentException( "implClass==null" );
         if( methName==null )throw new IllegalArgumentException( "methName==null" );
-        if( methSign==null )throw new IllegalArgumentException( "methSign==null" );
+        if( methDesc==null )throw new IllegalArgumentException( "methDesc==null" );
 
-        CBegin classByteCode = null;
+        CBegin<CField,CMethod<List<MethodByteCode>>> classByteCode = null;
         try{
             classByteCode = classByteCode(baseClass, implClass);
         } catch( IOException e ) {
@@ -312,7 +313,7 @@ public class LambdaDump implements Serializable {
         classByteCode
             .getMethods()
             .stream()
-            .filter( m -> methName.equals(m.getName()) && methSign.equals(m.getDescriptor()) )
+            .filter( m -> methName.equals(m.getName()) && methDesc.equals(m.desc().getRaw()) )
             .findFirst();
 
         cmethod.ifPresent( m -> {
@@ -342,7 +343,7 @@ public class LambdaDump implements Serializable {
                     if( rrefs!=null ){
                         return rrefs;
                     }
-                    var mdefChild = lambdaNode(baseClass, h.getOwner(), h.getName(), h.getDesc());
+                    var mdefChild = lambdaNode(baseClass, h.getOwner(), h.getName(), h.desc().getRaw());
                     if( mdefChild!=null ){
                         refs.put(h,mdefChild);
                     }
@@ -460,7 +461,7 @@ public class LambdaDump implements Serializable {
          * @param rootConsumer (возможно null) получает класс/метод
          * @return класс
          */
-        public synchronized CBegin classByteCode(Consumer<Tuple2<CBegin,CMethod>> rootConsumer){
+        public synchronized CBegin<?,?> classByteCode(Consumer<Tuple2<CBegin<?,?>,CMethod<?>>> rootConsumer){
             var srcRootNode = dump.getLambdaNode();
             if( srcRootNode==null )throw new IllegalStateException("root lambda node is null");
 
@@ -470,7 +471,7 @@ public class LambdaDump implements Serializable {
             var srcRootMethod = srcRootNode.getMethod();
             if( srcRootMethod==null )throw new IllegalStateException("root method (CMethod) is null");
 
-            CBegin rootClass = new CBegin();
+            CBegin<CField,CMethod<List<MethodByteCode>>> rootClass = new CBegin<CField,CMethod<List<MethodByteCode>>>();
             rootClass.javaName().setName(className.name);
             rootClass.setAccess(33);
             rootClass.setVersion(srcRootClass.getVersion());
@@ -485,10 +486,12 @@ public class LambdaDump implements Serializable {
             rootClass.getMethods().add( rootMethod );
             rlog.debug("add method {}",rootMethod);
 
-            var methods = new LinkedHashMap<LambdaNode, CMethod>();
+            var methods = new LinkedHashMap<LambdaNode, CMethod<?>>();
             methods.put(srcRootNode, rootMethod);
 
-            var relinkMap = new HashMap<CMethod,List<Tuple4<CBegin,CMethod,CBegin,CMethod>>>();
+            var relinkMap = new HashMap<CMethod<?>,
+                List<Tuple4<CBegin,CMethod,CBegin,CMethod<?>>>
+                >();
 
             if( rlog.isTraceEnabled() ){
                 srcRootNode.walk().tree().forEach( t -> {
@@ -499,7 +502,7 @@ public class LambdaDump implements Serializable {
                     if( n.getClazz()!=null )sb.append(" class=").append(n.getClazz().javaName());
 
                     var m = n.getMethod();
-                    if( m!=null )sb.append(" method=").append(m.getName()).append(" ").append(m.getDescriptor());
+                    if( m!=null )sb.append(" method=").append(m.getName()).append(" ").append(m.desc().getRaw());
 
                     rlog.trace(sb.toString());
                 });
@@ -539,12 +542,12 @@ public class LambdaDump implements Serializable {
                                     if( mh!=null ){
                                         if( mh.getOwner().equals(tlink.a().getName()) &&
                                             mh.getName().equals(tlink.b().getName()) &&
-                                            mh.getDesc().equals(tlink.b().getDescriptor())
+                                            mh.desc().getRaw().equals(tlink.b().desc().getRaw())
                                         ){
                                             var nmh = new MHandle();
                                             nmh.setName(tlink.d().getName());
                                             nmh.setOwner(tlink.c().getName());
-                                            nmh.setDesc(tlink.d().getDescriptor());
+                                            nmh.desc().setRaw(tlink.d().desc().getRaw());
                                             nmh.setTag(mh.getTag());
                                             nmh.setIface(mh.isIface());
 
@@ -552,8 +555,8 @@ public class LambdaDump implements Serializable {
 
                                             rlog.debug(
                                                 "linked {} -> {}",
-                                                tlink.a().javaName()+" "+tlink.b().getName()+tlink.b().getDescriptor(),
-                                                tlink.c().javaName()+" "+tlink.d().getName()+tlink.d().getDescriptor()
+                                                tlink.a().javaName()+" "+tlink.b().getName()+tlink.b().desc().getRaw(),
+                                                tlink.c().javaName()+" "+tlink.d().getName()+tlink.d().desc().getRaw()
                                             );
                                         }
                                     }
