@@ -32,6 +32,11 @@
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>xyz.cofe</groupId>
+            <artifactId>text</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

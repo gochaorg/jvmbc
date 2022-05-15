@@ -19,5 +19,8 @@ public class SampleClass<Arg extends Number> {
     public SampleClass<AtomicInteger> intSelf;
     public SampleClass<? extends AtomicInteger> extIntSelf;
     public SampleClass<? super AtomicInteger> ext2IntSelf;
+    public String concat(int a,Double b){
+        return ""+a+""+b;
+    }
     public <A extends Number & Runnable, B extends A> void some(A param, B param2){}
 }

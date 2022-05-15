@@ -10,12 +10,14 @@ public class ClassParseTest {
         var cbegin = CBegin.parseByteCode(SampleClass.class);
         System.out.println(cbegin);
 
+        System.out.println("fields:");
         for( var cfld : cbegin.getFields() ){
-            System.out.println(cfld);
+            System.out.println("  "+cfld);
         }
 
+        System.out.println("methods:");
         for( var cmeth : cbegin.getMethods() ){
-            System.out.println(cmeth);
+            System.out.println("  "+cmeth);
         }
     }
 }
