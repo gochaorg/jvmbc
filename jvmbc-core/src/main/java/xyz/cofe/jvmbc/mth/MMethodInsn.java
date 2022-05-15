@@ -1,6 +1,7 @@
 package xyz.cofe.jvmbc.mth;
 
 import org.objectweb.asm.MethodVisitor;
+import xyz.cofe.jvmbc.MDesc;
 
 /**
  * This opcode is either
@@ -114,7 +115,7 @@ public class MMethodInsn extends MAbstractBC implements MethodWriter {
         this.opcode = op;
         this.owner = owner;
         this.name = name;
-        this.descriptor = descriptor;
+        desc().setRaw(descriptor);
         this.iface = iface;
     }
 
@@ -127,7 +128,7 @@ public class MMethodInsn extends MAbstractBC implements MethodWriter {
         opcode = sample.opcode;
         owner = sample.owner;
         name = sample.name;
-        descriptor = sample.descriptor;
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         iface = sample.iface;
     }
 
@@ -160,14 +161,20 @@ public class MMethodInsn extends MAbstractBC implements MethodWriter {
         this.name = name;
     }
     //endregion
-    //region descriptor : String
-    private String descriptor;
-    public String getDescriptor(){
-        return descriptor;
-    }
+    //region descriptor : String - дескриптор типов параметров и результата
+    /**
+     * дескриптор типов параметров и результата
+     */
+    protected MDesc descProperty;
 
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    /**
+     * Возвращает дескриптор типов параметров и результата
+     * @return дескриптор метода
+     */
+    public MDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new MDesc();
+        return descProperty;
     }
     //endregion
     //region iface : boolean
@@ -185,13 +192,13 @@ public class MMethodInsn extends MAbstractBC implements MethodWriter {
     public String toString(){
         return MMethodInsn.class.getSimpleName()+
             " opcode="+OpCode.code(opcode).map(OpCode::name).orElse("?")+"#"+opcode+"" +
-            " owner="+owner+" name="+name+" desc="+descriptor+" iface="+iface
+            " owner="+owner+" name="+name+" desc="+desc()+" iface="+iface
             ;
     }
 
     @Override
     public void write(MethodVisitor v, MethodWriterCtx ctx){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        v.visitMethodInsn(getOpcode(),getOwner(),getName(),getDescriptor(),isIface());
+        v.visitMethodInsn(getOpcode(),getOwner(),getName(), desc().getRaw(),isIface());
     }
 }

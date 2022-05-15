@@ -20,6 +20,7 @@ public class SampleClass<Arg extends Number> {
     public SampleClass<? extends AtomicInteger> extIntSelf;
     public SampleClass<? super AtomicInteger> ext2IntSelf;
     public String concat(int a,Double b){
+        System.out.println("concat of "+a+" "+b);
         return ""+a+""+b;
     }
     public <A extends Number & Runnable, B extends A> void some(A param, B param2){}

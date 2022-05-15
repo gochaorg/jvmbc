@@ -4,20 +4,20 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Описывает тип данных (переменной, поля класса, ...)
+ * Описывает сигнатуру (без generic) метода
  */
-public class TDesc implements Serializable {
+public class MDesc implements Serializable {
     /**
      * Конструктор по умолчанию
      */
-    public TDesc(){
+    public MDesc(){
     }
 
     /**
      * Конструктор
      * @param raw "сырое" значение
      */
-    public TDesc( String raw ){
+    public MDesc( String raw ){
         this.raw = raw;
     }
 
@@ -25,15 +25,15 @@ public class TDesc implements Serializable {
      * Конструктор копирования
      * @param sample образец
      */
-    public TDesc( TDesc sample ){
+    public MDesc( MDesc sample ){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         this.raw = sample.raw;
         this.typeDesc = sample.typeDesc;
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public TDesc clone(){
-        return new TDesc(this);
+    public MDesc clone(){
+        return new MDesc(this);
     }
 
     /**
@@ -56,18 +56,18 @@ public class TDesc implements Serializable {
         this.typeDesc = null;
     }
 
-    private transient TypeDesc typeDesc;
+    private transient MethodDescTypes typeDesc;
 
     /**
      * Возвращает тип значения
      * @return тип значения
      */
-    public Optional<TypeDesc> tryGet(){
+    public Optional<MethodDescTypes> tryGet(){
         if( typeDesc!=null )return Optional.of(typeDesc);
         var raw = this.raw;
         if( raw==null )return Optional.empty();
         try{
-            typeDesc = TypeDesc.parse(raw);
+            typeDesc = MethodDescTypes.parse(raw);
             return Optional.of(typeDesc);
         } catch( Error e ){
             return Optional.empty();
@@ -80,18 +80,18 @@ public class TDesc implements Serializable {
      * @throws IllegalStateException если не установлено raw
      * @throws Error если raw значение не получилось распознать
      */
-    public TypeDesc get(){
+    public MethodDescTypes get(){
         if( typeDesc!=null )return typeDesc;
         var raw = this.raw;
         if( raw==null )throw new IllegalStateException("raw value is null");
-        typeDesc = TypeDesc.parse(raw);
+        typeDesc = MethodDescTypes.parse(raw);
         return typeDesc;
     }
 
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
-        sb.append(TDesc.class.getSimpleName()).append("{");
+        sb.append(MDesc.class.getSimpleName()).append("{");
         sb.append("raw=").append(raw);
         tryGet().ifPresent( t -> {
             sb.append(" get=").append(t);

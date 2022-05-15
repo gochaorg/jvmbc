@@ -609,7 +609,11 @@ public class CBegin implements ClsByteCode, ClazzWriter, AccFlagsProperty, Class
     @SuppressWarnings("unchecked")
     @Override
     public List<ByteCode> nodes(){
-        ArrayList<ByteCode> r = new ArrayList<>(List.of(source, outerClass, nestHost, permittedSubclass));
+        ArrayList<ByteCode> r = new ArrayList<>();
+        if( source!=null )r.add(source);
+        if( outerClass!=null )r.add(outerClass);
+        if( nestHost!=null )r.add(nestHost);
+        if( permittedSubclass!=null )r.add(permittedSubclass);
 
         if( annotations!=null && !annotations.isEmpty() ) {
             r.addAll( annotations );

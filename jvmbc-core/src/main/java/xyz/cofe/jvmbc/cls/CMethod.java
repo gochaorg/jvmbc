@@ -6,10 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import org.objectweb.asm.ClassWriter;
-import xyz.cofe.jvmbc.AccFlags;
-import xyz.cofe.jvmbc.AccFlagsProperty;
-import xyz.cofe.jvmbc.ByteCode;
-import xyz.cofe.jvmbc.MethodFlags;
+import xyz.cofe.jvmbc.*;
 import xyz.cofe.jvmbc.mth.MEnd;
 import xyz.cofe.jvmbc.mth.MethodByteCode;
 import xyz.cofe.jvmbc.mth.MethodWriterCtx;
@@ -36,7 +33,7 @@ public class CMethod implements ClsByteCode, ClazzWriter, AccFlagsProperty, Meth
     public CMethod(int access, String name, String descriptor, String signature, String[] exceptions){
         this.access = access;
         this.name = name;
-        this.descriptor = descriptor;
+        desc().setRaw(descriptor);
         this.signature = signature;
         this.exceptions = exceptions;
     }
@@ -49,7 +46,7 @@ public class CMethod implements ClsByteCode, ClazzWriter, AccFlagsProperty, Meth
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         access = sample.getAccess();
         name = sample.getName();
-        descriptor = sample.getDescriptor();
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         signature = sample.getSignature();
         exceptions = sample.getExceptions();
         if( sample.methodByteCodes!=null ){
@@ -124,22 +121,16 @@ public class CMethod implements ClsByteCode, ClazzWriter, AccFlagsProperty, Meth
     /**
      * дескриптор типов параметров и результата
      */
-    protected String descriptor;
+    protected MDesc descProperty;
 
     /**
      * Возвращает дескриптор типов параметров и результата
-     * @return дескриптор типов параметров и результата
+     * @return дескриптор метода
      */
-    public String getDescriptor(){
-        return descriptor;
-    }
-
-    /**
-     * Указывает дескриптор типов параметров и результата
-     * @param descriptor дескриптор типов параметров и результата
-     */
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    public MDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new MDesc();
+        return descProperty;
     }
     //endregion
     //region signature : String - сигнатура generic параметров и результата
@@ -215,7 +206,7 @@ public class CMethod implements ClsByteCode, ClazzWriter, AccFlagsProperty, Meth
         return "CMethod " +
             "access="+access+("#"+new AccFlags(access).flags())+
             " name="+name +
-            " descriptor=" + descriptor +
+            " descriptor=" + desc() +
             " signature=" + signature +
             " exceptions=" + Arrays.toString(exceptions);
     }
@@ -234,7 +225,7 @@ public class CMethod implements ClsByteCode, ClazzWriter, AccFlagsProperty, Meth
     public void write(ClassWriter v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
         var mv = v.visitMethod(
-            getAccess(),getName(),getDescriptor(),getSignature(),getExceptions()
+            getAccess(),getName(), desc().getRaw(), getSignature(),getExceptions()
             );
 
         var ctx = new MethodWriterCtx();

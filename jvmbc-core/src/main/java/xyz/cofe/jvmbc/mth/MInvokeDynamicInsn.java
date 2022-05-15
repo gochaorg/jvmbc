@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
+import xyz.cofe.jvmbc.MDesc;
 import xyz.cofe.jvmbc.bm.IntArg;
 import xyz.cofe.jvmbc.bm.MHandle;
 import xyz.cofe.jvmbc.bm.StringArg;
@@ -189,7 +190,7 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
         Object[] args
     ){
         this.name = name;
-        this.descriptor = descriptor;
+        desc().setRaw(descriptor);
         if( handle!=null ){
             this.bootstrapMethodHandle = new MHandle(handle);
         }
@@ -225,7 +226,7 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
     public MInvokeDynamicInsn(MInvokeDynamicInsn sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         name = sample.getName();
-        descriptor = sample.getDescriptor();
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
 
         var bmh = sample.bootstrapMethodHandle;
         if( bmh!=null )bootstrapMethodHandle = bmh.clone();
@@ -247,13 +248,20 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
         this.name = name;
     }
     //endregion
-    //region descriptor : String
-    private String descriptor;
-    public String getDescriptor(){
-        return descriptor;
-    }
-    public void setDescriptor(String descriptor){
-        this.descriptor = descriptor;
+    //region descriptor : String - дескриптор типов параметров и результата
+    /**
+     * дескриптор типов параметров и результата
+     */
+    protected MDesc descProperty;
+
+    /**
+     * Возвращает дескриптор типов параметров и результата
+     * @return дескриптор метода
+     */
+    public MDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new MDesc();
+        return descProperty;
     }
     //endregion
     //region bootstrapMethodHandle : MHandle
@@ -281,7 +289,7 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
     public String toString(){
         return MInvokeDynamicInsn.class.getSimpleName()+
             " name="+name+
-            " descriptor="+descriptor+
+            " descriptor="+desc()+
             " bootstrapMethodHandle="+bootstrapMethodHandle+
             " args="+bootstrapMethodArguments+"";
     }
@@ -298,7 +306,7 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
             bmh.getTag(),
             bmh.getOwner(),
             bmh.getName(),
-            bmh.getDesc(),
+            bmh.desc().getRaw(),
             bmh.isIface()
         );
 
@@ -331,7 +339,7 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
             args[ai] = arg;
         }
 
-        v.visitInvokeDynamicInsn(getName(),getDescriptor(),hdl,args);
+        v.visitInvokeDynamicInsn(getName(), desc().getRaw(), hdl,args);
     }
 
     protected Object build(IntArg arg){ return arg.getValue(); }

@@ -1,5 +1,7 @@
 package xyz.cofe.jvmbc.bm;
 
+import xyz.cofe.jvmbc.MDesc;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -14,7 +16,7 @@ public class MHandle implements Serializable, BootstrapMethArg {
     public MHandle(org.objectweb.asm.Handle sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         tag = sample.getTag();
-        desc = sample.getDesc();
+        desc().setRaw(sample.getDesc());
         name = sample.getName();
         owner = sample.getOwner();
         iface = sample.isInterface();
@@ -27,7 +29,7 @@ public class MHandle implements Serializable, BootstrapMethArg {
     public MHandle(MHandle sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         tag = sample.getTag();
-        desc = sample.getDesc();
+        descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         name = sample.getName();
         owner = sample.getOwner();
         iface = sample.isIface();
@@ -47,15 +49,20 @@ public class MHandle implements Serializable, BootstrapMethArg {
         this.tag = tag;
     }
     //endregion
-    //region desc : String
-    private String desc;
+    //region descriptor : String - дескриптор типов параметров и результата
+    /**
+     * дескриптор типов параметров и результата
+     */
+    protected MDesc descProperty;
 
-    public String getDesc(){
-        return desc;
-    }
-
-    public void setDesc(String desc){
-        this.desc = desc;
+    /**
+     * Возвращает дескриптор типов параметров и результата
+     * @return дескриптор метода
+     */
+    public MDesc desc(){
+        if( descProperty!=null )return descProperty;
+        descProperty = new MDesc();
+        return descProperty;
     }
     //endregion
     //region name : String
@@ -96,7 +103,7 @@ public class MHandle implements Serializable, BootstrapMethArg {
     public String toString(){
         return MHandle.class.getSimpleName()+" { " +
             "tag=" + tag +
-            ", desc='" + desc + '\'' +
+            ", desc='" + desc() + '\'' +
             ", name='" + name + '\'' +
             ", owner='" + owner + '\'' +
             ", iface=" + iface +
@@ -108,11 +115,16 @@ public class MHandle implements Serializable, BootstrapMethArg {
         if( this == o ) return true;
         if( o == null || getClass() != o.getClass() ) return false;
         MHandle handle = (MHandle) o;
-        return tag == handle.tag && iface == handle.iface && Objects.equals(desc, handle.desc) && Objects.equals(name, handle.name) && Objects.equals(owner, handle.owner);
+        return
+            tag == handle.tag &&
+            iface == handle.iface &&
+                Objects.equals(desc().getRaw(), handle.desc().getRaw()) &&
+                Objects.equals(name, handle.name) &&
+                Objects.equals(owner, handle.owner);
     }
 
     @Override
     public int hashCode(){
-        return Objects.hash(tag, desc, name, owner, iface);
+        return Objects.hash(tag, desc().getRaw(), name, owner, iface);
     }
 }
