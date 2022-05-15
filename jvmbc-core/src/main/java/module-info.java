@@ -8,5 +8,5 @@ module xyz.cofe.jvmbc.core {
     exports xyz.cofe.jvmbc.cls;
     exports xyz.cofe.jvmbc.fld;
     exports xyz.cofe.jvmbc.mth;
-    exports xyz.cofe.jvmbc.prop;
+    //exports xyz.cofe.jvmbc.prop;
 }

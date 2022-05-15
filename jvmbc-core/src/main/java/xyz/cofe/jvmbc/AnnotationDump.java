@@ -119,7 +119,7 @@ public class AnnotationDump extends AnnotationVisitor {
         dump = dump.byteCode(byteCodeConsumer,emOb);
 
         emOb.setName(name);
-        emOb.setDescriptor(descriptor);
+        emOb.desc().setRaw(descriptor);
 
         emit(emOb);
 

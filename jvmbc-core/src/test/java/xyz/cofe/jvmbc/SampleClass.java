@@ -1,9 +1,11 @@
 package xyz.cofe.jvmbc;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class SampleClass {
+public class SampleClass<Arg extends Number> {
     private int privateInt = 20;
     protected int protectedInt = 30;
     public int publicInt = 10;
@@ -14,4 +16,8 @@ public class SampleClass {
         1, List.of(10,11),
         2, List.of(20,21)
     );
+    public SampleClass<AtomicInteger> intSelf;
+    public SampleClass<? extends AtomicInteger> extIntSelf;
+    public SampleClass<? super AtomicInteger> ext2IntSelf;
+    public <A extends Number & Runnable, B extends A> void some(A param, B param2){}
 }

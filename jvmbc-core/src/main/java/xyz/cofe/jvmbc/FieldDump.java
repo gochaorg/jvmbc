@@ -118,7 +118,7 @@ public class FieldDump extends FieldVisitor {
 
         ta.setTypeRef(typeRef);
         ta.setTypePath(typePath!=null ? typePath.toString() : null);
-        ta.setDescriptor(descriptor);
+        ta.desc().setRaw(descriptor);
         ta.setVisible(visible);
 
         emit(ta);

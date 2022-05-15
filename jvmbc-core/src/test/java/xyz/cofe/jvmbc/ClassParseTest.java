@@ -13,5 +13,9 @@ public class ClassParseTest {
         for( var cfld : cbegin.getFields() ){
             System.out.println(cfld);
         }
+
+        for( var cmeth : cbegin.getMethods() ){
+            System.out.println(cmeth);
+        }
     }
 }
