@@ -246,7 +246,7 @@ public class LambdaDump implements Serializable {
      * @return байт код
      * @throws IOException ошибка чтение байт кода
      */
-    protected CBegin<CField,CMethod<List<MethodByteCode>>> classByteCode( Class<?> baseClass, String clazz ) throws IOException {
+    protected CBegin<CField,CMethod<List<MethodByteCode>>,List<MethodByteCode>> classByteCode( Class<?> baseClass, String clazz ) throws IOException {
         if( baseClass==null )throw new IllegalArgumentException( "baseClass==null" );
         if( clazz==null )throw new IllegalArgumentException( "clazz==null" );
 
@@ -299,7 +299,7 @@ public class LambdaDump implements Serializable {
         if( methName==null )throw new IllegalArgumentException( "methName==null" );
         if( methDesc==null )throw new IllegalArgumentException( "methDesc==null" );
 
-        CBegin<CField,CMethod<List<MethodByteCode>>> classByteCode = null;
+        CBegin<CField,CMethod<List<MethodByteCode>>,List<MethodByteCode>> classByteCode = null;
         try{
             classByteCode = classByteCode(baseClass, implClass);
         } catch( IOException e ) {
@@ -461,7 +461,7 @@ public class LambdaDump implements Serializable {
          * @param rootConsumer (возможно null) получает класс/метод
          * @return класс
          */
-        public synchronized CBegin<?,?> classByteCode(Consumer<Tuple2<CBegin<?,?>,CMethod<?>>> rootConsumer){
+        public synchronized CBegin<?,?,?> classByteCode(Consumer<Tuple2<CBegin<?,?,?>,CMethod<?>>> rootConsumer){
             var srcRootNode = dump.getLambdaNode();
             if( srcRootNode==null )throw new IllegalStateException("root lambda node is null");
 
@@ -471,7 +471,7 @@ public class LambdaDump implements Serializable {
             var srcRootMethod = srcRootNode.getMethod();
             if( srcRootMethod==null )throw new IllegalStateException("root method (CMethod) is null");
 
-            CBegin<CField,CMethod<List<MethodByteCode>>> rootClass = new CBegin<CField,CMethod<List<MethodByteCode>>>();
+            CBegin<CField,CMethod<List<MethodByteCode>>,List<MethodByteCode>> rootClass = new CBegin<>();
             rootClass.javaName().setName(className.name);
             rootClass.setAccess(33);
             rootClass.setVersion(srcRootClass.getVersion());

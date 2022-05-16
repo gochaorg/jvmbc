@@ -4,10 +4,10 @@ import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SimpleProperty<A> implements Property<A> {
+public class MutableProperty<A> implements Property<A> {
     private A value;
 
-    public SimpleProperty(A initial){
+    public MutableProperty( A initial){
         this.value = initial;
     }
 

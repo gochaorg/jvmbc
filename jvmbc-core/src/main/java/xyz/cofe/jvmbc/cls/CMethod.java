@@ -73,17 +73,6 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
         return new CMethod<>(this);
     }
 
-//    /**
-//     * Конфигурация экземпляра
-//     * @param conf конфигурация
-//     * @return SELF ссылка
-//     */
-//    public CMethod configure(Consumer<CMethod> conf){
-//        if( conf==null )throw new IllegalArgumentException( "conf==null" );
-//        conf.accept(this);
-//        return this;
-//    }
-
     //region access : int - флаги доступа к методу
     /**
      * флаги доступа к методу {@link AccFlags}
@@ -201,14 +190,6 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
     public LIST getMethodByteCodes(){
         if( methodByteCodes==null )methodByteCodes = newList.get();
         return methodByteCodes;
-    }
-
-    /**
-     * Указывает байт-код метода
-     * @param ls байт-код метода
-     */
-    public void setMethodByteCodes(LIST ls){
-        methodByteCodes = ls;
     }
     //endregion
 

@@ -23,7 +23,8 @@ import xyz.cofe.jvmbc.mth.MethodByteCode;
  */
 public class CBegin<
     CFIELD extends CField,
-    CMETHOD extends CMethod<List<MethodByteCode>>
+    CMETHOD extends CMethod<CM_LIST>,
+    CM_LIST extends List<MethodByteCode>
 > implements ClsByteCode, ClazzWriter, AccFlagsProperty, ClassFlags {
     /**
      * Идентификатор версии при сериализации/де-сериализации
@@ -57,7 +58,7 @@ public class CBegin<
      * Конструктор копирования
      * @param sample образец для копирования
      */
-    public CBegin(CBegin<CFIELD,CMETHOD> sample){
+    public CBegin(CBegin<CFIELD,CMETHOD,CM_LIST> sample){
         if( sample==null )throw new IllegalArgumentException("sample==null");
         version = sample.getVersion();
         access = sample.getAccess();
@@ -139,7 +140,7 @@ public class CBegin<
      * @return копия
      */
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public CBegin<CFIELD,CMETHOD> clone(){
+    public CBegin<CFIELD,CMETHOD,CM_LIST> clone(){
         return new CBegin<>(this);
     }
 
@@ -600,7 +601,7 @@ public class CBegin<
 
     @Override
     public String toString(){
-        return CBegin.class.getSimpleName()+" " +
+        return this.getClass().getSimpleName()+" " +
             "version=" + version +
             " access="+access+("#"+new AccFlags(access).flags())+
             " name=" + name +
@@ -728,7 +729,7 @@ public class CBegin<
      * @return представление класса
      */
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    public static CBegin<CField,CMethod<List<MethodByteCode>>> parseByteCode(byte[] byteCode){
+    public static CBegin<CField,CMethod<List<MethodByteCode>>,List<MethodByteCode>> parseByteCode(byte[] byteCode){
         if( byteCode==null )throw new IllegalArgumentException( "byteCode==null" );
 
         ClassReader classReader = new ClassReader(byteCode);
@@ -760,7 +761,7 @@ public class CBegin<
      * @param clazz класс
      * @return представление байт кода
      */
-    public static CBegin<CField,CMethod<List<MethodByteCode>>> parseByteCode(Class<?> clazz){
+    public static CBegin<CField,CMethod<List<MethodByteCode>>,List<MethodByteCode>> parseByteCode(Class<?> clazz){
         if( clazz==null )throw new IllegalArgumentException( "clazz==null" );
 
         var resName = "/"+clazz.getName().replace(".","/")+".class";
@@ -778,10 +779,84 @@ public class CBegin<
      * @param url ссылка на байт-код
      * @return представление класса
      */
-    public static CBegin<CField,CMethod<List<MethodByteCode>>> parseByteCode(URL url){
+    public static CBegin<CField,CMethod<List<MethodByteCode>>,List<MethodByteCode>> parseByteCode(URL url){
         if( url==null )throw new IllegalArgumentException( "url==null" );
         try{
             return parseByteCode(IOFun.readBytes(url));
+        } catch( IOException e ) {
+            throw new IOError(e);
+        }
+    }
+
+    /**
+     * Парсинг байт-кода
+     * @param  byteCode байт-код
+     * @return представление класса
+     */
+    public static
+    <
+        CBEGIN extends CBegin<CFIELD,CMETHOD,CM_LIST>,
+        CFIELD extends CField,
+        CMETHOD extends CMethod<CM_LIST>,
+        CM_LIST extends List<MethodByteCode>
+    > CBEGIN parseByteCode(byte[] byteCode, ClassFactory<CBEGIN,CFIELD,CMETHOD,CM_LIST> factory){
+        if( byteCode==null )throw new IllegalArgumentException( "byteCode==null" );
+        if( factory==null )throw new IllegalArgumentException( "factory==null" );
+
+        ClassReader classReader = new ClassReader(byteCode);
+        List<ByteCode> byteCodes = new ArrayList<>();
+
+        var dump =
+            new ClassDump<>(factory);
+
+        dump.byteCode( byteCodes::add );
+        classReader.accept(dump,0);
+
+        return byteCodes.stream().filter( b -> b instanceof CBegin )
+            .map( b -> (CBEGIN)b ).findFirst().get();
+    }
+
+    /**
+     * Парсинг байт-кода
+     * @param clazz ссылка на байт-код
+     * @return представление класса
+     */
+    public static
+    <
+        CBEGIN extends CBegin<CFIELD,CMETHOD,CM_LIST>,
+        CFIELD extends CField,
+        CMETHOD extends CMethod<CM_LIST>,
+        CM_LIST extends List<MethodByteCode>
+        > CBEGIN
+    parseByteCode(Class<?> clazz, ClassFactory<CBEGIN,CFIELD,CMETHOD,CM_LIST> factory){
+        if( clazz==null )throw new IllegalArgumentException( "clazz==null" );
+        if( factory==null )throw new IllegalArgumentException( "factory==null" );
+
+        var resName = "/"+clazz.getName().replace(".","/")+".class";
+        var classUrl = clazz.getResource(resName);
+
+        if( classUrl==null )throw new IOError(
+            new IOException("resource "+resName+" not found")
+        );
+
+        return parseByteCode(classUrl, factory);
+    }
+
+    /**
+     * Парсинг байт-кода
+     * @param url ссылка на байт-код
+     * @return представление класса
+     */
+    public static <
+        CBEGIN extends CBegin<CFIELD,CMETHOD,CM_LIST>,
+        CFIELD extends CField,
+        CMETHOD extends CMethod<CM_LIST>,
+        CM_LIST extends List<MethodByteCode>
+        > CBEGIN
+    parseByteCode(URL url, ClassFactory<CBEGIN,CFIELD,CMETHOD,CM_LIST> factory){
+        if( url==null )throw new IllegalArgumentException( "url==null" );
+        try{
+            return parseByteCode(IOFun.readBytes(url), factory);
         } catch( IOException e ) {
             throw new IOError(e);
         }

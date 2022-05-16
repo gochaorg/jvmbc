@@ -34,9 +34,10 @@ import xyz.cofe.jvmbc.mth.MethodByteCode;
  * </ol>
  */
 public class ClassDump<
-    CBEGIN extends CBegin<CFIELD,CMETHOD>,
+    CBEGIN extends CBegin<CFIELD,CMETHOD, CM_LIST>,
     CFIELD extends CField,
-    CMETHOD extends CMethod<List<MethodByteCode>>
+    CMETHOD extends CMethod<CM_LIST>,
+    CM_LIST extends List<MethodByteCode>
     > extends ClassVisitor {
     private void dump(String message,Object...args){
         if( message==null )return;
@@ -52,11 +53,12 @@ public class ClassDump<
         }
     }
 
-    private final ClassFactory<CBEGIN,CFIELD,CMETHOD,List<MethodByteCode>> classFactory;
+    private final ClassFactory<CBEGIN,CFIELD,CMETHOD,CM_LIST> classFactory;
     public static ClassDump<
-        CBegin<CField,CMethod<List<MethodByteCode>>>,
+        CBegin<CField,CMethod<List<MethodByteCode>>,List<MethodByteCode>>,
         CField,
-        CMethod<List<MethodByteCode>>
+        CMethod<List<MethodByteCode>>,
+        List<MethodByteCode>
         > create(){
         return new ClassDump<>(new ClassFactory.Default());
     }
@@ -67,13 +69,13 @@ public class ClassDump<
      * @param api the ASM API version implemented by this visitor. Must be one of {@link
      *            Opcodes#ASM4}, {@link Opcodes#ASM5}, {@link Opcodes#ASM6} or {@link Opcodes#ASM7}.
      */
-    public ClassDump(int api, ClassFactory<CBEGIN,CFIELD,CMETHOD,List<MethodByteCode>> cf){
+    public ClassDump(int api, ClassFactory<CBEGIN,CFIELD,CMETHOD,CM_LIST> cf){
         super(api);
         if( cf==null )throw new IllegalArgumentException("cf==null");
         classFactory = cf;
     }
 
-    public ClassDump(ClassFactory<CBEGIN,CFIELD,CMETHOD,List<MethodByteCode>> cf){
+    public ClassDump(ClassFactory<CBEGIN,CFIELD,CMETHOD,CM_LIST> cf){
         super(Opcodes.ASM9);
         if( cf==null )throw new IllegalArgumentException("cf==null");
         classFactory = cf;
@@ -283,7 +285,8 @@ public class ClassDump<
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions){
         int ci = currentIndexGetAndInc();
-        var method = new CMethod<>(classFactory.methodList(),access,name,descriptor,signature,exceptions);
+        var method = //new CMethod<>(classFactory.methodList(),access,name,descriptor,signature,exceptions);
+            classFactory.cmethod(access, name, descriptor, signature, exceptions);
 
         MethodDump dump = new MethodDump(api);
         dump.byteCode(b -> {
