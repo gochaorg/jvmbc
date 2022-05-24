@@ -1,115 +1,164 @@
 package xyz.cofe.jvmbc.mth
 
-enum OpCode( val code:Int ):
+sealed abstract class OpCode(val code:Int)
+
+object OpCode:
+  val values = List[OpCode](
+    NOP,ACONST_NULL,ICONST_M1,ICONST_0,ICONST_1,ICONST_2,ICONST_3,
+    ICONST_4,ICONST_5,LCONST_0,LCONST_1,
+    FCONST_0,FCONST_1,FCONST_2,DCONST_0,DCONST_1,
+    BIPUSH,SIPUSH,LDC,
+    LDC_W,LDC2_W,
+    ILOAD,LLOAD,FLOAD,DLOAD,ALOAD,
+    IALOAD,LALOAD,FALOAD,DALOAD,AALOAD,
+    BALOAD,CALOAD,SALOAD,ISTORE,LSTORE,
+    LSTORE_0,LSTORE_1,LSTORE_2,LSTORE_3,
+    FSTORE,FSTORE_0,FSTORE_1,FSTORE_2,FSTORE_3,
+    DSTORE,DSTORE_0,DSTORE_1,DSTORE_2,DSTORE_3,
+    ASTORE,ASTORE_0,ASTORE_1,ASTORE_2,ASTORE_3,
+    IASTORE,LASTORE,FASTORE,DASTORE,AASTORE,
+    BASTORE,CASTORE,SASTORE,
+    POP,POP2,DUP,DUP_X1,DUP_X2,DUP2,
+    DUP2_X1,DUP2_X2,SWAP,IADD,LADD,
+    FADD,DADD,ISUB,LSUB,FSUB,DSUB,
+    IMUL,LMUL,FMUL,DMUL,IDIV,LDIV,FDIV,DDIV,
+    IREM,LREM,FREM,DREM,INEG,LNEG,FNEG,
+    DNEG,ISHL,LSHL,ISHR,LSHR,IUSHR,LUSHR,
+    IAND,LAND,IOR,LOR,IXOR,LXOR,IINC,
+    I2L,I2F,I2D,L2I,L2F,L2D,
+    F2I,F2L,F2D,
+    D2I,D2L,D2F,
+    I2B,I2C,I2S,
+    LCMP,FCMPL,FCMPG,DCMPL,DCMPG,
+    IFEQ,IFNE,IFLT,IFGE,IFGT,IFLE,
+    IF_ICMPEQ,IF_ICMPNE,IF_ICMPLT,IF_ICMPGE,
+    IF_ICMPGT,IF_ICMPLE,IF_ACMPEQ,
+    IF_ACMPNE,
+    GOTO,GOTO_W,
+    JSR,RET,
+    TABLESWITCH,LOOKUPSWITCH,
+    IRETURN,LRETURN,FRETURN,
+    DRETURN,ARETURN,RETURN,
+    GETSTATIC,PUTSTATIC,
+    GETFIELD,PUTFIELD,
+    INVOKEVIRTUAL,INVOKESPECIAL,
+    INVOKESTATIC,INVOKEINTERFACE,
+    INVOKEDYNAMIC,NEW,
+    NEWARRAY,ANEWARRAY,ARRAYLENGTH,
+    ATHROW,CHECKCAST,
+    INSTANCEOF,MONITORENTER,MONITOREXIT,
+    MULTIANEWARRAY,IFNULL,IFNONNULL
+  )
+
   /**
    * perform no operation
    * <p>Стек [No change]
    */
-  case NOP extends OpCode(0)
+  object NOP extends OpCode(0)
 
   /**
    * push a null reference onto the stack
    * <p>Стек → null
    */
-  case ACONST_NULL extends OpCode(1)
+  object ACONST_NULL extends OpCode(1)
 
   /**
    * load the int value −1 onto the stack
    * <p>Стек → -1
    */
-  case ICONST_M1 extends OpCode(2)
+  object ICONST_M1 extends OpCode(2)
 
   /**
    * load the int value 0 onto the stack
    * <p>Стек → 0
    */
-  case ICONST_0 extends OpCode(3)
+  object ICONST_0 extends OpCode(3)
 
   /**
    * load the int value 1 onto the stack
    * <p>Стек → 1
    */
-  case ICONST_1 extends OpCode(4)
+  object ICONST_1 extends OpCode(4)
 
   /**
    * load the int value 2 onto the stack
    * <p>Стек → 2
    */
-  case ICONST_2 extends OpCode(5) 
+  object ICONST_2 extends OpCode(5) 
 
   /**
    * load the int value 3 onto the stack
    * <p>Стек → 3
    */
-  case ICONST_3 extends OpCode(6) 
+  object ICONST_3 extends OpCode(6) 
 
   /**
    * load the int value 4 onto the stack
    * <p>Стек → 4
    */
-  case ICONST_4 extends OpCode(7) 
+  object ICONST_4 extends OpCode(7) 
 
   /**
    * load the int value 5 onto the stack
    * <p>Стек → 5
    */
-  case ICONST_5 extends OpCode(8) 
+  object ICONST_5 extends OpCode(8) 
 
   /**
    * push 0L (the number zero with type long) onto the stack
    * <p>Стек → 0
    */
-  case LCONST_0 extends OpCode(9) 
+  object LCONST_0 extends OpCode(9) 
 
   /**
    * push 1L (the number one with type long) onto the stack
    * <p>Стек → 1
    */
-  case LCONST_1 extends OpCode(10) 
+  object LCONST_1 extends OpCode(10) 
 
   /**
    * push 0.0f on the stack
    * <p>Стек → 0f
    */
-  case FCONST_0 extends OpCode(11) 
+  object FCONST_0 extends OpCode(11) 
 
   /**
    * push 1.0f on the stack
    * <p>Стек → 1f
    */
-  case FCONST_1 extends OpCode(12) 
+  object FCONST_1 extends OpCode(12) 
 
   /**
    * push 2.0f on the stack
    * <p>Стек → 2f
    */
-  case FCONST_2 extends OpCode(13) 
+  object FCONST_2 extends OpCode(13) 
 
   /**
    * push 0.0 (double) on the stack
    * <p>Стек → 0.0
    */
-  case DCONST_0 extends OpCode(14) 
+  object DCONST_0 extends OpCode(14) 
 
   /**
    * push 1.0 (double) on the stack
    * <p>Стек → 1.0
    */
-  case DCONST_1 extends OpCode(15) 
+  object DCONST_1 extends OpCode(15) 
 
   /**
    * push a byte onto the stack as an integer value
    * <p>Параметры 1: byte
    * <p>Стек → value
    */
-  case BIPUSH extends OpCode(16) // visitIntInsn
+  object BIPUSH extends OpCode(16) // visitIntInsn
 
   /**
    * push a short onto the stack as an integer value
    * <p>Параметры 2: byte1, byte2
    * <p>Стек → value
    */
-  case SIPUSH extends OpCode(17) 
+  object SIPUSH extends OpCode(17) 
 
   /**
    * push a constant #index from a constant pool 
@@ -118,8 +167,8 @@ enum OpCode( val code:Int ):
    * <p>Параметры 1: index
    * <p>Стек → value
    */
-  case LDC extends OpCode(18) // visitLdcInsn
-  
+  object LDC extends OpCode(18) // visitLdcInsn
+
   /**
    * push a constant #index from a constant pool 
    * (String, int, float, Class, java.lang.invoke.MethodType, 
@@ -128,7 +177,7 @@ enum OpCode( val code:Int ):
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек → value
    */
-  case LDC_W extends OpCode(19)
+  object LDC_W extends OpCode(19)
 
   /**
    * push a constant #index from a constant pool (double, long, or a 
@@ -137,780 +186,780 @@ enum OpCode( val code:Int ):
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек → value
    */
-  case LDC2_W extends OpCode(20)
+  object LDC2_W extends OpCode(20)
 
   /**
    * load an int value from a local variable #index
    * <p>Параметры 1: index
    * <p>Стек → value
    */
-  case ILOAD extends OpCode(21) // visitVarInsn
+  object ILOAD extends OpCode(21) // visitVarInsn
 
   /**
    * load a long value from a local variable #index
    * <p>Параметры 1: index
    * <p>Стек → value
    */
-  case LLOAD extends OpCode(22) 
+  object LLOAD extends OpCode(22) 
 
   /**
    * load a float value from a local variable #index
    * <p>Параметры 1: index
    * <p>Стек → value
    */
-  case FLOAD extends OpCode(23) 
+  object FLOAD extends OpCode(23) 
 
   /**
    * load a double value from a local variable #index
    * <p>Параметры 1: index
    * <p>Стек → value
    */
-  case DLOAD extends OpCode(24) 
+  object DLOAD extends OpCode(24) 
 
   /**
    * load a reference onto the stack from a local variable #index
    * <p>Параметры 1: index
    * <p>Стек → objectref
    */
-  case ALOAD extends OpCode(25) 
+  object ALOAD extends OpCode(25) 
 
   /**
    * load an int from an array
    * <p>Стек arrayref, index → value
    */
-  case IALOAD extends OpCode(46) // visitInsn
+  object IALOAD extends OpCode(46) // visitInsn
 
   /**
    * load a long from an array
    * <p>Стек arrayref, index → value
    */
-  case LALOAD extends OpCode(47) 
+  object LALOAD extends OpCode(47) 
 
   /**
    * load a float from an array
    * <p>Стек arrayref, index → value
    */
-  case FALOAD extends OpCode(48) 
+  object FALOAD extends OpCode(48) 
 
   /**
    * load a double from an array
    * <p>Стек arrayref, index → value
    */
-  case DALOAD extends OpCode(49) 
+  object DALOAD extends OpCode(49) 
 
   /**
    * load onto the stack a reference from an array
    * <p>Стек arrayref, index → value
    */
-  case AALOAD extends OpCode(50) 
+  object AALOAD extends OpCode(50) 
 
   /**
    * load a byte or Boolean value from an array
    * <p>Стек arrayref, index → value
    */
-  case BALOAD extends OpCode(51) 
+  object BALOAD extends OpCode(51) 
 
   /**
    * load a char from an array
    * <p>Стек arrayref, index → value
    */
-  case CALOAD extends OpCode(52) 
+  object CALOAD extends OpCode(52) 
 
   /**
    * load short from array
    * <p>Стек arrayref, index → value
    */
-  case SALOAD extends OpCode(53) 
+  object SALOAD extends OpCode(53) 
 
   /**
    * load a reference onto the stack from a local variable #index
    * <p>Параметры 1: index
    * <p>Стек → objectref
    */
-  case ISTORE extends OpCode(54) // visitVarInsn
+  object ISTORE extends OpCode(54) // visitVarInsn
 
   /**
    * store a long value in a local variable #index
    * <p>Параметры 1: index
    * <p>Стек value →
    */
-  case LSTORE extends OpCode(55) 
+  object LSTORE extends OpCode(55) 
 
   /**
    * store a long value in a local variable 0
    * <p>Стек value →
    */
-  case LSTORE_0 extends OpCode(0x3f)
+  object LSTORE_0 extends OpCode(0x3f)
 
   /**
    * store a long value in a local variable 1
    * <p>Стек value →
    */
-  case LSTORE_1 extends OpCode(0x40)
+  object LSTORE_1 extends OpCode(0x40)
 
   /**
    * store a long value in a local variable 2
    * <p>Стек value →
    */
-  case LSTORE_2 extends OpCode(0x41) 
+  object LSTORE_2 extends OpCode(0x41) 
 
   /**
    * store a long value in a local variable 3
    * <p>Стек value →
    */
-  case LSTORE_3 extends OpCode(0x42) 
+  object LSTORE_3 extends OpCode(0x42) 
 
   /**
    * store a float value into a local variable #index
    * <p>Параметры 1: index
    * <p>Стек value →
    */
-  case FSTORE extends OpCode(56) 
+  object FSTORE extends OpCode(56) 
 
   /**
    * store a float value into local variable 0
    * <p>Стек value →
    */
-  case FSTORE_0 extends OpCode(0x43) 
+  object FSTORE_0 extends OpCode(0x43) 
 
   /**
    * store a float value into local variable 1
    * <p>Стек value →
    */
-  case FSTORE_1 extends OpCode(0x44) 
+  object FSTORE_1 extends OpCode(0x44) 
 
   /**
    * store a float value into local variable 2
    * <p>Стек value →
    */
-  case FSTORE_2 extends OpCode(0x45) 
+  object FSTORE_2 extends OpCode(0x45) 
 
   /**
    * store a float value into local variable 3
    * <p>Стек value →
    */
-  case FSTORE_3 extends OpCode(0x46) 
+  object FSTORE_3 extends OpCode(0x46) 
 
   /**
    * store a double value into a local variable #index
    * <p>Параметры 1: index
    * <p>Стек value →
    */
-  case DSTORE extends OpCode(57)
+  object DSTORE extends OpCode(57)
 
   /**
    * store a double into local variable 0
    * <p>Параметры 1: index
    * <p>Стек value →
    */
-  case DSTORE_0 extends OpCode(0x47)
+  object DSTORE_0 extends OpCode(0x47)
 
   /**
    * store a double into local variable 1
    * <p>Параметры 
    * <p>Стек value →
    */
-  case DSTORE_1 extends OpCode(0x48)
+  object DSTORE_1 extends OpCode(0x48)
 
   /**
    * store a double into local variable 2
    * <p>Стек value →
    */
-  case DSTORE_2 extends OpCode(0x49)
+  object DSTORE_2 extends OpCode(0x49)
 
   /**
    * store a double into local variable 3
    * <p>Стек value →
    */
-  case DSTORE_3 extends OpCode(0x49)
+  object DSTORE_3 extends OpCode(0x49)
 
   /**
    * store a reference into a local variable #index
    * <p>Параметры 1: index
    * <p>Стек objectref →
    */
-  case ASTORE extends OpCode(58) 
+  object ASTORE extends OpCode(58) 
 
   /**
    * store a reference into local variable 0
    * <p>Стек objectref →
    */
-  case ASTORE_0 extends OpCode(0x4b) 
+  object ASTORE_0 extends OpCode(0x4b) 
 
   /**
    * store a reference into local variable 1
    * <p>Стек objectref →
    */
-  case ASTORE_1 extends OpCode(0x4c) 
+  object ASTORE_1 extends OpCode(0x4c) 
 
   /**
    * store a reference into local variable 2
    * <p>Стек objectref →
    */
-  case ASTORE_2 extends OpCode(0x4d) 
+  object ASTORE_2 extends OpCode(0x4d) 
 
   /**
    * store a reference into local variable 3
    * <p>Стек objectref →
    */
-  case ASTORE_3 extends OpCode(0x4e) 
+  object ASTORE_3 extends OpCode(0x4e) 
 
   /**
    * store an int into an array
    * <p>Стек arrayref, index, value →
    */
-  case IASTORE extends OpCode(79) // visitInsn
+  object IASTORE extends OpCode(79) // visitInsn
 
   /**
    * store a long to an array
    * <p>Стек arrayref, index, value →
    */
-  case LASTORE extends OpCode(80) 
+  object LASTORE extends OpCode(80) 
 
   /**
    * store a float in an array
    * <p>Стек arrayref, index, value →
    */
-  case FASTORE extends OpCode(81) 
+  object FASTORE extends OpCode(81) 
 
   /**
    * store a double into an array
    * <p>Стек arrayref, index, value →
    */
-  case DASTORE extends OpCode(82) 
+  object DASTORE extends OpCode(82) 
 
   /**
    * store a reference in an array
    * <p>Стек arrayref, index, value →
    */
-  case AASTORE extends OpCode(83) 
+  object AASTORE extends OpCode(83) 
 
   /**
    * store a byte or Boolean value into an array
    * <p>Стек arrayref, index, value →
    */
-  case BASTORE extends OpCode(84) 
+  object BASTORE extends OpCode(84) 
 
   /**
    * store a char into an array
    * <p>Стек arrayref, index, value →
    */
-  case CASTORE extends OpCode(85) 
+  object CASTORE extends OpCode(85) 
 
   /**
    * store short to array
    * <p>Стек arrayref, index, value →
    */
-  case SASTORE extends OpCode(86) 
+  object SASTORE extends OpCode(86) 
 
   /**
    * discard the top value on the stack
    * <p>Стек value →
    */
-  case POP extends OpCode(87) 
+  object POP extends OpCode(87) 
 
   /**
    * discard the top two values on the stack (or one value, if it is a double or long)
    * <p>Стек {value2, value1} →
    */
-  case POP2 extends OpCode(88) 
+  object POP2 extends OpCode(88) 
 
   /**
    * duplicate the value on top of the stack
    * <p>Стек value → value, value
    */
-  case DUP extends OpCode(89) 
+  object DUP extends OpCode(89) 
 
   /**
    * insert a copy of the top value into the stack two values from the top. value1 and value2 must not be of the type double or long.
    * <p>Стек value2, value1 → value1, value2, value1
    */
-  case DUP_X1 extends OpCode(90) 
+  object DUP_X1 extends OpCode(90) 
 
   /**
    * insert a copy of the top value into the stack two (if value2 is double or long it takes up the entry of value3, too) or three values (if value2 is neither double nor long) from the top
    * <p>Стек value3, value2, value1 → value1, value3, value2, value1
    */
-  case DUP_X2 extends OpCode(91) 
+  object DUP_X2 extends OpCode(91) 
 
   /**
    * duplicate top two stack words (two values, if value1 is not double nor long; a single value, if value1 is double or long)
    * <p>Стек {value2, value1} → {value2, value1}, {value2, value1}
    */
-  case DUP2 extends OpCode(92) 
+  object DUP2 extends OpCode(92) 
 
   /**
    * duplicate two words and insert beneath third word (see explanation above)
    * <p>Стек value3, {value2, value1} → {value2, value1}, value3, {value2, value1}
    */
-  case DUP2_X1 extends OpCode(93) 
+  object DUP2_X1 extends OpCode(93) 
 
   /**
    * duplicate two words and insert beneath fourth word
    * <p>Стек {value4, value3}, {value2, value1} → {value2, value1}, {value4, value3}, {value2, value1}
    */
-  case DUP2_X2 extends OpCode(94) 
+  object DUP2_X2 extends OpCode(94) 
 
   /**
    * swaps two top words on the stack (note that value1 and value2 must not be double or long)
    * <p>Стек value2, value1 → value1, value2
    */
-  case SWAP extends OpCode(95) 
+  object SWAP extends OpCode(95) 
 
   /**
    * add two ints
    * <p>Стек value1, value2 → result
    */
-  case IADD extends OpCode(96) 
+  object IADD extends OpCode(96) 
 
   /**
    * add two longs
    * <p>Стек value1, value2 → result
    */
-  case LADD extends OpCode(97) 
+  object LADD extends OpCode(97) 
 
   /**
    * add two floats
    * <p>Стек value1, value2 → result
    */
-  case FADD extends OpCode(98) 
+  object FADD extends OpCode(98) 
 
   /**
    * add two doubles
    * <p>Стек value1, value2 → result
    */
-  case DADD extends OpCode(99) 
+  object DADD extends OpCode(99) 
 
   /**
    * int subtract
    * <p>Стек value1, value2 → result
    */
-  case ISUB extends OpCode(100) 
+  object ISUB extends OpCode(100) 
 
   /**
    * subtract two longs
    * <p>Стек value1, value2 → result
    */
-  case LSUB extends OpCode(101) 
+  object LSUB extends OpCode(101) 
 
   /**
    * subtract two floats
    * <p>Стек value1, value2 → result
    */
-  case FSUB extends OpCode(102) 
+  object FSUB extends OpCode(102) 
 
   /**
    * subtract a double from another
    * <p>Стек value1, value2 → result
    */
-  case DSUB extends OpCode(103) 
+  object DSUB extends OpCode(103) 
 
   /**
    * multiply two integers
    * <p>Стек value1, value2 → result
    */
-  case IMUL extends OpCode(104) 
+  object IMUL extends OpCode(104) 
 
   /**
    * multiply two longs
    * <p>Стек value1, value2 → result
    */
-  case LMUL extends OpCode(105) 
+  object LMUL extends OpCode(105) 
 
   /**
    * multiply two floats
    * <p>Стек value1, value2 → result
    */
-  case FMUL extends OpCode(106) 
+  object FMUL extends OpCode(106) 
 
   /**
    * multiply two doubles
    * <p>Стек value1, value2 → result
    */
-  case DMUL extends OpCode(107) 
+  object DMUL extends OpCode(107) 
 
   /**
    * divide two integers
    * <p>Стек value1, value2 → result
    */
-  case IDIV extends OpCode(108) 
+  object IDIV extends OpCode(108) 
 
   /**
    * divide two longs
    * <p>Стек value1, value2 → result
    */
-  case LDIV extends OpCode(109) 
+  object LDIV extends OpCode(109) 
 
   /**
    * divide two floats
    * <p>Стек value1, value2 → result
    */
-  case FDIV extends OpCode(110) 
+  object FDIV extends OpCode(110) 
 
   /**
    * divide two doubles
    * <p>Стек value1, value2 → result
    */
-  case DDIV extends OpCode(111) 
+  object DDIV extends OpCode(111) 
 
   /**
    * logical int remainder
    * <p>Стек value1, value2 → result
    */
-  case IREM extends OpCode(112) 
+  object IREM extends OpCode(112) 
 
   /**
    * remainder of division of two longs
    * <p>Стек value1, value2 → result
    */
-  case LREM extends OpCode(113) 
+  object LREM extends OpCode(113) 
 
   /**
    * get the remainder from a division between two floats
    * <p>Стек value1, value2 → result
    */
-  case FREM extends OpCode(114) 
+  object FREM extends OpCode(114) 
 
   /**
    * get the remainder from a division between two doubles
    * <p>Стек value1, value2 → result
    */
-  case DREM extends OpCode(115) 
+  object DREM extends OpCode(115) 
 
   /**
    * negate int
    * <p>Стек value → result
    */
-  case INEG extends OpCode(116) 
+  object INEG extends OpCode(116) 
 
   /**
    * negate a long
    * <p>Стек value → result
    */
-  case LNEG extends OpCode(117) 
+  object LNEG extends OpCode(117) 
 
   /**
    * negate a float
    * <p>Стек value → result
    */
-  case FNEG extends OpCode(118) 
+  object FNEG extends OpCode(118) 
 
   /**
    * negate a double
    * <p>Стек value → result
    */
-  case DNEG extends OpCode(119) 
+  object DNEG extends OpCode(119) 
 
   /**
    * int shift left
    * <p>Стек value1, value2 → result
    */
-  case ISHL extends OpCode(120) 
+  object ISHL extends OpCode(120) 
 
   /**
    * bitwise shift left of a long value1 by int value2 positions
    * <p>Стек value1, value2 → result
    */
-  case LSHL extends OpCode(121) 
+  object LSHL extends OpCode(121) 
 
   /**
    * int arithmetic shift right
    * <p>Стек value1, value2 → result
    */
-  case ISHR extends OpCode(122) 
+  object ISHR extends OpCode(122) 
 
   /**
    * bitwise shift right of a long value1 by int value2 positions
    * <p>Стек value1, value2 → result
    */
-  case LSHR extends OpCode(123) 
+  object LSHR extends OpCode(123) 
 
   /**
    * int logical shift right
    * <p>Стек value1, value2 → result
    */
-  case IUSHR extends OpCode(124) 
+  object IUSHR extends OpCode(124) 
 
   /**
    * bitwise shift right of a long value1 by int value2 positions, unsigned
    * <p>Стек value1, value2 → result
    */
-  case LUSHR extends OpCode(125) 
+  object LUSHR extends OpCode(125) 
 
   /**
    * perform a bitwise AND on two integers
    * <p>Стек value1, value2 → result
    */
-  case IAND extends OpCode(126) 
+  object IAND extends OpCode(126) 
 
   /**
    * bitwise AND of two longs
    * <p>Стек value1, value2 → result
    */
-  case LAND extends OpCode(127) 
+  object LAND extends OpCode(127) 
 
   /**
    * bitwise int OR
    * <p>Стек value1, value2 → result
    */
-  case IOR extends OpCode(128) 
+  object IOR extends OpCode(128) 
 
   /**
    * bitwise OR of two longs
    * <p>Стек value1, value2 → result
    */
-  case LOR extends OpCode(129) 
+  object LOR extends OpCode(129) 
 
   /**
    * int xor
    * <p>Стек value1, value2 → result
    */
-  case IXOR extends OpCode(130) 
+  object IXOR extends OpCode(130) 
 
   /**
    * bitwise XOR of two longs
    * <p>Стек value1, value2 → result
    */
-  case LXOR extends OpCode(131) 
+  object LXOR extends OpCode(131) 
 
   /**
    * increment local variable #index by signed byte const
    * <p>Параметры 2: index, const
    * <p>Стек [No change]
    */
-  case IINC extends OpCode(132) // visitIincInsn
+  object IINC extends OpCode(132) // visitIincInsn
 
   /**
    * convert an int into a long
    * <p>Стек value → result
    */
-  case I2L extends OpCode(133) // visitInsn
+  object I2L extends OpCode(133) // visitInsn
 
   /**
    * convert an int into a float
    * <p>Стек value → result
    */
-  case I2F extends OpCode(134) 
+  object I2F extends OpCode(134) 
 
   /**
    * convert an int into a double
    * <p>Стек value → result
    */
-  case I2D extends OpCode(135) 
+  object I2D extends OpCode(135) 
 
   /**
    * convert an long into a int
    * <p>Стек value → result
    */
-  case L2I extends OpCode(136) 
+  object L2I extends OpCode(136) 
 
   /**
    * convert an long into a float
    * <p>Стек value → result
    */
-  case L2F extends OpCode(137) 
+  object L2F extends OpCode(137) 
 
   /**
    * convert an long into a double
    * <p>Стек value → result
    */
-  case L2D extends OpCode(138) 
+  object L2D extends OpCode(138) 
 
   /**
    * convert an float into a int
    * <p>Стек value → result
    */
-  case F2I extends OpCode(139) 
+  object F2I extends OpCode(139) 
 
   /**
    * convert an float into a long
    * <p>Стек value → result
    */
-  case F2L extends OpCode(140) 
+  object F2L extends OpCode(140) 
 
   /**
    * convert an float into a double
    * <p>Стек value → result
    */
-  case F2D extends OpCode(141) 
+  object F2D extends OpCode(141) 
 
   /**
    * convert an double into a int
    * <p>Стек value → result
    */
-  case D2I extends OpCode(142) 
+  object D2I extends OpCode(142) 
 
   /**
    * convert an double into a long
    * <p>Стек value → result
    */
-  case D2L extends OpCode(143) 
+  object D2L extends OpCode(143) 
 
   /**
    * convert an double into a float
    * <p>Стек value → result
    */
-  case D2F extends OpCode(144) 
+  object D2F extends OpCode(144) 
 
   /**
    * convert an int into a byte
    * <p>Стек value → result
    */
-  case I2B extends OpCode(145) 
+  object I2B extends OpCode(145) 
 
   /**
    * convert an int into a character
    * <p>Стек value → result
    */
-  case I2C extends OpCode(146) 
+  object I2C extends OpCode(146) 
 
   /**
    * convert an int into a short
    * <p>Стек value → result
    */
-  case I2S extends OpCode(147) 
+  object I2S extends OpCode(147) 
 
   /**
    * push 0 if the two longs are the same, 1 if value1 is greater than value2, -1 otherwise
    * <p>Стек value1, value2 → result
    */
-  case LCMP extends OpCode(148) 
+  object LCMP extends OpCode(148) 
 
   /**
    * compare two floats, -1 on NaN
    * <p>Стек value1, value2 → result
    */
-  case FCMPL extends OpCode(149) 
+  object FCMPL extends OpCode(149) 
 
   /**
    * compare two floats, 1 on NaN
    * <p>Стек value1, value2 → result
    */
-  case FCMPG extends OpCode(150) 
+  object FCMPG extends OpCode(150) 
 
   /**
    * compare two doubles, -1 on NaN
    * <p>Стек value1, value2 → result
    */
-  case DCMPL extends OpCode(151) 
+  object DCMPL extends OpCode(151) 
 
   /**
    * compare two doubles, 1 on NaN
    * <p>Стек value1, value2 → result
    */
-  case DCMPG extends OpCode(152) 
-  
+  object DCMPG extends OpCode(152) 
+
   /**
    * if value is 0, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value →
    */
-  case IFEQ extends OpCode(153) // visitJumpInsn
+  object IFEQ extends OpCode(153) // visitJumpInsn
 
   /**
    * if value is not 0, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value →
    */
-  case IFNE extends OpCode(154) 
+  object IFNE extends OpCode(154) 
 
   /**
    * if value is less than 0, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value →
    */
-  case IFLT extends OpCode(155) 
+  object IFLT extends OpCode(155) 
 
   /**
    * if value is greater than or equal to 0, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value →
    */
-  case IFGE extends OpCode(156) 
+  object IFGE extends OpCode(156) 
 
   /**
    * if value is greater than 0, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value →
    */
-  case IFGT extends OpCode(157) 
+  object IFGT extends OpCode(157) 
 
   /**
    * if value is less than or equal to 0, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value →
    */
-  case IFLE extends OpCode(158) 
+  object IFLE extends OpCode(158) 
 
   /**
    * if ints are equal, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value1, value2 →
    */
-  case IF_ICMPEQ extends OpCode(159) 
+  object IF_ICMPEQ extends OpCode(159) 
 
   /**
    * if ints are not equal, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value1, value2 →
    */
-  case IF_ICMPNE extends OpCode(160) 
+  object IF_ICMPNE extends OpCode(160) 
 
   /**
    * if value1 is less than value2, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value1, value2 →
    */
-  case IF_ICMPLT extends OpCode(161) 
+  object IF_ICMPLT extends OpCode(161) 
 
   /**
    * if value1 is greater than or equal to value2, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value1, value2 →
    */
-  case IF_ICMPGE extends OpCode(162) 
+  object IF_ICMPGE extends OpCode(162) 
 
   /**
    * if value1 is greater than value2, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value1, value2 →
    */
-  case IF_ICMPGT extends OpCode(163) 
+  object IF_ICMPGT extends OpCode(163) 
 
   /**
    * if value1 is less than or equal to value2, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value1, value2 →
    */
-  case IF_ICMPLE extends OpCode(164) 
+  object IF_ICMPLE extends OpCode(164) 
 
   /**
    * if references are equal, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value1, value2 →
    */
-  case IF_ACMPEQ extends OpCode(165) 
+  object IF_ACMPEQ extends OpCode(165) 
 
   /**
    * if references are not equal, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек value1, value2 →
    */
-  case IF_ACMPNE extends OpCode(166) 
+  object IF_ACMPNE extends OpCode(166) 
 
   /**
    * goes to another instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
    * <p>Параметры 2: branchbyte1, branchbyte2
    * <p>Стек [no change]
    */
-  case GOTO extends OpCode(167) 
-  
+  object GOTO extends OpCode(167) 
+
   /**
    * goes to another instruction at branchoffset (signed int constructed from unsigned bytes branchbyte1 &lt;&lt; 24 | branchbyte2 &lt;&lt; 16 | branchbyte3 &lt;&lt; 8 | branchbyte4)
    * <p>Параметры 4: branchbyte1, branchbyte2, branchbyte3, branchbyte4
    * <p>Стек [no change]
    */
-  case GOTO_W extends OpCode(0xc8)
+  object GOTO_W extends OpCode(0xc8)
 
   /**
    * jump to subroutine at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2) and place the return address on the stack
@@ -930,19 +979,19 @@ enum OpCode( val code:Int ):
    * <p> Обратите внимание, что jsr помещает адрес в стек операндов, а ret (§ret) получает его из локальной переменной. Эта асимметрия преднамеренная.
    * <p> В реализации Oracle компилятора для языка программирования Java до Java SE 6 инструкция jsr использовалась с инструкцией ret в реализации предложения finally (§3.13, §4.10.2.5).
    */
-  case JSR extends OpCode(168) 
+  object JSR extends OpCode(168) 
 
   /**
    * continue execution from address taken from a local variable #index (the asymmetry with jsr is intentional)
    * <p>Параметры 1: index
    * <p>Стек [No change]
- * <hr>
- * Обратите внимание, что jsr (§jsr) помещает адрес в стек операндов, а ret получает его из локальной переменной. Эта асимметрия преднамеренная.
- * <p> В реализации Oracle компилятора для языка программирования Java до Java SE 6 инструкция ret использовалась с инструкциями jsr и jsr_w (§jsr, §jsr_w) в реализации предложения finally (§3.13, §4.10.2.5) ).
- * <p> Инструкцию ret не следует путать с инструкцией return (§return). Команда возврата возвращает управление от метода вызывающей стороне, не передавая никакого значения обратно вызывающей стороне.
- * <p> Код операции ret может использоваться вместе с инструкцией wide (§wide) для доступа к локальной переменной с использованием двухбайтового беззнакового индекса.
+   * <hr>
+   * Обратите внимание, что jsr (§jsr) помещает адрес в стек операндов, а ret получает его из локальной переменной. Эта асимметрия преднамеренная.
+   * <p> В реализации Oracle компилятора для языка программирования Java до Java SE 6 инструкция ret использовалась с инструкциями jsr и jsr_w (§jsr, §jsr_w) в реализации предложения finally (§3.13, §4.10.2.5) ).
+   * <p> Инструкцию ret не следует путать с инструкцией return (§return). Команда возврата возвращает управление от метода вызывающей стороне, не передавая никакого значения обратно вызывающей стороне.
+   * <p> Код операции ret может использоваться вместе с инструкцией wide (§wide) для доступа к локальной переменной с использованием двухбайтового беззнакового индекса.
    */
-  case RET extends OpCode(169) // visitVarInsn
+  object RET extends OpCode(169) // visitVarInsn
 
 
   /**
@@ -950,7 +999,7 @@ enum OpCode( val code:Int ):
    * <p>Параметры 16+: [0–3 bytes padding], defaultbyte1, defaultbyte2, defaultbyte3, defaultbyte4, lowbyte1, lowbyte2, lowbyte3, lowbyte4, highbyte1, highbyte2, highbyte3, highbyte4, jump offsets...
    * <p>Стек index →
    */
-  case TABLESWITCH extends OpCode(170) // visiTableSwitchInsn
+  object TABLESWITCH extends OpCode(170) // visiTableSwitchInsn
 
 
   /**
@@ -958,165 +1007,165 @@ enum OpCode( val code:Int ):
    * <p>Параметры 8+: &lt;0 - 3 bytes padding&gt;, defaultbyte1, defaultbyte2, defaultbyte3, defaultbyte4, npairs1, npairs2, npairs3, npairs4, match-offset pairs...
    * <p>Стек key →
    */
-  case LOOKUPSWITCH extends OpCode(171) // visitLookupSwitch
-  
+  object LOOKUPSWITCH extends OpCode(171) // visitLookupSwitch
+
   /**
    * return an integer from a method
    * <p>Стек value → [empty]
    */
-  case IRETURN extends OpCode(172) // visitInsn
+  object IRETURN extends OpCode(172) // visitInsn
 
   /**
    * return a long value
    * <p>Стек value → [empty]
    */
-  case LRETURN extends OpCode(173) 
+  object LRETURN extends OpCode(173) 
 
   /**
    * return a float
    * <p>Стек value → [empty]
    */
-  case FRETURN extends OpCode(174) 
+  object FRETURN extends OpCode(174) 
 
   /**
    * return a double from a method
    * <p>Стек value → [empty]
    */
-  case DRETURN extends OpCode(175) 
+  object DRETURN extends OpCode(175) 
 
   /**
    * return a reference from a method
    * <p>Стек objectref → [empty]
    */
-  case ARETURN extends OpCode(176) 
+  object ARETURN extends OpCode(176) 
 
   /**
    * return void from method
    * <p>Стек → [empty]
    */
-  case RETURN extends OpCode(177) 
+  object RETURN extends OpCode(177) 
 
   /**
    * get a static field value of a class, where the field is identified by field reference in the constant pool index (indexbyte1 &lt;&lt; 8 | indexbyte2)
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек → value
    */
-  case GETSTATIC extends OpCode(178) // visitFieldInsn
+  object GETSTATIC extends OpCode(178) // visitFieldInsn
 
   /**
    * set static field to value in a class, where the field is identified by a field reference index in constant pool (indexbyte1 &lt;&lt; 8 | indexbyte2)
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек value →
    */
-  case PUTSTATIC extends OpCode(179) 
+  object PUTSTATIC extends OpCode(179) 
 
   /**
    * get a field value of an object objectref, where the field is identified by field reference in the constant pool index (indexbyte1 &lt;&lt; 8 | indexbyte2)
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек objectref → value
    */
-  case GETFIELD extends OpCode(180) 
+  object GETFIELD extends OpCode(180) 
 
   /**
    * set field to value in an object objectref, where the field is identified by a field reference index in constant pool (indexbyte1 &lt;&lt; 8 | indexbyte2)
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек objectref, value →
    */
-  case PUTFIELD extends OpCode(181) 
+  object PUTFIELD extends OpCode(181) 
 
   /**
    * invoke virtual method on object objectref and puts the result on the stack (might be void); the method is identified by method reference index in constant pool (indexbyte1 &lt;&lt; 8 | indexbyte2)
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек objectref, [arg1, arg2, ...] → result
    */
-  case INVOKEVIRTUAL extends OpCode(182) // visitMethodInsn
+  object INVOKEVIRTUAL extends OpCode(182) // visitMethodInsn
 
   /**
    * invoke instance method on object objectref and puts the result on the stack (might be void); the method is identified by method reference index in constant pool (indexbyte1 &lt;&lt; 8 | indexbyte2)
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек objectref, [arg1, arg2, ...] → result
    */
-  case INVOKESPECIAL extends OpCode(183) 
+  object INVOKESPECIAL extends OpCode(183) 
 
   /**
    * invoke a static method and puts the result on the stack (might be void); the method is identified by method reference index in constant pool (indexbyte1 &lt;&lt; 8 | indexbyte2)
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек [arg1, arg2, ...] → result
    */
-  case INVOKESTATIC extends OpCode(184) 
+  object INVOKESTATIC extends OpCode(184) 
 
   /**
    * invokes an interface method on object objectref and puts the result on the stack (might be void); the interface method is identified by method reference index in constant pool (indexbyte1 &lt;&lt; 8 | indexbyte2)
    * <p>Параметры 4: indexbyte1, indexbyte2, count, 0
    * <p>Стек objectref, [arg1, arg2, ...] → result
    */
-  case INVOKEINTERFACE extends OpCode(185) 
-  
+  object INVOKEINTERFACE extends OpCode(185) 
+
   /**
    * invokes a dynamic method and puts the result on the stack (might be void); the method is identified by method reference index in constant pool (indexbyte1 &lt;&lt; 8 | indexbyte2)
    * <p>Параметры 4: indexbyte1, indexbyte2, 0, 0
    * <p>Стек [arg1, arg2, ...] → result
    */
-  case INVOKEDYNAMIC extends OpCode(186) // visitInvokeDynamicInsn
+  object INVOKEDYNAMIC extends OpCode(186) // visitInvokeDynamicInsn
 
   /**
    * create new object of type identified by class reference in constant pool index (indexbyte1 &lt;&lt; 8 | indexbyte2)
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек → objectref
    */
-  case NEW extends OpCode(187) // visitTypeInsn
+  object NEW extends OpCode(187) // visitTypeInsn
 
   /**
    * create new array with count elements of primitive type identified by atype
    * <p>Параметры 1: atype
    * <p>Стек count → arrayref
    */
-  case NEWARRAY extends OpCode(188) // visitIntInsn
+  object NEWARRAY extends OpCode(188) // visitIntInsn
 
   /**
    * create a new array of references of length count and component type identified by the class reference index (indexbyte1 &lt;&lt; 8 | indexbyte2) in the constant pool
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек count → arrayref
    */
-  case ANEWARRAY extends OpCode(189) // visitTypeInsn
+  object ANEWARRAY extends OpCode(189) // visitTypeInsn
 
   /**
    * get the length of an array
    * <p>Стек arrayref → length
    */
-  case ARRAYLENGTH extends OpCode(190) // visitInsn
+  object ARRAYLENGTH extends OpCode(190) // visitInsn
 
   /**
    * throws an error or exception (notice that the rest of the stack is cleared, leaving only a reference to the Throwable)
    * <p>Стек objectref → [empty], objectref
    */
-  case ATHROW extends OpCode(191) 
+  object ATHROW extends OpCode(191) 
 
   /**
    * checks whether an objectref is of a certain type, the class reference of which is in the constant pool at index (indexbyte1 &lt;&lt; 8 | indexbyte2)
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек objectref → objectref
    */
-  case CHECKCAST extends OpCode(192) // visitTypeInsn
+  object CHECKCAST extends OpCode(192) // visitTypeInsn
 
   /**
    * determines if an object objectref is of a given type, identified by class reference index in constant pool (indexbyte1 &lt;&lt; 8 | indexbyte2)
    * <p>Параметры 2: indexbyte1, indexbyte2
    * <p>Стек objectref → result
    */
-  case INSTANCEOF extends OpCode(193) 
+  object INSTANCEOF extends OpCode(193) 
 
   /**
    * enter monitor for object ("grab the lock" – start of synchronized() section)
    * <p>Стек objectref → 
    */
-  case MONITORENTER extends OpCode(194) // visitInsn
+  object MONITORENTER extends OpCode(194) // visitInsn
 
   /**
    * exit monitor for object ("release the lock" – end of synchronized() section)
    * <p>Стек objectref → 
    */
-  case MONITOREXIT extends OpCode(195) 
+  object MONITOREXIT extends OpCode(195) 
 
   /**
    * create a new array of dimensions dimensions of type identified by class reference in constant pool index 
@@ -1170,7 +1219,7 @@ enum OpCode( val code:Int ):
    * <p>It may be more efficient to use newarray or anewarray (§newarray, §anewarray) when creating an array of a single dimension.
    * <p>The array class referenced via the run-time constant pool may have more dimensions than the dimensions operand of the multianewarray instruction. In that case, only the first dimensions of the dimensions of the array are created.
    */
-  case MULTIANEWARRAY extends OpCode(197) // visitMultiANewArrayInsn
+  object MULTIANEWARRAY extends OpCode(197) // visitMultiANewArrayInsn
 
   /**
    * if value is null, branch to instruction at branchoffset (signed short constructed from unsigned bytes branchbyte1 &lt;&lt; 8 | branchbyte2)
@@ -1181,7 +1230,7 @@ enum OpCode( val code:Int ):
    * <p>The value must of type reference. It is popped from the operand stack. If value is null, the unsigned branchbyte1 and branchbyte2 are used to construct a signed 16-bit offset, where the offset is calculated to be (branchbyte1 &lt;&lt; 8) | branchbyte2. Execution then proceeds at that offset from the address of the opcode of this ifnull instruction. The target address must be that of an opcode of an instruction within the method that contains this ifnull instruction.
    * <p>Otherwise, execution proceeds at the address of the instruction following this ifnull instruction.
    */
-  case IFNULL extends OpCode(198) // visitJumpInsn
+  object IFNULL extends OpCode(198) // visitJumpInsn
 
   /**
    * <a href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.ifnonnull">Официальная дока</a>
@@ -1192,4 +1241,4 @@ enum OpCode( val code:Int ):
    * <p>The value must be of type reference. It is popped from the operand stack. If value is not null, the unsigned branchbyte1 and branchbyte2 are used to construct a signed 16-bit offset, where the offset is calculated to be (branchbyte1 &lt;&lt; 8) | branchbyte2. Execution then proceeds at that offset from the address of the opcode of this ifnonnull instruction. The target address must be that of an opcode of an instruction within the method that contains this ifnonnull instruction.
    * <p>Otherwise, execution proceeds at the address of the instruction following this ifnonnull instruction.
    */
-  case IFNONNULL extends OpCode(199) 
+  object IFNONNULL extends OpCode(199) 
