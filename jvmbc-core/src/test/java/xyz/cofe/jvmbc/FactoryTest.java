@@ -7,7 +7,7 @@ import xyz.cofe.jvmbc.mth.MCode;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FactoryTest extends TstCommon {
+public class FactoryTest extends CommonForTest {
     @Test
     public void defaultFactory(){
         var cbegin = CBegin

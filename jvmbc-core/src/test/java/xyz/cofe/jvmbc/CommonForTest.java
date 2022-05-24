@@ -8,7 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.function.Supplier;
 
-public class TstCommon {
+public class CommonForTest {
     public final EndLineReWriter reWriter;
     {
         reWriter = new EndLineReWriter(new OutputStreamWriter(System.out));
