@@ -4,7 +4,7 @@ package cls
 import ann.AnnCode
 import mth.MethCode
 
-sealed trait ClassCode
+sealed trait ClassCode extends ByteCode
 
 /** аннотации прикрепленные к классу */
 case class CAnnotation(desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends ClassCode

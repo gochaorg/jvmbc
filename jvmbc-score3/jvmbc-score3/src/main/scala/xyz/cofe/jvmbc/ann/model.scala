@@ -1,7 +1,7 @@
 package xyz.cofe.jvmbc
 package ann
 
-sealed trait AnnCode
+sealed trait AnnCode extends ByteCode
 
 sealed abstract class APair[V](val name:Option[String],val value:V) extends AnnCode
 case class Undef(n:Option[String],v:Serializable) extends APair(n,v)

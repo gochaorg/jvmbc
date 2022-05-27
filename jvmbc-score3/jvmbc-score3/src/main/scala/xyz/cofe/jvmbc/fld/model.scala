@@ -3,7 +3,7 @@ package fld
 
 import ann.AnnCode
 
-sealed trait FieldCode
+sealed trait FieldCode extends ByteCode
 case class FAnnotation(desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends FieldCode
 
 /** end of the method */

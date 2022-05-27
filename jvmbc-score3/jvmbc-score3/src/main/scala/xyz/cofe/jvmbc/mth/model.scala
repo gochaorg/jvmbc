@@ -5,7 +5,7 @@ import ann.AnnCode
 import bm.BootstrapArg
 import bm.LdcType
 
-sealed trait MethCode
+sealed trait MethCode extends ByteCode
 
 /** Начала байт-кода метода */
 case class MCode() extends MethCode
