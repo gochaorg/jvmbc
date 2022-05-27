@@ -62,8 +62,12 @@ case class CNestHost(nestHost:String) extends ClassCode
 case class CField(access:Int,name:String,desc:TDesc,sign:Sign,value:AnyRef) extends ClassCode
 
 /** Описывает метод класса */
-case class CMethod(access:Int,name:String,desc:TDesc,sign:Sign,exceptions:Seq[String],body:Seq[MethCode]) extends ClassCode
-case class CInnerClass(access:Int,name:String,outerName:String,innerName:String) extends ClassCode
+case class CMethod(access:CMethodAccess,name:String,desc:MDesc,sign:MSign,exceptions:Seq[String],body:Seq[MethCode]) extends ClassCode
+case class CMethodAccess(raw:Int)
+case class MSign(raw:String)
+
+case class CInnerClass(access:CInnerClassAccess,name:String,outerName:String,innerName:String) extends ClassCode
+case class CInnerClassAccess(raw:Int)
 
 /**
  * Описывает класс / модуль
@@ -84,11 +88,11 @@ case class CInnerClass(access:Int,name:String,outerName:String,innerName:String)
  * @param order порядок определения полей/методов/..
  */
 case class CBegin(
-  version:Int,
-  access:Int,
+  version:CVersion,
+  access:CBeginAccess,
   name:JavaName,
-  sign:Sign,
-  superName:String,
+  sign:CSign,
+  superName:JavaName,
   interfaces:Seq[String],
   source:CSource,
   nestHost:CNestHost,
@@ -100,8 +104,13 @@ case class CBegin(
   methods:Seq[CMethod],
   order:Map[ClassCode,Int]=Map()
 ) extends ClassCode
+case class CSign(raw:String)
+case class CVersion(raw:Int)
 
 /**
  * Маркер конца класса.
  */
 case class CEnd() extends ClassCode
+
+/** Права доступа */
+case class CBeginAccess(raw:Int)
