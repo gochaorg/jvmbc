@@ -92,7 +92,7 @@ case class CBegin(
   interfaces:Seq[String],
   source:CSource,
   nestHost:CNestHost,
-  annotations:Seq[CAnnotation]
+  annotations:Seq[CAnnotation],
   typeAnnotations:Seq[CTypeAnnotation],
   nestMembers:Seq[CNestMember],
   innerClasses:Seq[CInnerClass],
