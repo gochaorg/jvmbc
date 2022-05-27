@@ -10,7 +10,7 @@
     <modules>
         <module>jvmbc-core</module>
         <module>jvmbc-analyze</module>
-        <module>jvmbc-score</module>
+<!--        <module>jvmbc-score</module>-->
     </modules>
     <packaging>pom</packaging>
 
