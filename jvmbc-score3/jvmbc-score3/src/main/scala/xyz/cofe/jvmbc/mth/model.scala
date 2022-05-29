@@ -131,6 +131,8 @@ case class MEnd() extends MethCode
  */
 case class MInst(op:OpCode) extends MethCode
 
+//case class MInsnAnnotation(typeRef:Int,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends MethCode
+
 /** 
  * @param parameterCount
  * @param visible
@@ -518,15 +520,13 @@ case class MIincInsn(variable:Int,inc:Int) extends MethCode
  * @param typePath
  * @param desc
  * @param visible
- * @param stack
  * @param annotations
  */
 case class MInsnAnnotation(
   typeRef:Int,
-  typePath:String,
+  typePath:Option[String],
   desc:TDesc,
   visible:Boolean,
-  stack:Seq[AnyRef],
   annotations:Seq[AnnCode]
   ) extends MethCode
 
@@ -757,7 +757,12 @@ indexbyte2
  * @param desc
  * @param args
  */
-case class MInvokeDynamicInsn(name:String,desc:MDesc,args:Seq[BootstrapArg]) extends MethCode
+case class MInvokeDynamicInsn(
+  name:String,
+  desc:MDesc,
+  bootstrapMethod:bm.Handle,
+  args:Seq[BootstrapArg]
+) extends MethCode
 
 /** 
  * Инструкция перехода
@@ -850,7 +855,9 @@ case class MLabel(name:String) extends MethCode
  * @param value
  * @param ldcType
  */
-case class MLdcInsn(value:AnyRef,ldcType:LdcType) extends MethCode
+case class MLdcInsn(value:AnyRef) extends MethCode {
+    //lazy val ldcType:LdcType
+}
 
 /** 
  * Номер строки в исходном коде
@@ -868,7 +875,7 @@ case class MLineNumber(line:Int,label:String) extends MethCode
  * @param labelEnd
  * @param index
  */
-case class MLocalVariable(name:String,desc:TDesc,sign:Sign,labelStart:String,labelEnd:String,index:Int) extends MethCode
+case class MLocalVariable(name:String,desc:TDesc,sign:Option[Sign],labelStart:String,labelEnd:String,index:Int) extends MethCode
 
 /** 
  * @param typeRef
@@ -882,7 +889,7 @@ case class MLocalVariable(name:String,desc:TDesc,sign:Sign,labelStart:String,lab
  */
 case class MLocalVariableAnnotation(
   typeRef:Int,
-  typePath:String,
+  typePath:Option[String],
   startLabels:Seq[String],
   endLabels:Seq[String],
   index:Seq[Int],
@@ -1088,7 +1095,7 @@ MyClass
  * @param desc
  * @param iface
  */
-case class MMethodInsn(op:OpCode,owner:String,name:String,desc:TDesc,iface:Boolean) extends MethCode
+case class MMethodInsn(op:OpCode,owner:String,name:String,desc:MDesc,iface:Boolean) extends MethCode
 
 /**
  * multianewarray
@@ -1243,7 +1250,7 @@ case class MTableSwitchInsn(min:Int,max:Int,defaultLabel:String,labels:Seq[Strin
  * @param desc
  * @param visible
  */
-case class MTryCatchAnnotation(typeRef:Int,typePath:String,desc:TDesc,visible:Boolean) extends MethCode
+case class MTryCatchAnnotation(typeRef:Int,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends MethCode
 
 /** 
  * try catch block
@@ -1260,7 +1267,7 @@ case class MTryCatchBlock(startLabel:String,endLabel:String,handlerLabel:String,
  * @param desc 
  * @param visible
  */
-case class MTypeAnnotation(typeRef:Int,typePath:String,desc:TDesc,visible:Boolean) extends MethCode
+case class MTypeAnnotation(typeRef:Int,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends MethCode
 
 /**
  * the opcode of the type instruction to be visited. This opcode is either NEW,

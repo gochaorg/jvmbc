@@ -51,6 +51,12 @@ object OpCode:
   )
 
   /**
+   * Поиск инструкции по коду
+   * @param code код
+   */
+  def find(code:Int):Option[? <: OpCode]=values.find(c => c.code==code)
+
+  /**
    * perform no operation
    * <p>Стек [No change]
    */

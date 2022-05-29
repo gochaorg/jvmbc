@@ -10,12 +10,12 @@ sealed trait ClassCode extends ByteCode
 case class CAnnotation(desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends ClassCode
 
 /** аннотации прикрепленные к классу */
-case class CTypeAnnotation(typeRef:Int,typePath:String,desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends ClassCode
+case class CTypeAnnotation(typeRef:Int,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends ClassCode
 
 /**
  * имя исходного класса/файла отладки (debug)
  */
-case class CSource(source:String,debug:String) extends ClassCode
+case class CSource(source:Option[String],debug:Option[String]) extends ClassCode
 case class CPermittedSubclass(permittedSubclass:String) extends ClassCode
 case class COuterClass(owner:String,name:String,desc:TDesc) extends ClassCode
 case class CNestMember(nestMember:String) extends ClassCode
@@ -59,10 +59,10 @@ case class CNestHost(nestHost:String) extends ClassCode
  *       accessDecode="[Private]"
  *       descriptor="Ljava/lang/String;"
  */
-case class CField(access:Int,name:String,desc:TDesc,sign:Sign,value:AnyRef) extends ClassCode
+case class CField(access:Int,name:String,desc:TDesc,sign:Option[Sign],value:Option[AnyRef]) extends ClassCode
 
 /** Описывает метод класса */
-case class CMethod(access:CMethodAccess,name:String,desc:MDesc,sign:MSign,exceptions:Seq[String],body:Seq[MethCode]) extends ClassCode
+case class CMethod(access:CMethodAccess,name:String,desc:MDesc,sign:Option[MSign],exceptions:Seq[String],body:Seq[MethCode]) extends ClassCode
 case class CMethodAccess(raw:Int)
 case class MSign(raw:String)
 
@@ -91,17 +91,18 @@ case class CBegin(
   version:CVersion,
   access:CBeginAccess,
   name:JavaName,
-  sign:CSign,
-  superName:JavaName,
-  interfaces:Seq[String],
-  source:CSource,
-  nestHost:CNestHost,
-  annotations:Seq[CAnnotation],
-  typeAnnotations:Seq[CTypeAnnotation],
-  nestMembers:Seq[CNestMember],
-  innerClasses:Seq[CInnerClass],
-  fields:Seq[CField],
-  methods:Seq[CMethod],
+  sign:Option[CSign]=None,
+  superName:Option[JavaName]=None,
+  interfaces:Seq[String]=List(),
+  source:Option[CSource]=None,
+  nestHost:Option[CNestHost]=None,
+  annotations:Seq[CAnnotation]=List(),
+  typeAnnotations:Seq[CTypeAnnotation]=List(),
+  nestMembers:Seq[CNestMember]=List(),
+  permittedSubClasses:Seq[CPermittedSubclass]=List(),
+  innerClasses:Seq[CInnerClass]=List(),
+  fields:Seq[CField]=List(),
+  methods:Seq[CMethod]=List(),
   order:Map[ClassCode,Int]=Map()
 ) extends ClassCode
 case class CSign(raw:String)
