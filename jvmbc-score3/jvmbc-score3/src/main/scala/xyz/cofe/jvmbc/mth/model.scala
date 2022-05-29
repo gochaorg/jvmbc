@@ -479,7 +479,50 @@ case class MFieldInsn(op:OpCode,owner:String,name:String,desc:TDesc) extends Met
  * @param numStack
  * @param stack
  */
-case class MFrame(kind:Int,numLocal:Int,local:Seq[AnyRef],numStack:Int,stack:Seq[AnyRef]) extends MethCode
+case class MFrame(kind:MFrameType,numLocal:Int,local:Seq[AnyRef],numStack:Int,stack:Seq[AnyRef]) extends MethCode
+case class MFrameType(kind:Int)
+
+/**
+- **F_NEW**
+  An expanded frame. See {@link ClassReader#EXPAND_FRAMES}
+
+- **F_FULL**
+  A compressed frame with complete frame data.
+
+- **F_APPEND**
+  A compressed frame where locals are the same as the locals in the previous frame, except that
+  additional 1-3 locals are defined, and with an empty stack.
+
+- **F_CHOP**
+  A compressed frame where locals are the same as the locals in the previous frame, except that
+  the last 1-3 locals are absent and with an empty stack.
+
+- **F_SAME**
+  A compressed frame with exactly the same locals as the previous frame and with an empty stack.
+
+- **F_SAME1**
+  A compressed frame with exactly the same locals as the previous frame and with a single value
+  on the stack.
+*/
+enum MFrameKind(kind:Int):
+  case F_NEW    extends MFrameKind(-1)
+  case F_FULL   extends MFrameKind(0)
+  case F_APPEND extends MFrameKind(1)
+  case F_CHOP   extends MFrameKind(2)
+  case F_SAME   extends MFrameKind(3)
+  case F_SAME1  extends MFrameKind(4)
+
+case class MFrameElem(kind:Int)
+enum MFrameElemKind(kind:Int):
+  case ITEM_TOP extends MFrameElemKind(0)
+  case ITEM_INTEGER extends MFrameElemKind(1)
+  case ITEM_FLOAT extends MFrameElemKind(2)
+  case ITEM_DOUBLE extends MFrameElemKind(3)
+  case ITEM_LONG extends MFrameElemKind(4)
+  case ITEM_NULL extends MFrameElemKind(5)
+  case ITEM_UNINITIALIZED_THIS extends MFrameElemKind(6)
+  case ITEM_OBJECT extends MFrameElemKind(7)
+  case ITEM_UNINITIALIZED extends MFrameElemKind(8)
 
 /**
  * Increment local variable by constant (<a href="https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html">jvm spec</a>).
@@ -523,7 +566,7 @@ case class MIincInsn(variable:Int,inc:Int) extends MethCode
  * @param annotations
  */
 case class MInsnAnnotation(
-  typeRef:Int,
+  typeRef:MTypeInsnRef,
   typePath:Option[String],
   desc:TDesc,
   visible:Boolean,
@@ -888,7 +931,7 @@ case class MLocalVariable(name:String,desc:TDesc,sign:Option[Sign],labelStart:St
  * @param annotations
  */
 case class MLocalVariableAnnotation(
-  typeRef:Int,
+  typeRef:MTypeLocalVarRef,
   typePath:Option[String],
   startLabels:Seq[String],
   endLabels:Seq[String],
@@ -1156,7 +1199,8 @@ case class MMultiANewArrayInsn(desc:TDesc,numDimensions:Int) extends MethCode
  * @param name parameter name or {@literal null} if none is provided.
  * @param access the parameter's access flags, only {@code ACC_FINAL}, {@code ACC_SYNTHETIC} or/and {@code ACC_MANDATED} are allowed (see {@link Opcodes}).
  */
-case class MParameter(name:String,access:Int) extends MethCode
+case class MParameter(name:Option[String],access:MParameterAccess) extends MethCode
+case class MParameterAccess(raw:Int)
 
 /** 
  * @param param
@@ -1250,7 +1294,7 @@ case class MTableSwitchInsn(min:Int,max:Int,defaultLabel:String,labels:Seq[Strin
  * @param desc
  * @param visible
  */
-case class MTryCatchAnnotation(typeRef:Int,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends MethCode
+case class MTryCatchAnnotation(typeRef:MTypeTryCatchRef,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends MethCode
 
 /** 
  * try catch block
@@ -1259,7 +1303,7 @@ case class MTryCatchAnnotation(typeRef:Int,typePath:Option[String],desc:TDesc,vi
  * @param handlerLabel
  * @param type
  */
-case class MTryCatchBlock(startLabel:String,endLabel:String,handlerLabel:String,`type`:String) extends MethCode
+case class MTryCatchBlock(startLabel:String,endLabel:String,handlerLabel:String,typeName:Option[String]) extends MethCode
 
 /** 
  * @param typeRef
@@ -1267,7 +1311,7 @@ case class MTryCatchBlock(startLabel:String,endLabel:String,handlerLabel:String,
  * @param desc 
  * @param visible
  */
-case class MTypeAnnotation(typeRef:Int,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends MethCode
+case class MTypeAnnotation(typeRef:MTypeRef,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends MethCode
 
 /**
  * the opcode of the type instruction to be visited. This opcode is either NEW,

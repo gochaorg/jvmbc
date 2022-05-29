@@ -28,7 +28,10 @@ class MethodDump(
    */
   override def visitParameter(name:String, access:Int):Unit =
     body = Right(
-      MParameter(name,access)
+      MParameter(
+        if name!=null then Some(name) else None,
+        MParameterAccess(access)
+      )
     ) +: body
 
   /**
@@ -82,7 +85,7 @@ class MethodDump(
       body =
         abodyEt.map { body => 
           MTypeAnnotation(
-            typeRef,
+            MTypeRef(typeRef),
             if typePath!=null then Some(typePath.toString) else None,
             TDesc(descriptor),
             visible,
@@ -207,7 +210,7 @@ class MethodDump(
    */
   override def visitFrame(frameType:Int, numLocal:Int, local:Array[AnyRef] , numStack:Int, stack:Array[AnyRef]):Unit = 
     body = Right(MFrame(
-      frameType,
+      MFrameType(frameType),
       numLocal,
       local,
       numStack,
@@ -333,7 +336,9 @@ class MethodDump(
         case a:String => Right(StringArg(a))
         case a:org.objectweb.asm.Type => Right(TypeArg( a.toString ))
         case a:org.objectweb.asm.Handle => Right(bm.Handle(a))
-        case a:AnyRef => Left(s"unsupported bootstrap method arg ${a} : ${if a!=null then a.getClass else null}")
+        // TODO need implement ConstantDynamic
+        case a:org.objectweb.asm.ConstantDynamic => Left(s"(visitInvokeDynamicInsn) unimplemented ConstantDynamic")
+        case a:AnyRef => Left(s"(visitInvokeDynamicInsn) unsupported bootstrap method arg ${a} : ${if a!=null then a.getClass else null}")
     }
     val bmHdl = bm.Handle(bootstrapMethodHandle)
     
@@ -490,7 +495,7 @@ class MethodDump(
       body =
         abodyEt.map { body => 
           MInsnAnnotation(
-            typeRef,
+            MTypeInsnRef(typeRef),
             if typePath!=null then Some(typePath.toString) else None,
             TDesc(descriptor),
             visible,
@@ -520,7 +525,7 @@ class MethodDump(
         start.toString,
         end.toString,
         handler.toString,
-        typeName
+        if typeName!=null then Some(typeName) else None
       )) +: body
 
   /**
@@ -543,7 +548,7 @@ class MethodDump(
       body =
         abodyEt.map { body => 
           MTryCatchAnnotation(
-            typeRef,
+            MTypeTryCatchRef(typeRef),
             if typePath!=null then Some(typePath.toString) else None,
             TDesc(descriptor),
             visible,
@@ -610,7 +615,7 @@ class MethodDump(
       body =
         abodyEt.map { body => 
           MLocalVariableAnnotation(
-            typeRef,
+            MTypeLocalVarRef(typeRef),
             if typePath!=null then Some(typePath.toString) else None,
             start.map(_.toString),
             end.map(_.toString),
