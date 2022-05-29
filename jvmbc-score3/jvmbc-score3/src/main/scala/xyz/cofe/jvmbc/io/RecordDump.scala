@@ -54,7 +54,7 @@ extends RecordComponentVisitor(_api) {
    *
    * @param attribute an attribute.
    */
-  override def visitAttribute(attribute:Attribute):Unit = ???
+  override def visitAttribute(attribute:Attribute):Unit = {}
 
   /**
    * Visits the end of the record component. This method, which is the last one to be called, is

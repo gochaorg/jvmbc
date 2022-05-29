@@ -367,7 +367,7 @@ extends ClassVisitor(_api, null)
       nestMembers.reverse,
       permittedSubClasses.reverse,
       innerClasses.reverse,
-      flds.reverse,
+      flds,
       mths.reverse,
       order
     )
