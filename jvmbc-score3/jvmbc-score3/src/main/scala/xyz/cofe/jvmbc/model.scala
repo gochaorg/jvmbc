@@ -29,6 +29,7 @@ case class MTypeRef(private val _raw:Int) extends TypeRef(_raw)
 case class MTypeInsnRef(private val _raw:Int) extends TypeRef(_raw)
 case class MTypeTryCatchRef(private val _raw:Int) extends TypeRef(_raw)
 case class MTypeLocalVarRef(private val _raw:Int) extends TypeRef(_raw)
+case class ATypeRef(private val _raw:Int) extends TypeRef(_raw)
 
 /**
 

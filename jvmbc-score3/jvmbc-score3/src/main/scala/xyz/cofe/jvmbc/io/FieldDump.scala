@@ -51,7 +51,7 @@ extends FieldVisitor(_api)
     AnnotationDump(_api,Some(bodyEthier=>{
       body = bodyEthier.map { body => 
         FTypeAnnotation(
-          typeRef,
+          ATypeRef(typeRef),
           if typePath!=null then Some(typePath.toString) else None,
           TDesc(descriptor),
           visible,
