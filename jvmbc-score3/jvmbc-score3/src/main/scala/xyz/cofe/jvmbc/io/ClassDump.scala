@@ -101,10 +101,23 @@ extends ClassVisitor(_api, null)
    *     compiled elements of the class. May be {@literal null}.
    */
   override def visitSource(source:String, debug:String):Unit = 
-    this.source =Some(CSource(
-      if source!=null then Some(source) else None,
-      if debug!=null then Some(debug) else None
-    ))
+    (source!=null, debug!=null) match
+      case (true,true) =>
+        this.source =Some(CSource(
+          if source!=null then Some(source) else None,
+          if debug!=null then Some(debug) else None
+        ))
+      case (false,true) =>
+        this.source =Some(CSource(
+          if source!=null then Some(source) else None,
+          if debug!=null then Some(debug) else None
+        ))
+      case (true,false) =>
+        this.source =Some(CSource(
+          if source!=null then Some(source) else None,
+          if debug!=null then Some(debug) else None
+        ))
+      case _ =>
 
   /**
    * Visit the module corresponding to the class.
@@ -143,7 +156,11 @@ extends ClassVisitor(_api, null)
    *     the class is not enclosed in a method of its enclosing class.
    */
   override def visitOuterClass(owner:String, name:String, descriptor:String):Unit = 
-    this.outerClass = Some(COuterClass(owner,name,TDesc(descriptor)))
+    this.outerClass = Some(COuterClass(
+      owner,
+      if name!=null then Some(name) else None,
+      if descriptor!=null then Some(TDesc(descriptor)) else None
+    ))
 
   /**
    * Visits an annotation of the class.
@@ -179,7 +196,7 @@ extends ClassVisitor(_api, null)
     AnnotationDump(_api,Some(bodyEthier=>{
       typeAnnotations = bodyEthier.map { body => 
         CTypeAnnotation(
-          typeRef,
+          CTypeRef(typeRef),
           if typePath!=null then Some(typePath.toString) else None,
           TDesc(descriptor),
           visible,
@@ -237,7 +254,11 @@ extends ClassVisitor(_api, null)
    *     class.
    */
   override def visitInnerClass(name:String, outerName:String, innerName:String, access:Int):Unit = {
-    this.innerClasses = CInnerClass(CInnerClassAccess(access),name,outerName,innerName) +: this.innerClasses
+    this.innerClasses = CInnerClass(
+      CInnerClassAccess(access),
+      name,
+      if outerName!=null then Some(outerName) else None,
+      if innerName!=null then Some(innerName) else None ) +: this.innerClasses
   }
 
   /**

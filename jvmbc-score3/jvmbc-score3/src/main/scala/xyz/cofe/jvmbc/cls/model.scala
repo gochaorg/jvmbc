@@ -10,14 +10,14 @@ sealed trait ClassCode extends ByteCode
 case class CAnnotation(desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends ClassCode
 
 /** аннотации прикрепленные к классу */
-case class CTypeAnnotation(typeRef:Int,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends ClassCode
+case class CTypeAnnotation(typeRef:CTypeRef,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends ClassCode
 
 /**
  * имя исходного класса/файла отладки (debug)
  */
 case class CSource(source:Option[String],debug:Option[String]) extends ClassCode
 case class CPermittedSubclass(permittedSubclass:String) extends ClassCode
-case class COuterClass(owner:String,name:String,desc:TDesc) extends ClassCode
+case class COuterClass(owner:String,name:Option[String],desc:Option[TDesc]) extends ClassCode
 case class CNestMember(nestMember:String) extends ClassCode
 case class CNestHost(nestHost:String) extends ClassCode
 
@@ -66,7 +66,7 @@ case class CMethod(access:CMethodAccess,name:String,desc:MDesc,sign:Option[MSign
 case class CMethodAccess(raw:Int)
 case class MSign(raw:String)
 
-case class CInnerClass(access:CInnerClassAccess,name:String,outerName:String,innerName:String) extends ClassCode
+case class CInnerClass(access:CInnerClassAccess,name:String,outerName:Option[String],innerName:Option[String]) extends ClassCode
 case class CInnerClassAccess(raw:Int)
 
 /**
