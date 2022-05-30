@@ -359,16 +359,16 @@ extends ClassVisitor(_api, null)
       nam,
       sign,
       superName,
-      interfaces.reverse,
+      interfaces,
       source,
       nestHost,
-      ann.reverse,
-      tann.reverse,
-      nestMembers.reverse,
-      permittedSubClasses.reverse,
-      innerClasses.reverse,
+      ann,
+      tann,
+      nestMembers,
+      permittedSubClasses,
+      innerClasses,
       flds,
-      mths.reverse,
+      mths,
       order
     )
 }

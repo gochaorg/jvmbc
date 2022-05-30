@@ -79,6 +79,6 @@ extends FieldVisitor(_api)
 
   def build:Either[String,Seq[FieldCode]] = 
     import FirstErr.firstErr
-    firstErr(body.reverse)
+    firstErr(body)
 
 }

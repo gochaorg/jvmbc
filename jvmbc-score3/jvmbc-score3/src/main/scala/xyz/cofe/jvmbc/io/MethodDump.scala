@@ -660,5 +660,5 @@ class MethodDump(
 
   def build:Either[String,Seq[MethCode]] = 
     import FirstErr.firstErr
-    firstErr(body.reverse)
+    firstErr(body)
 }
