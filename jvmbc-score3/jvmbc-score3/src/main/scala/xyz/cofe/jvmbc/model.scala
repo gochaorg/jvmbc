@@ -7,7 +7,7 @@ case class JavaName(raw:String)
 case class Sign(raw:String)
 
 /** Сигнатура типа */
-case class TDesc( raw:String )
+case class TDesc(raw:String)
 
 /** Сигнатура метода типа */
 case class MDesc(raw:String)
@@ -30,6 +30,7 @@ case class MTypeInsnRef(private val _raw:Int) extends TypeRef(_raw)
 case class MTypeTryCatchRef(private val _raw:Int) extends TypeRef(_raw)
 case class MTypeLocalVarRef(private val _raw:Int) extends TypeRef(_raw)
 case class ATypeRef(private val _raw:Int) extends TypeRef(_raw)
+case class RTypeRef(private val _raw:Int) extends TypeRef(_raw)
 
 /**
 

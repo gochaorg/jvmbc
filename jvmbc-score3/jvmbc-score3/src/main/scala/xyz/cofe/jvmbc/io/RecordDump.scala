@@ -10,6 +10,8 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.TypePath
 import org.objectweb.asm.Attribute
 
+import rec._
+
 /**
 order
 
@@ -20,8 +22,13 @@ order
 - )* 
 - visitEnd
 */
-class RecordDump(private val _api:Int)
+class RecordDump(
+  private val _api:Int,
+  atEnd:Option[Either[String,Seq[RecordCode]]=>Unit]=None
+)
 extends RecordComponentVisitor(_api) {
+  var body = List[Either[String,RecordCode]]()
+
   /**
    * Visits an annotation of the record component.
    *
@@ -30,7 +37,16 @@ extends RecordComponentVisitor(_api) {
    * @return a visitor to visit the annotation values, or {@literal null} if this visitor is not
    *     interested in visiting this annotation.
    */
-  override def visitAnnotation(descriptor:String, visible:Boolean):AnnotationVisitor = ???
+  override def visitAnnotation(descriptor:String, visible:Boolean):AnnotationVisitor = 
+    AnnotationDump(_api,Some(bodyEthier=>{
+      body = bodyEthier.map { body => 
+        RecAnnotation(
+          TDesc(descriptor),
+          visible,
+          body
+        )
+      } +: body
+    }))
 
   /**
    * Visits an annotation on a type in the record component signature.
@@ -47,7 +63,18 @@ extends RecordComponentVisitor(_api) {
    * @return a visitor to visit the annotation values, or {@literal null} if this visitor is not
    *     interested in visiting this annotation.
    */
-  override def visitTypeAnnotation(typeRef:Int, typePath:TypePath, descriptor:String, visible:Boolean):AnnotationVisitor = ???
+  override def visitTypeAnnotation(typeRef:Int, typePath:TypePath, descriptor:String, visible:Boolean):AnnotationVisitor = 
+    AnnotationDump(_api,Some(bodyEthier=>{
+      body = bodyEthier.map { body => 
+        RecTypeAnnotation(
+          RTypeRef(typeRef),
+          if typePath!=null then Some(typePath.toString) else None,
+          TDesc(descriptor),
+          visible,
+          body
+        )
+      } +: body
+    }))
 
   /**
    * Visits a non standard attribute of the record component.
@@ -60,5 +87,13 @@ extends RecordComponentVisitor(_api) {
    * Visits the end of the record component. This method, which is the last one to be called, is
    * used to inform the visitor that everything have been visited.
    */
-  override def visitEnd():Unit = ???
+  override def visitEnd():Unit = 
+    body = Right(RecEnd()) +: body
+    atEnd match
+      case None => 
+      case Some(call) => call(build)    
+
+  def build:Either[String,Seq[RecordCode]] = 
+    import FirstErr.firstErr
+    firstErr(body)
 }

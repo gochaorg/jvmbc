@@ -47,7 +47,7 @@ extends ClassVisitor(_api, null)
   var superName:Option[JavaName] = None
   var interfaces:Seq[String] = List()
   var source:Option[CSource] = None
-  //var visitModule
+  var module:Option[Either[String,CModule]] = None
   var nestHost:Option[CNestHost] = None
   var outerClass:Option[COuterClass] = None
   var annotations:Seq[Either[String,CAnnotation]] = List()
@@ -55,10 +55,16 @@ extends ClassVisitor(_api, null)
   var nestMembers:Seq[CNestMember] = List()
   var permittedSubClasses:Seq[CPermittedSubclass] = List()
   var innerClasses:Seq[CInnerClass] = List()
-  //var visitRecordComponent
+  var recordComponents:Seq[Either[String,CRecordComponent]] = List()
   var fields:Seq[Either[String,CField]] = List()
   var methods:Seq[Either[String,CMethod]] = List()
   var order:Map[ClassCode,Int]=Map()
+
+  var orderPointer=0
+  protected def trackOrder[C <: ClassCode](cc:C):C = 
+    order += cc -> orderPointer
+    orderPointer += 1
+    cc
 
   /**
    * Visits the header of the class.
@@ -101,22 +107,17 @@ extends ClassVisitor(_api, null)
    *     compiled elements of the class. May be {@literal null}.
    */
   override def visitSource(source:String, debug:String):Unit = 
+    val src = CSource(
+          if source!=null then Some(source) else None,
+          if debug!=null then Some(debug) else None
+        )
+    def doIt() = 
+      this.source = Some(trackOrder(src))
+
     (source!=null, debug!=null) match
-      case (true,true) =>
-        this.source =Some(CSource(
-          if source!=null then Some(source) else None,
-          if debug!=null then Some(debug) else None
-        ))
-      case (false,true) =>
-        this.source =Some(CSource(
-          if source!=null then Some(source) else None,
-          if debug!=null then Some(debug) else None
-        ))
-      case (true,false) =>
-        this.source =Some(CSource(
-          if source!=null then Some(source) else None,
-          if debug!=null then Some(debug) else None
-        ))
+      case (true,true) => doIt()
+      case (false,true) => doIt()
+      case (true,false) => doIt()
       case _ =>
 
   /**
@@ -130,7 +131,17 @@ extends ClassVisitor(_api, null)
    *     interested in visiting this module.
    */
   override def visitModule(name:String, access:Int, version:String):ModuleVisitor = 
-    ModuleDump(_api)
+    ModuleDump(_api,Some(bodyEt => {
+      val el = bodyEt.map { body => 
+        trackOrder(CModule(
+          name,
+          CModuleAccess(access),
+          if version!=null then Some(version) else None,
+          body
+          ))
+        }
+      this.module = Some(el)
+    }))
 
   /**
    * Visits the nest host class of the class. A nest is a set of classes of the same package that
@@ -156,11 +167,11 @@ extends ClassVisitor(_api, null)
    *     the class is not enclosed in a method of its enclosing class.
    */
   override def visitOuterClass(owner:String, name:String, descriptor:String):Unit = 
-    this.outerClass = Some(COuterClass(
+    this.outerClass = Some(trackOrder(COuterClass(
       owner,
       if name!=null then Some(name) else None,
       if descriptor!=null then Some(TDesc(descriptor)) else None
-    ))
+    )))
 
   /**
    * Visits an annotation of the class.
@@ -173,7 +184,7 @@ extends ClassVisitor(_api, null)
   override def visitAnnotation(descriptor:String, visible:Boolean):AnnotationVisitor =
     AnnotationDump(_api,Some(bodyEthier=>{
       annotations = bodyEthier.map { body => 
-        CAnnotation(TDesc(descriptor),visible,body)
+        trackOrder(CAnnotation(TDesc(descriptor),visible,body))
       } +: annotations
     }))
 
@@ -195,13 +206,13 @@ extends ClassVisitor(_api, null)
   override def visitTypeAnnotation(typeRef:Int, typePath:TypePath, descriptor:String, visible:Boolean):AnnotationVisitor = 
     AnnotationDump(_api,Some(bodyEthier=>{
       typeAnnotations = bodyEthier.map { body => 
-        CTypeAnnotation(
+        trackOrder(CTypeAnnotation(
           CTypeRef(typeRef),
           if typePath!=null then Some(typePath.toString) else None,
           TDesc(descriptor),
           visible,
           body
-        )
+        ))
       } +: typeAnnotations
     }))
     
@@ -228,7 +239,7 @@ extends ClassVisitor(_api, null)
    * @param nestMember the internal name of a nest member.
    */
   override def visitNestMember(nestMember:String):Unit = {
-    this.nestMembers = CNestMember(nestMember) +: this.nestMembers
+    this.nestMembers = trackOrder(CNestMember(nestMember)) +: this.nestMembers
   }
 
   /**
@@ -238,7 +249,7 @@ extends ClassVisitor(_api, null)
    * @param permittedSubclass the internal name of a permitted subclass.
    */
   override def visitPermittedSubclass(permittedSubclass:String):Unit = {
-    this.permittedSubClasses = CPermittedSubclass(permittedSubclass) +: this.permittedSubClasses
+    this.permittedSubClasses = trackOrder(CPermittedSubclass(permittedSubclass)) +: this.permittedSubClasses
   }
 
   /**
@@ -254,11 +265,11 @@ extends ClassVisitor(_api, null)
    *     class.
    */
   override def visitInnerClass(name:String, outerName:String, innerName:String, access:Int):Unit = {
-    this.innerClasses = CInnerClass(
+    this.innerClasses = trackOrder(CInnerClass(
       CInnerClassAccess(access),
       name,
       if outerName!=null then Some(outerName) else None,
-      if innerName!=null then Some(innerName) else None ) +: this.innerClasses
+      if innerName!=null then Some(innerName) else None )) +: this.innerClasses
   }
 
   /**
@@ -272,7 +283,17 @@ extends ClassVisitor(_api, null)
    *     if this class visitor is not interested in visiting these annotations and attributes.
    */
   override def visitRecordComponent(name:String, descriptor:String, signature:String):RecordComponentVisitor = 
-    RecordDump(_api)
+    RecordDump(_api, Some(bodyEt => {
+      val e = bodyEt.map { body => 
+        trackOrder(CRecordComponent(
+          name,
+          TDesc(descriptor),
+          if signature!=null then Some(Sign(signature)) else None,
+          body
+        ))
+      }
+      this.recordComponents = e +: this.recordComponents
+    }))
 
   /**
    * Visits a field of the class.
@@ -295,13 +316,13 @@ extends ClassVisitor(_api, null)
   override def visitField(access:Int, name:String, descriptor:String, signature:String, value:AnyRef):FieldVisitor = 
     FieldDump(_api,Some(fieldEt => {
       val cf = fieldEt.map { body => 
-        CField(
+        trackOrder(CField(
           access,
           name,
           TDesc(descriptor),
           if signature!=null then Some(Sign(signature)) else None,
           if value!=null then Some(value) else None
-        )
+        ))
       }
       fields = cf +: fields
     }))
@@ -325,14 +346,14 @@ extends ClassVisitor(_api, null)
   override def visitMethod(access:Int, name:String, descriptor:String, signature:String, exceptions:Array[String]):MethodVisitor = 
     MethodDump(_api,Some(methEt => {
       val cm = methEt.map { body => 
-        CMethod(
+        trackOrder(CMethod(
           CMethodAccess(access),
           name,
           MDesc(descriptor),
           if signature!=null then Some(MSign(signature)) else None,
           if exceptions!=null then exceptions else List(),
           body
-        )
+        ))
       }
       methods = cm +: methods
     }))
@@ -344,31 +365,38 @@ extends ClassVisitor(_api, null)
   override def visitEnd():Unit = {}
 
   def build:Either[String,CBegin] =
-    import FirstErr.firstErr
-    for {
-      ver  <- version.toRight("version not defined")
-      acc  <- access.toRight("access not defined")
-      nam  <- name.toRight("name not defined")
-      ann  <- firstErr(annotations)
-      tann <- firstErr(typeAnnotations)
-      flds <- firstErr(fields)
-      mths <- firstErr(methods)
-    } yield CBegin(
-      ver,
-      acc,
-      nam,
-      sign,
-      superName,
-      interfaces,
-      source,
-      nestHost,
-      ann,
-      tann,
-      nestMembers,
-      permittedSubClasses,
-      innerClasses,
-      flds,
-      mths,
-      order
-    )
+    if module.isDefined && module.get.isLeft then
+      Left(module.get.left.getOrElse("?"))
+    else
+      val module0 = module.map { m => m.right.get }
+      import FirstErr.firstErr
+      for {
+        ver  <- version.toRight("version not defined")
+        acc  <- access.toRight("access not defined")
+        nam  <- name.toRight("name not defined")
+        ann  <- firstErr(annotations)
+        tann <- firstErr(typeAnnotations)
+        flds <- firstErr(fields)
+        mths <- firstErr(methods)
+        recs <- firstErr(recordComponents)
+      } yield CBegin(
+        ver,
+        acc,
+        nam,
+        sign,
+        superName,
+        interfaces,
+        source,
+        module0,
+        nestHost,
+        ann,
+        tann,
+        nestMembers,
+        permittedSubClasses,
+        innerClasses,
+        recs,
+        flds,
+        mths,
+        order
+      )
 }

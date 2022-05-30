@@ -3,6 +3,9 @@ package cls
 
 import ann.AnnCode
 import mth.MethCode
+import mdl.ModuleCode
+import mdl.Modulo
+import rec.RecordCode
 
 sealed trait ClassCode extends ByteCode
 
@@ -16,6 +19,21 @@ case class CTypeAnnotation(typeRef:CTypeRef,typePath:Option[String],desc:TDesc,v
  * имя исходного класса/файла отладки (debug)
  */
 case class CSource(source:Option[String],debug:Option[String]) extends ClassCode
+
+/** 
+ * Модуль приложения
+ * @param name имя модуля
+ * @param access Доступ
+ * @param version Версия
+ */
+case class CModule(name:String,access:CModuleAccess,version:Option[String],body:Modulo) extends ClassCode
+
+/** 
+ * Доступ модуля
+ * @param raw флаги доступ
+ */
+case class CModuleAccess(raw:Int)
+
 case class CPermittedSubclass(permittedSubclass:String) extends ClassCode
 case class COuterClass(owner:String,name:Option[String],desc:Option[TDesc]) extends ClassCode
 case class CNestMember(nestMember:String) extends ClassCode
@@ -69,6 +87,11 @@ case class MSign(raw:String)
 case class CInnerClass(access:CInnerClassAccess,name:String,outerName:Option[String],innerName:Option[String]) extends ClassCode
 case class CInnerClassAccess(raw:Int)
 
+/** 
+ * Record класс
+ */
+case class CRecordComponent(name:String, desc:TDesc, sign:Option[Sign],body:Seq[RecordCode]) extends ClassCode
+
 /**
  * Описывает класс / модуль
  * @param version версия байт-кода
@@ -78,6 +101,7 @@ case class CInnerClassAccess(raw:Int)
  * @param superName имя (байт-код) класса родителя
  * @param interfaces имена (байт-код) интерфейсов
  * @param source имя исходного класса/файла отладки (debug)
+ * @param module
  * @param nestHost 
  * @param annotations аннотации прикрепленные к классу
  * @param typeAnnotations аннотации прикрепленные к классу
@@ -95,12 +119,14 @@ case class CBegin(
   superName:Option[JavaName]=None,
   interfaces:Seq[String]=List(),
   source:Option[CSource]=None,
+  module:Option[CModule]=None,
   nestHost:Option[CNestHost]=None,
   annotations:Seq[CAnnotation]=List(),
   typeAnnotations:Seq[CTypeAnnotation]=List(),
   nestMembers:Seq[CNestMember]=List(),
   permittedSubClasses:Seq[CPermittedSubclass]=List(),
   innerClasses:Seq[CInnerClass]=List(),
+  recordComponents:Seq[CRecordComponent]=List(),
   fields:Seq[CField]=List(),
   methods:Seq[CMethod]=List(),
   order:Map[ClassCode,Int]=Map()
