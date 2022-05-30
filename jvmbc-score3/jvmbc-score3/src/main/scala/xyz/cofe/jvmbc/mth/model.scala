@@ -904,8 +904,8 @@ case class MLdcInsn(value:AnyRef) extends MethCode {
 
 /** 
  * Номер строки в исходном коде
- * @param line
- * @param label
+ * @param line a line number. This number refers to the source file from which the class was compiled.
+ * @param label the first instruction corresponding to this line number.
  */
 case class MLineNumber(line:Int,label:String) extends MethCode
 
