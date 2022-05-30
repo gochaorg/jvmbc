@@ -6,19 +6,20 @@ import mth.MethCode
 import mdl.ModuleCode
 import mdl.Modulo
 import rec.RecordCode
+import xyz.cofe.jvmbc.fld.FieldCode
 
 sealed trait ClassCode extends ByteCode
 
 /** аннотации прикрепленные к классу */
-case class CAnnotation(desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends ClassCode
+case class CAnnotation(desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends ClassCode with NestedAll
 
 /** аннотации прикрепленные к классу */
-case class CTypeAnnotation(typeRef:CTypeRef,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends ClassCode
+case class CTypeAnnotation(typeRef:CTypeRef,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends ClassCode with NestedAll
 
 /**
  * имя исходного класса/файла отладки (debug)
  */
-case class CSource(source:Option[String],debug:Option[String]) extends ClassCode
+case class CSource(source:Option[String],debug:Option[String]) extends ClassCode with NestedAll
 
 /** 
  * Модуль приложения
@@ -26,7 +27,7 @@ case class CSource(source:Option[String],debug:Option[String]) extends ClassCode
  * @param access Доступ
  * @param version Версия
  */
-case class CModule(name:String,access:CModuleAccess,version:Option[String],body:Modulo) extends ClassCode
+case class CModule(name:String,access:CModuleAccess,version:Option[String],body:Modulo) extends ClassCode with NestedAll
 
 /** 
  * Доступ модуля
@@ -77,10 +78,13 @@ case class CNestHost(nestHost:String) extends ClassCode
  *       accessDecode="[Private]"
  *       descriptor="Ljava/lang/String;"
  */
-case class CField(access:Int,name:String,desc:TDesc,sign:Option[Sign],value:Option[AnyRef]) extends ClassCode
+case class CField(access:Int,name:String,desc:TDesc,sign:Option[Sign],value:Option[AnyRef], body:Seq[FieldCode]) 
+  extends ClassCode with NestedAll
 
 /** Описывает метод класса */
-case class CMethod(access:CMethodAccess,name:String,desc:MDesc,sign:Option[MSign],exceptions:Seq[String],body:Seq[MethCode]) extends ClassCode
+case class CMethod(access:CMethodAccess,name:String,desc:MDesc,sign:Option[MSign],exceptions:Seq[String],body:Seq[MethCode])
+  extends ClassCode with NestedAll
+
 case class CMethodAccess(raw:Int)
 case class MSign(raw:String)
 
@@ -90,7 +94,7 @@ case class CInnerClassAccess(raw:Int)
 /** 
  * Record класс
  */
-case class CRecordComponent(name:String, desc:TDesc, sign:Option[Sign],body:Seq[RecordCode]) extends ClassCode
+case class CRecordComponent(name:String, desc:TDesc, sign:Option[Sign],body:Seq[RecordCode]) extends ClassCode with NestedAll
 
 /**
  * Описывает класс / модуль
@@ -130,7 +134,7 @@ case class CBegin(
   fields:Seq[CField]=List(),
   methods:Seq[CMethod]=List(),
   order:Map[ClassCode,Int]=Map()
-) extends ClassCode
+) extends ClassCode with NestedAll
 case class CSign(raw:String)
 case class CVersion(raw:Int)
 

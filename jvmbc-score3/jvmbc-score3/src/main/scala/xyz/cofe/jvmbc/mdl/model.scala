@@ -11,7 +11,7 @@ case class Modulo(
   opens: Seq[ModOpen] = List(),
   uses: Seq[ModUse] = List(),
   providers: Seq[ModProvide] = List(),
-) extends ModuleCode
+) extends ModuleCode with NestedAll
 
 case class ModMainClass(name:String) extends ModuleCode
 case class ModPackage(name:String) extends ModuleCode

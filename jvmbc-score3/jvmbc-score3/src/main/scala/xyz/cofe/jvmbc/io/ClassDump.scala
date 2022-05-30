@@ -321,7 +321,8 @@ extends ClassVisitor(_api, null)
           name,
           TDesc(descriptor),
           if signature!=null then Some(Sign(signature)) else None,
-          if value!=null then Some(value) else None
+          if value!=null then Some(value) else None,
+          body
         ))
       }
       fields = cf +: fields
