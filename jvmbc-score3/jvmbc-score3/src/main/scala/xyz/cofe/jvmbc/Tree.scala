@@ -3,9 +3,13 @@ package xyz.cofe.jvmbc
 trait Nested extends Product:
   self =>
 
-  private def debug(any:AnyRef)=println(any)
-  
-  def nested:List[Product]
+  def nested:List[Product]=
+    unpack(
+      this.productIterator.zip(this.productElementNames)
+        .filter { case(prod,name) => isNestedItem(name) }
+    )
+
+  def isNestedItem(name:String):Boolean
 
   def walk:Iterator[List[Product]] = new {
     private var ws = List[List[Product]](List(self))
@@ -14,81 +18,42 @@ trait Nested extends Product:
       val res = ws.head
       ws = ws.tail
       res.head match
-        case Some(n:Nested) =>
-          val follows = n.nested.map { n => 
-            n :: res
-          }
-          ws = follows ::: ws
         case nested:Nested =>
           val follows = nested.nested.map { n => 
-            //if n.isInstanceOf[Seq[_]] then 
             n :: res
           }
           ws = follows ::: ws
-        case _ =>
-          if res.head.isInstanceOf[Seq[_]] then
-            var ins = List[List[Product]]()
-            res.head.asInstanceOf[Seq[_]].filter(_!=null).foreach { n =>
-              n match
-                case nested:Nested =>
-                  //val in0 = nested.nested.map { u => u :: res }
-                  val in0 = List(nested :: res)
-                  ins = ins ::: in0
-                case _ =>
-            }
-            ws = ins ::: ws
+        case _ => 
       res
   }
 
+  protected def unpack( seq:Iterator[(Any,String)] )=
+    seq.filter { case(prod,name) => prod match 
+        case None => false
+        case _ => true
+      }
+      .map { case(prod,name) => prod match 
+        case Some(prod) => (prod,name)
+        case _ => (prod,name)
+      }
+      .filter { case(prod,name) => prod.isInstanceOf[Product] }
+      .map { case(prod,name) => prod.asInstanceOf[Product] }
+      .flatMap { prod => 
+        prod match
+          case seq@Seq(_*) =>
+            seq.filter { _.isInstanceOf[Product] }.map { _.asInstanceOf[Product] }.toList
+          case _ => List(prod)
+      }
+      .toList
+
 trait NestedAll extends Product with Nested:
   self =>
-
-  private def debug(any:AnyRef)=
-    {}
-    //println(any)
-
-  def nested:List[Product] =
-    debug("NestedAll")
-    val r = this.productIterator.filter { _.isInstanceOf[Product] }.map { _.asInstanceOf[Product] }.toList
-    debug(s"res = $r")
-    r
+  def isNestedItem(name:String):Boolean = true
 
 trait NestedThey(they:String*) extends Product with Nested:
   self =>
-
-  private def debug(any:AnyRef)=
-    {}
-    //println(any)
-
-  def nested:List[Product] =
-    debug(s"NestedThey($they) $self")
-    val r = this.productIterator.zip(this.productElementNames)
-      .map { case (prod,name) => (prod,name, they.exists(t => t==name) && prod.isInstanceOf[Product] ) }
-      .filter { case(prod,name,matched) => 
-        debug(s"name $name matched $matched")
-        matched 
-      }
-      .map { case(prod,name,matched) => prod.asInstanceOf[Product] }
-      .toList
-    debug(s"res = $r")
-    r
+  def isNestedItem(name:String):Boolean = they.exists(t=>t==name)
 
 trait NestedExcl(they:String*) extends Product with Nested:
   self =>
-
-  private def debug(any:AnyRef)=
-    //println(any)
-    {}
-
-  def nested:List[Product] =
-    debug(s"NestedExcl($they) $self")
-    val r = this.productIterator.zip(this.productElementNames)
-      .map { case (prod,name) => (prod,name, !they.exists(t => t==name ) && prod.isInstanceOf[Product] ) }
-      .filter { case(prod,name,matched) => 
-        debug(s"name $name matched $matched")
-        matched 
-      }
-      .map { case(prod,name,matched) => prod.asInstanceOf[Product] }
-      .toList
-    debug(s"res = $r")
-    r
+  def isNestedItem(name:String):Boolean = !they.exists(t=>t==name)

@@ -15,12 +15,13 @@ case class CAnnotation(desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) exte
 
 /** аннотации прикрепленные к классу */
 case class CTypeAnnotation(typeRef:CTypeRef,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) 
-  extends ClassCode with NestedThey("annotations")
+  extends ClassCode 
 
 /**
  * имя исходного класса/файла отладки (debug)
  */
-case class CSource(source:Option[String],debug:Option[String]) extends ClassCode
+case class CSource(source:Option[String],debug:Option[String]) 
+  extends ClassCode
 
 /** 
  * Модуль приложения
@@ -28,7 +29,9 @@ case class CSource(source:Option[String],debug:Option[String]) extends ClassCode
  * @param access Доступ
  * @param version Версия
  */
-case class CModule(name:String,access:CModuleAccess,version:Option[String],body:Modulo) extends ClassCode with NestedThey("body")
+case class CModule(name:String,access:CModuleAccess,version:Option[String],body:Modulo) 
+  extends ClassCode 
+  with NestedThey("body")
 
 /** 
  * Доступ модуля
@@ -36,8 +39,12 @@ case class CModule(name:String,access:CModuleAccess,version:Option[String],body:
  */
 case class CModuleAccess(raw:Int)
 
-case class CPermittedSubclass(permittedSubclass:String) extends ClassCode
-case class COuterClass(owner:String,name:Option[String],desc:Option[TDesc]) extends ClassCode
+case class CPermittedSubclass(permittedSubclass:String) 
+  extends ClassCode
+
+case class COuterClass(owner:String,name:Option[String],desc:Option[TDesc]) 
+  extends ClassCode
+
 case class CNestMember(nestMember:String) extends ClassCode
 case class CNestHost(nestHost:String) extends ClassCode
 
@@ -80,22 +87,28 @@ case class CNestHost(nestHost:String) extends ClassCode
  *       descriptor="Ljava/lang/String;"
  */
 case class CField(access:Int,name:String,desc:TDesc,sign:Option[Sign],value:Option[AnyRef], body:Seq[FieldCode]) 
-  extends ClassCode with NestedThey("body")
+  extends ClassCode 
+  with NestedThey("body")
 
 /** Описывает метод класса */
 case class CMethod(access:CMethodAccess,name:String,desc:MDesc,sign:Option[MSign],exceptions:Seq[String],body:Seq[MethCode])
-  extends ClassCode with NestedThey("body")
+  extends ClassCode 
+  with NestedThey("body")
 
 case class CMethodAccess(raw:Int)
 case class MSign(raw:String)
 
-case class CInnerClass(access:CInnerClassAccess,name:String,outerName:Option[String],innerName:Option[String]) extends ClassCode
+case class CInnerClass(access:CInnerClassAccess,name:String,outerName:Option[String],innerName:Option[String]) 
+  extends ClassCode
+
 case class CInnerClassAccess(raw:Int)
 
 /** 
  * Record класс
  */
-case class CRecordComponent(name:String, desc:TDesc, sign:Option[Sign],body:Seq[RecordCode]) extends ClassCode with NestedAll
+case class CRecordComponent(name:String, desc:TDesc, sign:Option[Sign],body:Seq[RecordCode]) 
+  extends ClassCode 
+  with NestedThey("body")
 
 /**
  * Описывает класс / модуль
@@ -135,7 +148,10 @@ case class CBegin(
   fields:Seq[CField]=List(),
   methods:Seq[CMethod]=List(),
   order:Map[ClassCode,Int]=Map()
-) extends ClassCode with NestedExcl("version","access","name","sign","superName","interfaces","order")
+) 
+  extends ClassCode 
+  with NestedExcl("version","access","name","sign","superName","interfaces","order")
+
 case class CSign(raw:String)
 case class CVersion(raw:Int)
 

@@ -1063,7 +1063,8 @@ case class MLookupSwitchInsn(
  * @param maxStack  максимальный размер стека метода.
  * @param maxLocal  максимальное количество локальных переменных для метода.
  */
-case class MMaxs(maxStack:Int,maxLocal:Int) extends MethCode
+case class MMaxs(maxStack:Int,maxLocal:Int) 
+  extends MethCode
 
 /**
  * This opcode is either
@@ -1149,7 +1150,8 @@ MyClass
  * @param desc
  * @param iface
  */
-case class MMethodInsn(op:OpCode,owner:String,name:String,desc:MDesc,iface:Boolean) extends MethCode
+case class MMethodInsn(op:OpCode,owner:String,name:String,desc:MDesc,iface:Boolean) 
+  extends MethCode
 
 /**
  * multianewarray
@@ -1203,14 +1205,17 @@ case class MMethodInsn(op:OpCode,owner:String,name:String,desc:MDesc,iface:Boole
  * @param desc
  * @param numDimensions
  */
-case class MMultiANewArrayInsn(desc:TDesc,numDimensions:Int) extends MethCode
+case class MMultiANewArrayInsn(desc:TDesc,numDimensions:Int) 
+  extends MethCode
 
 /** 
  * Visits a parameter of this method.
  * @param name parameter name or {@literal null} if none is provided.
  * @param access the parameter's access flags, only {@code ACC_FINAL}, {@code ACC_SYNTHETIC} or/and {@code ACC_MANDATED} are allowed (see {@link Opcodes}).
  */
-case class MParameter(name:Option[String],access:MParameterAccess) extends MethCode
+case class MParameter(name:Option[String],access:MParameterAccess) 
+  extends MethCode
+
 case class MParameterAccess(raw:Int)
 
 /** 
@@ -1220,7 +1225,7 @@ case class MParameterAccess(raw:Int)
  * @param annotations
  */
 case class MParameterAnnotation(param:Int,desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) 
-  extends MethCode with NestedAll
+  extends MethCode 
 
 /**
  * tableswitch
@@ -1298,7 +1303,8 @@ case class MParameterAnnotation(param:Int,desc:TDesc,visible:Boolean,annotations
  * @param defaultLabel
  * @param labels
  */
-case class MTableSwitchInsn(min:Int,max:Int,defaultLabel:String,labels:Seq[String]) extends MethCode
+case class MTableSwitchInsn(min:Int,max:Int,defaultLabel:String,labels:Seq[String]) 
+  extends MethCode
 
 /** 
  * @param typeRef
@@ -1312,7 +1318,8 @@ case class MTryCatchAnnotation(
   desc:TDesc,
   visible:Boolean,
   annotations:Seq[AnnCode]
-) extends MethCode with NestedAll
+) extends MethCode 
+  with NestedThey("annotations")
 
 /** 
  * try catch block
@@ -1340,7 +1347,8 @@ case class MTypeAnnotation(
   desc:TDesc,
   visible:Boolean,
   annotations:Seq[AnnCode]
-) extends MethCode with NestedAll
+) extends MethCode 
+  with NestedThey("annotations")
 
 /**
  * the opcode of the type instruction to be visited. This opcode is either NEW,
@@ -1352,7 +1360,8 @@ case class MTypeAnnotation(
  * @param op
  * @param type
  */
-case class MTypeInsn(op:OpCode,typeName:String) extends MethCode
+case class MTypeInsn(op:OpCode,typeName:String) 
+  extends MethCode
 
 /**
  * the opcode of the local variable instruction to be visited. This opcode is either
@@ -2041,4 +2050,5 @@ case class MTypeInsn(op:OpCode,typeName:String) extends MethCode
  * @param op
  * @param variable
  */
-case class MVarInsn(op:OpCode,variable:Int) extends MethCode
+case class MVarInsn(op:OpCode,variable:Int) 
+  extends MethCode
