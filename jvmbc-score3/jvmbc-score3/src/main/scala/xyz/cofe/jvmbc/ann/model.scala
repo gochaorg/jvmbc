@@ -62,8 +62,12 @@ object APair:
 
 case class AEnum(name:String,desc:TDesc,value:String) extends AnnCode
 
-case class EmAArray(name:String,annotations:Seq[AnnCode]) extends AnnCode with NestedAll
+case class EmAArray(name:String,annotations:Seq[AnnCode]) 
+  extends AnnCode 
+  with NestedThey("annotations")
 
-case class EmANameDesc(name:String,desc:TDesc,annotations:Seq[AnnCode]) extends AnnCode with NestedAll
+case class EmANameDesc(name:String,desc:TDesc,annotations:Seq[AnnCode]) 
+  extends AnnCode 
+  with NestedThey("annotations")
 
 case class AEnd() extends AnnCode

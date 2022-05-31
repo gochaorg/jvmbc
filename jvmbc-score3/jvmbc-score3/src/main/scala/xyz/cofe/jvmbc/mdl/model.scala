@@ -13,8 +13,11 @@ case class Modulo(
   providers: Seq[ModProvide] = List(),
 ) extends ModuleCode with NestedAll
 
-case class ModMainClass(name:String) extends ModuleCode
-case class ModPackage(name:String) extends ModuleCode
+case class ModMainClass(name:String) 
+  extends ModuleCode
+
+case class ModPackage(name:String) 
+  extends ModuleCode
 
 case class ModRequire(
   module:String, 
@@ -24,10 +27,16 @@ case class ModRequire(
 
 case class ModRequireAccess(raw:Int)
 
-case class ModExport(packaze:String, access:ModExportAccess, modules:Seq[String]) extends ModuleCode
+case class ModExport(packaze:String, access:ModExportAccess, modules:Seq[String]) 
+  extends ModuleCode
+  with NestedThey("modules")
+
 case class ModExportAccess(raw:Int)
 
-case class ModOpen(packaze:String, access:ModOpenAccess, modules:Seq[String]) extends ModuleCode
+case class ModOpen(packaze:String, access:ModOpenAccess, modules:Seq[String]) 
+  extends ModuleCode
+  with NestedThey("modules")
+
 case class ModOpenAccess(raw:Int)
 
 case class ModUse(service:String) extends ModuleCode
