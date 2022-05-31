@@ -54,7 +54,6 @@ class TreeTest extends AnyFunSuite {
                       case _ => s" ${name}=$value"
                     )
                   }
-                case _ =>
               println()
         }
   }
