@@ -5,6 +5,9 @@ import java.util.Map;
 import org.objectweb.asm.Label;
 import xyz.cofe.jvmbc.bm.MHandle;
 
+/**
+ * Контекст записи метода
+ */
 public class MethodWriterCtx {
     private Map<String, Label> labels = new LinkedHashMap<>();
     public Label labelCreate(String name){

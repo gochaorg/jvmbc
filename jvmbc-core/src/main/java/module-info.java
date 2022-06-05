@@ -11,4 +11,5 @@ module xyz.cofe.jvmbc.core {
     //exports xyz.cofe.jvmbc.prop;
     exports xyz.cofe.jvmbc.tree;
     exports xyz.cofe.jvmbc.fn;
+    exports xyz.cofe.jvmbc.rec;
 }

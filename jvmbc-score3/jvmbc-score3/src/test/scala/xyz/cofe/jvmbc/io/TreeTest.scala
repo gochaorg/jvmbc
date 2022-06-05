@@ -13,7 +13,8 @@ import xyz.cofe.jvmbc.Nested
 class TreeTest extends AnyFunSuite {
   test("SampleClass.class nested tree") {
     println("-"*60)
-    val sampleClass = this.getClass.getResource("/xyz/cofe/jvmbc/SampleClass.class")
+    //val sampleClass = this.getClass.getResource("/xyz/cofe/jvmbc/SampleClass.class")
+    val sampleClass = this.getClass.getResource("/xyz/cofe/jvmbc/SampleAnn.class")
     require(sampleClass!=null)
 
     val strm = sampleClass.openStream    

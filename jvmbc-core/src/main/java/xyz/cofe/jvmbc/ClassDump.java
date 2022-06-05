@@ -3,18 +3,12 @@ package xyz.cofe.jvmbc;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Attribute;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.ModuleVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.RecordComponentVisitor;
-import org.objectweb.asm.TypePath;
+
+import org.objectweb.asm.*;
 import xyz.cofe.jvmbc.cls.*;
 import xyz.cofe.jvmbc.fld.FieldByteCode;
 import xyz.cofe.jvmbc.mth.MethodByteCode;
+import xyz.cofe.jvmbc.rec.RecordByteCode;
 
 /**
  * Дамп байт-кода класса
@@ -257,10 +251,36 @@ public class ClassDump<
         emit(c);
     }
 
+    /**
+     * Visits a record component of the class.
+     *
+     * @param name the record component name.
+     * @param descriptor the record component descriptor (see {@link Type}).
+     * @param signature the record component signature. May be {@literal null} if the record component
+     *     type does not use generic types.
+     * @return a visitor to visit this record component annotations and attributes, or {@literal null}
+     *     if this class visitor is not interested in visiting these annotations and attributes.
+     */
     @Override
     public RecordComponentVisitor visitRecordComponent(String name, String descriptor, String signature){
         dump("recordComponent name="+name+" descriptor="+descriptor+" signature="+signature);
-        return super.visitRecordComponent(name, descriptor, signature);
+
+        int ci = currentIndexGetAndInc();
+        var c = new CRecord(name,descriptor,signature);
+
+        currentClass( x -> x.order(c,ci).getRecords().add(c) );
+
+        RecordDump dump = new RecordDump(api);
+        dump.byteCode( bc -> {
+            if( byteCodeConsumer!=null )byteCodeConsumer.accept(bc);
+            if( bc instanceof RecordByteCode ){
+                c.getRecordByteCodes().add( (RecordByteCode)bc );
+            }
+        });
+
+        emit(c);
+
+        return dump;
     }
 
     @Override

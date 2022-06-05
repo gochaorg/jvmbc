@@ -127,11 +127,13 @@ public class CBegin<
      */
     public CFIELD clone(CFIELD field){
         if( field==null )throw new IllegalArgumentException( "field==null" );
+        //noinspection unchecked
         return (CFIELD) field.clone();
     }
 
     public CMETHOD clone(CMETHOD method){
         if( method==null )throw new IllegalArgumentException( "method==null" );
+        //noinspection unchecked
         return (CMETHOD) method.clone();
     }
 
@@ -230,9 +232,13 @@ public class CBegin<
     /**
      * Манипуляции с именем класса
      */
-    public static class JavaNamed {
-        public final CBegin cBegin;
-        public JavaNamed(CBegin cBegin){
+    public static class JavaNamed<
+        CFIELD extends CField,
+        CMETHOD extends CMethod<CM_LIST>,
+        CM_LIST extends List<MethodByteCode>
+        > {
+        public final CBegin<CFIELD,CMETHOD,CM_LIST> cBegin;
+        public JavaNamed(CBegin<CFIELD,CMETHOD,CM_LIST> cBegin){
             if( cBegin==null )throw new IllegalArgumentException( "cBegin==null" );
             this.cBegin = cBegin;
         }
@@ -338,8 +344,8 @@ public class CBegin<
      * Изменение имени класса, меняет содержимое поля {@link #name}
      * @return управление именем класса
      */
-    public JavaNamed javaName(){
-        return new JavaNamed(this);
+    public JavaNamed<CFIELD,CMETHOD,CM_LIST> javaName(){
+        return new JavaNamed<>(this);
     }
     //endregion
     //region signature : String - сигнатура generic или null
@@ -515,7 +521,17 @@ public class CBegin<
     }
     //endregion
 
-    // protected List visitRecordComponent
+    //region records : List<CRecord>
+    protected List<CRecord> records;
+    public List<CRecord> getRecords(){
+        if( records!=null )return records;
+        records = new ArrayList<>();
+        return records;
+    }
+    public void setRecords(List<CRecord> records){
+        this.records = records;
+    }
+    //endregion
 
     //region fields : List<CFIELD> - Список полней класса
     /**
@@ -592,7 +608,7 @@ public class CBegin<
      * @param order порядок
      * @return SELF ссылка
      */
-    public CBegin order(ClsByteCode c, int order){
+    public CBegin<CFIELD, CMETHOD, CM_LIST> order(ClsByteCode c, int order){
         if( c==null )throw new IllegalArgumentException( "c==null" );
         getOrder().put(c,order);
         return this;
@@ -615,7 +631,6 @@ public class CBegin<
      * Возвращает дочерние узлы
      * @return дочерние узлы
      */
-    @SuppressWarnings("unchecked")
     @Override
     public List<ByteCode> nodes(){
         ArrayList<ByteCode> r = new ArrayList<>();
@@ -739,6 +754,7 @@ public class CBegin<
         dump.byteCode( byteCodes::add );
         classReader.accept(dump,0);
 
+        //noinspection unchecked,rawtypes
         return byteCodes.stream().filter( b -> b instanceof CBegin )
             .map( b -> (CBegin)b ).findFirst().get();
     }
@@ -812,6 +828,7 @@ public class CBegin<
         dump.byteCode( byteCodes::add );
         classReader.accept(dump,0);
 
+        //noinspection unchecked,OptionalGetWithoutIsPresent
         return byteCodes.stream().filter( b -> b instanceof CBegin )
             .map( b -> (CBEGIN)b ).findFirst().get();
     }
