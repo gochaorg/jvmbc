@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import org.objectweb.asm.*;
 import xyz.cofe.jvmbc.cls.*;
 import xyz.cofe.jvmbc.fld.FieldByteCode;
+import xyz.cofe.jvmbc.mdl.Modulo;
 import xyz.cofe.jvmbc.mth.MethodByteCode;
 import xyz.cofe.jvmbc.rec.RecordByteCode;
 
@@ -158,8 +159,31 @@ public class ClassDump<
 
     @Override
     public ModuleVisitor visitModule(String name, int access, String version){
-        dump("module name="+name+" access="+(new AccFlags(access).flags())+" version="+version);
-        return super.visitModule(name, access, version);
+        //dump("module name="+name+" access="+(new AccFlags(access).flags())+" version="+version);
+
+        CModule cmod = new CModule();
+        cmod.setName(name);
+        cmod.setAccess(access);
+        cmod.setVersion(version);
+        ModuleDump moduleDump = new ModuleDump(api){
+            @Override
+            protected Modulo newModulo(){
+                return cmod;
+            }
+        };
+        moduleDump.byteCode( bc -> {
+            if( bc instanceof CModule ){
+                CModule cmod0 = (CModule)bc;
+                int ci = currentIndexGetAndInc();
+
+                currentClass( cls -> {
+                    cls.order(cmod0,ci);
+                    cls.setModule( Optional.of( cmod0 ));
+                });
+            }
+        });
+
+        return moduleDump;
     }
 
     @Override

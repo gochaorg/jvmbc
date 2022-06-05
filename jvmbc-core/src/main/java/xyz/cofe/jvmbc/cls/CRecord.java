@@ -1,11 +1,13 @@
 package xyz.cofe.jvmbc.cls;
 
 import org.objectweb.asm.ClassWriter;
+import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.rec.RecordByteCode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CRecord implements ClsByteCode {
     public CRecord(){}
@@ -87,5 +89,18 @@ public class CRecord implements ClsByteCode {
     @Override
     public CRecord clone(){
         return new CRecord(this);
+    }
+
+    /**
+     * Возвращает дочерние узлы
+     *
+     * @return дочерние узлы
+     */
+    @Override
+    public List<ByteCode> nodes(){
+        if( recordByteCodes!=null ){
+            return recordByteCodes.stream().map( x -> (ByteCode)x ).collect(Collectors.toList());
+        }
+        return ClsByteCode.super.nodes();
     }
 }

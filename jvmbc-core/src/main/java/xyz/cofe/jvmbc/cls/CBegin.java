@@ -449,7 +449,17 @@ public class CBegin<
     public void setPermittedSubclass(CPermittedSubclass s){ permittedSubclass = s; }
     //endregion
 
-    // protected visitModule ...
+    //region module : Optional<CModule>
+    protected Optional<CModule> module = Optional.empty();
+
+    public Optional<CModule> getModule(){
+        return module;
+    }
+
+    public void setModule( Optional<CModule> module ){
+        this.module = module;
+    }
+    //endregion
 
     //region annotations : List<CAnnotation> - аннотации прикрепленные к классу
     /**
@@ -708,6 +718,9 @@ public class CBegin<
         if( methods!=null )body.addAll(methods);
         if( nestMembers!=null )body.addAll(nestMembers);
         if( innerClasses!=null )body.addAll(innerClasses);
+        if( records!=null )body.addAll(records);
+        //noinspection OptionalAssignedToNull
+        if( module!=null )module.ifPresent(body::add);
 
         body.sort( (a,b)->{
             int o1 = getOrder().getOrDefault(a,-1);
