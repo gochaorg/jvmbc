@@ -73,6 +73,8 @@ public abstract class APair<V> extends AAbstractBC implements AnnotationWriter {
             if( clsName.equals("[F") )return new APairFloatArr1D( name, (float[])value );
             if( clsName.equals("[J") )return new APairLongArr1D( name, (long[])value );
             if( clsName.equals("[D") )return new APairDoubleArr1D( name, (double[])value );
+            //noinspection SpellCheckingInspection
+            if( clsName.equals("[Ljava/lang/String;") )return new APairStringArr1D( name, (String[])value );
         }
 
         if( value instanceof Serializable ){
@@ -93,6 +95,16 @@ public abstract class APair<V> extends AAbstractBC implements AnnotationWriter {
     // V - void
     // L - object
 
+    public static class APairStringArr1D extends APair<String[]> {
+        public APairStringArr1D(String name, String[] value){
+            super(name, value);
+        }
+
+        @Override
+        public APairStringArr1D clone(){
+            return new APairStringArr1D(getName(), getValue());
+        }
+    }
     public static class APairBooleanArr1D extends APair<boolean[]> {
         public APairBooleanArr1D(String name, boolean[] value){
             super(name, value);

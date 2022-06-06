@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>jvmbc-core</module>
-        <module>jvmbc-analyze</module>
+<!--        <module>jvmbc-analyze</module>-->
 <!--        <module>jvmbc-score</module>-->
     </modules>
     <packaging>pom</packaging>
