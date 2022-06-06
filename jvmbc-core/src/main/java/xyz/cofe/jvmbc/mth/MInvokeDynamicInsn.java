@@ -12,7 +12,6 @@ import xyz.cofe.jvmbc.bm.TypeArg;
 import xyz.cofe.jvmbc.bm.BootstrapMethArg;
 import xyz.cofe.jvmbc.bm.DoubleArg;
 import xyz.cofe.jvmbc.bm.FloatArg;
-import xyz.cofe.jvmbc.bm.HandleArg;
 import xyz.cofe.jvmbc.bm.LongArg;
 
 /**
@@ -211,7 +210,7 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
                 }else if( a instanceof Type ){
                     bootstrapMethodArguments.add(new TypeArg(((Type)a).toString()));
                 }else if( a instanceof org.objectweb.asm.Handle ){
-                    bootstrapMethodArguments.add(new HandleArg(new MHandle((org.objectweb.asm.Handle)a)));
+                    bootstrapMethodArguments.add(new MHandle((org.objectweb.asm.Handle)a));
                 }else {
                     throw new IllegalArgumentException("unsupported bootstrapMethodArgument "+a);
                 }
@@ -331,8 +330,8 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
                 arg = build((DoubleArg) sarg);
             }else if( sarg instanceof TypeArg ){
                 arg = build((TypeArg)sarg);
-            }else if( sarg instanceof HandleArg ){
-                arg = build((HandleArg)sarg, hdl, ctx);
+            }else if( sarg instanceof MHandle ){
+                arg = build((MHandle)sarg, hdl, ctx);
             }else {
                 throw new UnsupportedOperationException("can't feetch BootstrapMethodArgument from "+sarg);
             }
@@ -348,9 +347,8 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
     protected Object build(DoubleArg arg){ return arg.getValue(); }
     protected Object build(StringArg arg){ return arg.getValue(); }
     protected Object build(TypeArg arg){ return Type.getType(arg.getType()); }
-    protected Object build(HandleArg arg, org.objectweb.asm.Handle bm, MethodWriterCtx ctx){
-        var hdl = arg.getHandle();
-        if( hdl==null )throw new IllegalArgumentException("target handle is null");
-        return ctx.bootstrapArgument(hdl, bm);
+    protected Object build(MHandle arg, org.objectweb.asm.Handle bm, MethodWriterCtx ctx){
+        if( arg==null )throw new IllegalArgumentException("target handle is null");
+        return ctx.bootstrapArgument(arg, bm);
     }
 }
