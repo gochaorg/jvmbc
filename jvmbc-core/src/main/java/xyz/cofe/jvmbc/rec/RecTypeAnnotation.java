@@ -23,7 +23,7 @@ public class RecTypeAnnotation
     public RecTypeAnnotation(){}
     public RecTypeAnnotation( RecTypeAnnotation sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
-        desc = sample.desc != null ? sample.desc.clone() : null;
+        descProperty = sample.descProperty != null ? sample.descProperty.clone() : new TDesc();
         visible = sample.visible;
         typeRef = sample.typeRef;
         typePath = sample.typePath;
@@ -41,7 +41,7 @@ public class RecTypeAnnotation
     }
     public RecTypeAnnotation( int typeRef, String typePath, String desc, boolean visible){
         if( desc==null )throw new IllegalArgumentException( "desc==null" );
-        desc().setRaw(desc);
+        descProperty = new TDesc(desc);
         this.visible = visible;
         this.typeRef = typeRef;
         this.typePath = typePath!=null ? Optional.of(typePath) : Optional.empty();
@@ -73,12 +73,27 @@ public class RecTypeAnnotation
     }
     //endregion
 
-    //region desc : TDesc
-    private TDesc desc;
-    public TDesc desc(){
-        if( desc!=null )return desc;
-        desc = new TDesc();
-        return desc;
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
+
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc getDesc(){
+        return descProperty;
+    }
+
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
     }
     //endregion
 
@@ -125,7 +140,7 @@ public class RecTypeAnnotation
         v.visitTypeAnnotation(
             getTypeRef(),
             tp.map(TypePath::fromString).orElse(null),
-            desc().getRaw(),
+            getDesc().getRaw(),
             isVisible()
         );
     }

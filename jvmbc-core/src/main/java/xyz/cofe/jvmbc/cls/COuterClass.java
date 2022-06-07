@@ -16,7 +16,7 @@ public class COuterClass implements ClsByteCode, ClazzWriter {
     public COuterClass(String owner, String name, String descriptor){
         this.owner = owner;
         this.name = name!=null ? Optional.of(name) : Optional.empty();
-        this.desc().setRaw(descriptor);
+        descProperty = new TDesc(descriptor);
     }
 
     /**
@@ -76,24 +76,30 @@ public class COuterClass implements ClsByteCode, ClazzWriter {
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){ //todo optional
-        if( descProperty!=null )return descProperty;
-        descProperty = new TDesc();
+    public TDesc getDesc(){
         return descProperty;
     }
-    //endregion
 
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
+    }
+    //endregion
     @Override
     public String toString(){
         return COuterClass.class.getSimpleName()+" " +
             "owner=" + owner +
             " name=" + name +
-            " descriptor=" + desc() ;
+            " descriptor=" + getDesc() ;
     }
 
     @Override
     public void write(ClassWriter v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        v.visitOuterClass(getOwner(),getName().orElse(null), desc().getRaw());
+        v.visitOuterClass(getOwner(),getName().orElse(null), getDesc().getRaw());
     }
 }

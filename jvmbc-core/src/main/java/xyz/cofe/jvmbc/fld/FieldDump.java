@@ -111,14 +111,13 @@ public class FieldDump extends FieldVisitor {
     @Override
     public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible){
         AnnotationDump dump = new AnnotationDump(this.api);
-        FTypeAnnotation ta = new FTypeAnnotation();
+        FTypeAnnotation ta = new FTypeAnnotation(
+            typeRef,
+            typePath!=null ? typePath.toString() : null,
+            descriptor,visible
+            );
 
         dump.byteCode( byteCodeConsumer, ta );
-
-        ta.setTypeRef(typeRef);
-        ta.setTypePath(typePath!=null ? Optional.of(typePath.toString()) : Optional.empty());
-        ta.desc().setRaw(descriptor);
-        ta.setVisible(visible);
 
         emit(ta);
         return dump;

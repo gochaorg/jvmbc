@@ -12,6 +12,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.TypePath;
+import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.ann.AnnotationDump;
 import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.bm.LdcType;
@@ -186,15 +187,10 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      */
     @Override
     public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible){
-        MTypeAnnotation ta = new MTypeAnnotation();
+        MTypeAnnotation ta = new MTypeAnnotation(typeRef, typePath, descriptor, visible);
 
         AnnotationDump dump = new AnnotationDump(this.api);
         dump.byteCode( this.byteCodeConsumer,ta );
-
-        ta.setTypeRef(typeRef);
-        ta.setTypePath(typePath!=null ? Optional.of(typePath.toString()) : Optional.empty());
-        ta.desc().setRaw(descriptor);
-        ta.setVisible(visible);
 
         emit(ta);
         return dump;
@@ -234,14 +230,10 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      */
     @Override
     public AnnotationVisitor visitParameterAnnotation(int parameter, String descriptor, boolean visible){
-        MParameterAnnotation pa = new MParameterAnnotation();
+        MParameterAnnotation pa = new MParameterAnnotation(parameter,descriptor,visible);
 
         AnnotationDump dump = new AnnotationDump(this.api);
         dump.byteCode( this.byteCodeConsumer,pa );
-
-        pa.setParameter(parameter);
-        pa.desc().setRaw(descriptor);
-        pa.setVisible(visible);
 
         emit(pa);
         return dump;
@@ -640,18 +632,14 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      */
     @Override
     public AnnotationVisitor visitInsnAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible){
-        MInsnAnnotation ia = new MInsnAnnotation();
+        MInsnAnnotation ia = new MInsnAnnotation(typeRef,
+            typePath!=null ? typePath.toString() : null,
+            descriptor,visible);
         AnnotationDump dump = new AnnotationDump(this.api);
 
         dump.byteCode( this.byteCodeConsumer,ia );
 
-        ia.setTypeRef(typeRef);
-        ia.setTypePath(typePath!=null ? Optional.of(typePath.toString()) : Optional.empty());
-        ia.desc().setRaw(descriptor);
-        ia.setVisible(visible);
-
         emit(ia);
-
         return dump;
     }
 
@@ -743,22 +731,18 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      */
     @Override
     public AnnotationVisitor visitLocalVariableAnnotation(int typeRef, TypePath typePath, Label[] start, Label[] end, int[] index, String descriptor, boolean visible){
-        MLocalVariableAnnotation a = new MLocalVariableAnnotation();
+        MLocalVariableAnnotation a = new MLocalVariableAnnotation(
+            typeRef,
+            typePath,
+            start,
+            end,
+            index,
+            descriptor,
+            visible
+        );
 
         AnnotationDump dump = new AnnotationDump(this.api);
         dump.byteCode( this.byteCodeConsumer,a );
-
-        a.setTypeRef(typeRef);
-        a.setTypePath(typePath!=null ? Optional.of(typePath.toString()) : Optional.empty());
-        if( start!=null ){
-            a.setStartLabels(Arrays.stream(start).map(s -> s!=null ? s.toString() : null).toArray(String[]::new));
-        }
-        if( end!=null ){
-            a.setEndLabels(Arrays.stream(end).map(s -> s!=null ? s.toString() : null).toArray(String[]::new));
-        }
-        a.setIndex(index);
-        a.desc().setRaw(descriptor);
-        a.setVisible(visible);
 
         emit(a);
         return dump;

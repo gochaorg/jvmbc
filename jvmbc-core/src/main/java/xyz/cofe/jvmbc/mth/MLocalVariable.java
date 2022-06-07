@@ -25,7 +25,7 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
      */
     public MLocalVariable(String name, String descriptor, String signature, String labelStart, String labelEnd, int index){
         this.name = name;
-        this.desc().setRaw(descriptor);
+        descProperty = new TDesc(descriptor);
         this.signature = signature;
         this.labelStart = labelStart;
         this.labelEnd = labelEnd;
@@ -67,7 +67,7 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
         this.name = name;
     }
     //endregion
-    //region desc() - дескриптор типа локальной переменной
+    //region desc() - дескриптор типа
     /**
      * Дескриптор типа данных
      */
@@ -77,10 +77,17 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){
-        if( descProperty!=null )return descProperty;
-        descProperty = new TDesc();
+    public TDesc getDesc(){
         return descProperty;
+    }
+
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
     }
     //endregion
     //region signature : String - сигнатура для Generic типа локальной переменной или null
@@ -163,7 +170,7 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
     public String toString(){
         return MLocalVariable.class.getSimpleName()+
             " name="+name+
-            " descriptor="+desc()+
+            " descriptor="+getDesc()+
             " signature="+signature+
             " start="+labelStart+
             " end="+labelEnd+
@@ -180,7 +187,7 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
 
         v.visitLocalVariable(
             getName(),
-            desc().getRaw(),
+            getDesc().getRaw(),
             getSignature(),
             ls!=null ? ctx.labelGet(ls) : null,
             le!=null ? ctx.labelGet(le) : null,

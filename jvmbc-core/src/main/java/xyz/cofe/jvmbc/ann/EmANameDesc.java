@@ -18,6 +18,19 @@ public class EmANameDesc extends EmbededAnnotation implements AnnotationWriter {
     }
 
     /**
+     * Конструктор
+     * @param name the value name.
+     * @param desc the class descriptor of the nested annotation class
+     */
+    public EmANameDesc(String name, String desc){
+        if( name==null )throw new IllegalArgumentException( "name==null" );
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+
+        this.name = name;
+        this.descProperty = new TDesc(desc);
+    }
+
+    /**
      * Конструктор копирования
      * @param sample образец
      */
@@ -64,15 +77,17 @@ public class EmANameDesc extends EmbededAnnotation implements AnnotationWriter {
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){
-        if( descProperty!=null )return descProperty;
-        descProperty = new TDesc();
+    public TDesc getDesc(){
         return descProperty;
+    }
+
+    public void setDesc(TDesc desc){
+        descProperty = desc;
     }
     //endregion
 
     public String toString(){
-        return EmANameDesc.class.getSimpleName()+" name="+name+" descriptor="+desc();
+        return EmANameDesc.class.getSimpleName()+" name="+name+" descriptor="+getDesc();
     }
 
     /**
@@ -88,7 +103,7 @@ public class EmANameDesc extends EmbededAnnotation implements AnnotationWriter {
     @Override
     public void write(AnnotationVisitor v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        var nv = v.visitAnnotation(getName(), desc().getRaw());
+        var nv = v.visitAnnotation(getName(), getDesc().getRaw());
         var body = annotationByteCodes;
         if( body!=null ){
             for( var b : body ){

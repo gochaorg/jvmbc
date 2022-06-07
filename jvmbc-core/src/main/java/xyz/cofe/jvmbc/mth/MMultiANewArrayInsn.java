@@ -62,7 +62,7 @@ public class MMultiANewArrayInsn extends MAbstractBC implements MethodWriter {
     public MMultiANewArrayInsn(){
     }
     public MMultiANewArrayInsn(String descriptor, int numDimensions){
-        desc().setRaw(descriptor);
+        descProperty = new TDesc(descriptor);
         this.numDimensions = numDimensions;
     }
 
@@ -88,10 +88,17 @@ public class MMultiANewArrayInsn extends MAbstractBC implements MethodWriter {
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){
-        if( descProperty!=null )return descProperty;
-        descProperty = new TDesc();
+    public TDesc getDesc(){
         return descProperty;
+    }
+
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
     }
     //endregion
     //region numDimensions
@@ -108,13 +115,13 @@ public class MMultiANewArrayInsn extends MAbstractBC implements MethodWriter {
 
     public String toString(){
         return MMultiANewArrayInsn.class.getSimpleName()+
-            " descriptor="+desc()+
+            " descriptor="+getDesc()+
             " numDimensions="+numDimensions;
     }
 
     @Override
     public void write(MethodVisitor v, MethodWriterCtx ctx){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        v.visitMultiANewArrayInsn(desc().getRaw(), getNumDimensions());
+        v.visitMultiANewArrayInsn(getDesc().getRaw(), getNumDimensions());
     }
 }

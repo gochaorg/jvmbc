@@ -14,7 +14,7 @@ public class RecAnnotation implements RecordByteCode, GetAnnotationByteCodes {
     public RecAnnotation(){}
     public RecAnnotation(RecAnnotation sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
-        desc = sample.desc != null ? sample.desc.clone() : null;
+        descProperty = sample.descProperty != null ? sample.descProperty.clone() : new TDesc();
         visible = sample.visible;
 
         if( sample.annotationByteCodes!=null ){
@@ -30,16 +30,33 @@ public class RecAnnotation implements RecordByteCode, GetAnnotationByteCodes {
     }
     public RecAnnotation(String desc,boolean visible){
         if( desc==null )throw new IllegalArgumentException( "desc==null" );
-        desc().setRaw(desc);
+        descProperty = new TDesc(desc);
         this.visible = visible;
     }
 
-    private TDesc desc;
-    public TDesc desc(){
-        if( desc!=null )return desc;
-        desc = new TDesc();
-        return desc;
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
+
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc getDesc(){
+        return descProperty;
     }
+
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
+    }
+    //endregion
 
     private boolean visible;
     public boolean isVisible(){
@@ -78,6 +95,6 @@ public class RecAnnotation implements RecordByteCode, GetAnnotationByteCodes {
     @Override
     public void write( RecordComponentVisitor v ){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        v.visitAnnotation(desc().getRaw(), isVisible());
+        v.visitAnnotation(getDesc().getRaw(), isVisible());
     }
 }

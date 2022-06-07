@@ -23,6 +23,16 @@ public class MParameterAnnotation extends MAbstractBC
     }
 
     /**
+     * Конструктор по умолчанию
+     */
+    public MParameterAnnotation(int parameter, String descriptor, boolean visible){
+        if( descriptor==null )throw new IllegalArgumentException( "descriptor==null" );
+        this.parameter = parameter;
+        this.descProperty = new TDesc(descriptor);
+        this.visible = visible;
+    }
+
+    /**
      * Конструктор копирования
      * @param sample образец
      */
@@ -66,10 +76,17 @@ public class MParameterAnnotation extends MAbstractBC
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){
-        if( descProperty!=null )return descProperty;
-        descProperty = new TDesc();
+    public TDesc getDesc(){
         return descProperty;
+    }
+
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
     }
     //endregion
     //region visible : boolean
@@ -87,7 +104,7 @@ public class MParameterAnnotation extends MAbstractBC
     public String toString(){
         return MParameterAnnotation.class.getSimpleName()+
             " parameter="+parameter+
-            " descriptor="+desc()+
+            " descriptor="+getDesc()+
             " visible="+visible;
     }
 
@@ -117,7 +134,7 @@ public class MParameterAnnotation extends MAbstractBC
         if( v==null )throw new IllegalArgumentException( "v==null" );
 
         var av = v.visitParameterAnnotation(
-            getParameter(), desc().getRaw(), isVisible()
+            getParameter(), getDesc().getRaw(), isVisible()
         );
 
         var abody = annotationByteCodes;

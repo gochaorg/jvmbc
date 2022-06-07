@@ -31,7 +31,7 @@ public class CTypeAnnotation
     public CTypeAnnotation(int typeRef, String typePath, String descriptor, boolean visible){
         this.typeRef = typeRef;
         this.typePath = typePath!=null ? Optional.of(typePath) : Optional.empty();
-        this.desc().setRaw(descriptor);
+        descProperty = new TDesc(descriptor);
         this.visible = visible;
     }
 
@@ -117,10 +117,17 @@ public class CTypeAnnotation
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){
-        if( descProperty!=null )return descProperty;
-        descProperty = new TDesc();
+    public TDesc getDesc(){
         return descProperty;
+    }
+
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
     }
     //endregion
     //region visible : boolean
@@ -135,7 +142,7 @@ public class CTypeAnnotation
 
     public String toString(){
         return CTypeAnnotation.class.getSimpleName()+
-            " typeRef="+typeRef+" typePath="+typePath+" descriptor="+desc()+" visible="+visible;
+            " typeRef="+typeRef+" typePath="+typePath+" descriptor="+getDesc()+" visible="+visible;
     }
 
     //region annotationByteCodes : List<AnnotationByteCode>
@@ -167,7 +174,7 @@ public class CTypeAnnotation
         var av = v.visitTypeAnnotation(
             getTypeRef(),
             tp.map(TypePath::fromString).orElse(null),
-            desc().getRaw(),
+            getDesc().getRaw(),
             isVisible()
         );
 

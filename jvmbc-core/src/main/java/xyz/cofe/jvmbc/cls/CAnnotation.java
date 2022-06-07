@@ -81,7 +81,7 @@ public class CAnnotation implements
      * @param visible {@literal true} если аннотация видна в runtime
      */
     public CAnnotation(String descriptor, boolean visible){
-        desc().setRaw(descriptor);
+        descProperty = new TDesc(descriptor);
         this.visible = visible;
     }
 
@@ -120,7 +120,7 @@ public class CAnnotation implements
         return this;
     }
 
-    //region desc() - Имя типа аннотации (дескриптор)
+    //region desc() - дескриптор типа
     /**
      * Дескриптор типа данных
      */
@@ -130,10 +130,17 @@ public class CAnnotation implements
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){
-        if( descProperty!=null )return descProperty;
-        descProperty = new TDesc();
+    public TDesc getDesc(){
         return descProperty;
+    }
+
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
     }
     //endregion
     //region visible : boolean - видна ли аннотация в runtime
@@ -162,7 +169,7 @@ public class CAnnotation implements
     //region toString()
     public String toString(){
         return CAnnotation.class.getSimpleName()+
-            " descriptor="+desc()+
+            " descriptor="+getDesc()+
             " visible="+visible;
     }
     //endregion
@@ -206,7 +213,7 @@ public class CAnnotation implements
     public void write(ClassWriter v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
 
-        var av = v.visitAnnotation(desc().getRaw(), isVisible());
+        var av = v.visitAnnotation(getDesc().getRaw(), isVisible());
 
         var abody = annotationByteCodes;
         if( abody!=null ){

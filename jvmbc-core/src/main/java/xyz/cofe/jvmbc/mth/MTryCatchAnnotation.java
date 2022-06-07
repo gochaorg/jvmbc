@@ -32,7 +32,7 @@ public class MTryCatchAnnotation extends MAbstractBC
     public MTryCatchAnnotation(int typeRef, String typePath, String descriptor, boolean visible){
         this.typeRef = typeRef;
         this.typePath = typePath!=null ? Optional.of(typePath) : Optional.empty();
-        this.desc().setRaw(descriptor);
+        descProperty = new TDesc(descriptor);
         this.visible = visible;
     }
 
@@ -93,10 +93,17 @@ public class MTryCatchAnnotation extends MAbstractBC
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){
-        if( descProperty!=null )return descProperty;
-        descProperty = new TDesc();
+    public TDesc getDesc(){
         return descProperty;
+    }
+
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
     }
     //endregion
     //region visible : boolean
@@ -115,7 +122,7 @@ public class MTryCatchAnnotation extends MAbstractBC
         return MTryCatchAnnotation.class.getSimpleName()+
             " typeRef="+typeRef+
             " typePath="+typePath+
-            " descriptor="+desc()+
+            " descriptor="+getDesc()+
             " visible="+visible;
     }
 
@@ -148,7 +155,7 @@ public class MTryCatchAnnotation extends MAbstractBC
         var av = v.visitTryCatchAnnotation(
             getTypeRef(),
             tp.map(TypePath::fromString).orElse(null),
-            desc().getRaw(),
+            getDesc().getRaw(),
             isVisible()
         );
 

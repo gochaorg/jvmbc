@@ -7,6 +7,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.TDesc;
 
 /**
  * Создание дампа байт-кода аннотаций
@@ -107,16 +108,12 @@ public class AnnotationDump extends AnnotationVisitor {
      */
     @Override
     public AnnotationVisitor visitAnnotation(String name, String descriptor){
-        EmANameDesc emOb = new EmANameDesc();
+        EmANameDesc emOb = new EmANameDesc(name, descriptor);
 
         AnnotationDump dump = new AnnotationDump(this.api);
         dump = dump.byteCode(byteCodeConsumer,emOb);
 
-        emOb.setName(name);
-        emOb.desc().setRaw(descriptor);
-
         emit(emOb);
-
         return dump;
     }
 

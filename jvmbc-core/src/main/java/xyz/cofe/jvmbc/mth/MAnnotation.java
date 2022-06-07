@@ -14,7 +14,7 @@ import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
  * Visits an annotation of this method.
  *
  * <p>
- * {@link #desc()} the class descriptor of the annotation class.
+ * {@link #getDesc()} the class descriptor of the annotation class.
  *
  * <p>
  * {@link #visible}  {@literal true} if the annotation is visible at runtime.
@@ -34,7 +34,7 @@ public class MAnnotation
      */
     public MAnnotation(){}
     public MAnnotation(String descriptor, boolean visible){
-        this.desc().setRaw(descriptor);
+        descProperty = new TDesc(descriptor);
         this.visible = visible;
     }
 
@@ -70,10 +70,17 @@ public class MAnnotation
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){
-        if( descProperty!=null )return descProperty;
-        descProperty = new TDesc();
+    public TDesc getDesc(){
         return descProperty;
+    }
+
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
     }
     //endregion
     //region visible : boolean
@@ -88,7 +95,7 @@ public class MAnnotation
 
     public String toString(){
         return MAnnotation.class.getSimpleName()+
-            " descriptor="+desc()+
+            " descriptor="+getDesc()+
             " visible="+visible;
     }
 
@@ -117,7 +124,7 @@ public class MAnnotation
     public void write(MethodVisitor v, MethodWriterCtx ctx){
         if( v==null )throw new IllegalArgumentException( "v==null" );
 
-        var av = v.visitAnnotation(desc().getRaw(), isVisible());
+        var av = v.visitAnnotation(getDesc().getRaw(), isVisible());
 
         var abody = annotationByteCodes;
         if( abody!=null ){

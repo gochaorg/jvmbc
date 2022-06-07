@@ -71,7 +71,7 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
     public CField(int access, String name, String descriptor, String signature, Object value){
         this.access = access;
         this.name = name;
-        desc().setRaw(descriptor);
+        descProperty = new TDesc(descriptor);
         this.signature = signature;
         this.value = value;
     }
@@ -159,10 +159,17 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){
-        if( descProperty!=null )return descProperty;
-        descProperty = new TDesc();
+    public TDesc getDesc(){
         return descProperty;
+    }
+
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
     }
     //endregion
     //region signature - сигнатура, в случае Generic
@@ -215,7 +222,7 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
         return CField.class.getSimpleName() +
             " access="+access+("#"+new AccFlags(access).flags())+
             " name=" + name +
-            " desc=" + desc() +
+            " desc=" + getDesc() +
             " signature=" + signature +
             " value=" + value ;
     }
@@ -247,7 +254,7 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
     @Override
     public void write(ClassWriter v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        var fv = v.visitField(getAccess(),getName(), desc().getRaw(), getSignature(),getValue());
+        var fv = v.visitField(getAccess(),getName(), getDesc().getRaw(), getSignature(),getValue());
         var body = fieldByteCodes;
         if( body!=null ){
             for( var b : body ){

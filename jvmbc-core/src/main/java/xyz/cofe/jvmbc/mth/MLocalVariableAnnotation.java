@@ -2,6 +2,7 @@ package xyz.cofe.jvmbc.mth;
 
 import java.util.*;
 
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.TypePath;
 import xyz.cofe.jvmbc.ByteCode;
@@ -26,6 +27,25 @@ public class MLocalVariableAnnotation extends MAbstractBC
      * Конструктор по умолчанию
      */
     public MLocalVariableAnnotation(){}
+
+    /**
+     * Конструктор по умолчанию
+     */
+    public MLocalVariableAnnotation( int typeRef, TypePath typePath, Label[] start, Label[] end, int[] index, String descriptor, boolean visible){
+        if( descriptor==null )throw new IllegalArgumentException( "descriptor==null" );
+
+        this.typeRef = typeRef;
+        this.typePath = typePath!=null ? Optional.of(typePath.toString()) : Optional.empty();
+        if( start!=null ){
+            this.startLabels = Arrays.stream(start).map(s -> s!=null ? s.toString() : null).toArray(String[]::new);
+        }
+        if( end!=null ){
+            this.endLabels = Arrays.stream(end).map(s -> s!=null ? s.toString() : null).toArray(String[]::new);
+        }
+        this.index = index;
+        descProperty = new TDesc(descriptor);
+        this.visible = visible;
+    }
 
     /**
      * Конструктор копирования

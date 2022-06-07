@@ -32,7 +32,7 @@ public class MTypeAnnotation extends MAbstractBC
     public MTypeAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible){
         this.typeRef = typeRef;
         this.typePath = typePath!=null ? Optional.of(typePath.toString()) : Optional.empty();
-        desc().setRaw(descriptor);
+        this.descProperty = new TDesc(descriptor);
         this.visible = visible;
     }
 
@@ -92,10 +92,17 @@ public class MTypeAnnotation extends MAbstractBC
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){
-        if( descProperty!=null )return descProperty;
-        descProperty = new TDesc();
+    public TDesc getDesc(){
         return descProperty;
+    }
+
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
     }
     //endregion
     //region visible : boolean
@@ -114,7 +121,7 @@ public class MTypeAnnotation extends MAbstractBC
         return MTypeAnnotation.class.getSimpleName()+
             " typeRef="+typeRef+
             " typePath="+typePath+
-            " descriptor="+desc()+
+            " descriptor="+getDesc()+
             " visible="+visible;
     }
 
@@ -146,7 +153,7 @@ public class MTypeAnnotation extends MAbstractBC
         var av = v.visitTypeAnnotation(
             getTypeRef(),
             tp.map(TypePath::fromString).orElse(null),
-            desc().getRaw(),
+            getDesc().getRaw(),
             isVisible()
         );
         var abody = annotationByteCodes;

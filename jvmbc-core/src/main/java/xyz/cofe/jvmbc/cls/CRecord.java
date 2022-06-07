@@ -14,7 +14,7 @@ public class CRecord implements ClsByteCode {
     public CRecord(CRecord sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         this.name = sample.getName();
-        if( sample.desc!=null )desc().setRaw(sample.desc.getRaw());
+        if( sample.descProperty!=null )descProperty = sample.descProperty.clone();
         this.sign = sample.getSign();
 
         if( sample.recordByteCodes!=null ){
@@ -32,7 +32,7 @@ public class CRecord implements ClsByteCode {
         if( name==null )throw new IllegalArgumentException( "name==null" );
         if( desc==null )throw new IllegalArgumentException( "desc==null" );
         this.name = name;
-        desc().setRaw(desc);
+        descProperty = new TDesc(desc);
         this.sign = sign;
     }
 
@@ -45,12 +45,29 @@ public class CRecord implements ClsByteCode {
         this.name = name;
     }
 
-    protected TDesc desc;
-    public TDesc desc(){
-        if( desc!=null )return desc;
-        desc = new TDesc();
-        return desc;
+    //region desc() - дескриптор типа
+    /**
+     * Дескриптор типа данных
+     */
+    protected TDesc descProperty;
+
+    /**
+     * Возвращает дескриптор типа данных
+     * @return Дескриптор типа данных
+     */
+    public TDesc getDesc(){
+        return descProperty;
     }
+
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
+    }
+    //endregion
 
     protected String sign; //todo optional
 
@@ -75,7 +92,7 @@ public class CRecord implements ClsByteCode {
     @Override
     public void write( ClassWriter v ){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        var recVisit = v.visitRecordComponent(getName(), desc().getRaw(), getSign());
+        var recVisit = v.visitRecordComponent(getName(), getDesc().getRaw(), getSign());
         //noinspection ConstantConditions
         if( recVisit!=null ){
             getRecordByteCodes().forEach( recBc -> {

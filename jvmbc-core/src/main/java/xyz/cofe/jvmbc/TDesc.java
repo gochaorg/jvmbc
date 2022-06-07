@@ -51,7 +51,7 @@ public class TDesc implements Serializable {
      * Указывает "сырое" значение
      * @param raw "сырое" значение или null
      */
-    public void setRaw( String raw ){
+    private void setRaw( String raw ){
         this.raw = raw;
         this.typeDesc = null;
     }

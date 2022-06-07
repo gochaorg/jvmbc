@@ -208,7 +208,7 @@ public class MFieldInsn extends MAbstractBC implements MethodWriter {
         this.opcode = opcode;
         this.owner = owner;
         this.name = name;
-        this.desc().setRaw(descriptor);
+        descProperty = new TDesc(descriptor);
     }
 
     /**
@@ -265,26 +265,32 @@ public class MFieldInsn extends MAbstractBC implements MethodWriter {
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){
-        if( descProperty!=null )return descProperty;
-        descProperty = new TDesc();
+    public TDesc getDesc(){
         return descProperty;
     }
-    //endregion
 
+    /**
+     * Указывает дескриптор типа данных
+     * @param desc Дескриптор типа данных
+     */
+    public void setDesc(TDesc desc){
+        if( desc==null )throw new IllegalArgumentException( "desc==null" );
+        descProperty = desc;
+    }
+    //endregion
     @Override
     public String toString(){
         return MFieldInsn.class.getSimpleName()+
             " opcode=" + OpCode.code(opcode).map(OpCode::name).orElse("?") + "#" + opcode +
             " owner='" + owner + '\'' +
             " name='" + name + '\'' +
-            " descriptor='" + desc() + '\'' +
+            " descriptor='" + getDesc() + '\'' +
             '}';
     }
 
     @Override
     public void write(MethodVisitor v, MethodWriterCtx ctx){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        v.visitFieldInsn(getOpcode(),getOwner(),getName(), desc().getRaw());
+        v.visitFieldInsn(getOpcode(),getOwner(),getName(), getDesc().getRaw());
     }
 }
