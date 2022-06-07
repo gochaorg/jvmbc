@@ -1,15 +1,20 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.cls;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.objectweb.asm.*;
-import xyz.cofe.jvmbc.cls.*;
+import xyz.cofe.jvmbc.*;
+import xyz.cofe.jvmbc.ann.AnnotationDump;
 import xyz.cofe.jvmbc.fld.FieldByteCode;
+import xyz.cofe.jvmbc.fld.FieldDump;
+import xyz.cofe.jvmbc.mdl.ModuleDump;
 import xyz.cofe.jvmbc.mdl.Modulo;
 import xyz.cofe.jvmbc.mth.MethodByteCode;
+import xyz.cofe.jvmbc.mth.MethodDump;
 import xyz.cofe.jvmbc.rec.RecordByteCode;
+import xyz.cofe.jvmbc.rec.RecordDump;
 
 /**
  * Дамп байт-кода класса
@@ -150,7 +155,7 @@ public class ClassDump<
 
         var c = new CSource(source,debug);
         currentClass(x -> {
-            x.setSource(c);
+            x.setSource(Optional.of(c));
             x.getOrder().put(c,ci);
         });
 
@@ -226,6 +231,21 @@ public class ClassDump<
         return dump;
     }
 
+    /**
+     * Visits an annotation on a type in the class signature.
+     *
+     * @param typeRef a reference to the annotated type. The sort of this type reference must be
+     *     {@link TypeReference#CLASS_TYPE_PARAMETER}, {@link
+     *     TypeReference#CLASS_TYPE_PARAMETER_BOUND} or {@link TypeReference#CLASS_EXTENDS}. See
+     *     {@link TypeReference}.
+     * @param typePath the path to the annotated type argument, wildcard bound, array element type, or
+     *     static inner type within 'typeRef'. May be {@literal null} if the annotation targets
+     *     'typeRef' as a whole.
+     * @param descriptor the class descriptor of the annotation class.
+     * @param visible {@literal true} if the annotation is visible at runtime.
+     * @return a visitor to visit the annotation values, or {@literal null} if this visitor is not
+     *     interested in visiting this annotation.
+     */
     @Override
     public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible){
         int ci = currentIndexGetAndInc();

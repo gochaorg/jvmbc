@@ -10,6 +10,7 @@ import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class RecTypeAnnotation implements RecordByteCode, GetAnnotationByteCodes {
     public RecTypeAnnotation(){}
@@ -36,7 +37,7 @@ public class RecTypeAnnotation implements RecordByteCode, GetAnnotationByteCodes
         desc().setRaw(desc);
         this.visible = visible;
         this.typeRef = typeRef;
-        this.typePath = typePath;
+        this.typePath = typePath!=null ? Optional.of(typePath) : Optional.empty();
     }
 
     //region typeRef : int
@@ -52,13 +53,15 @@ public class RecTypeAnnotation implements RecordByteCode, GetAnnotationByteCodes
     //endregion
 
     //region typePath : String
-    private String typePath;
+    private Optional<String> typePath = Optional.empty();
 
-    public String getTypePath(){
+    public Optional<String> getTypePath(){
         return typePath;
     }
 
-    public void setTypePath( String typePath ){
+    public void setTypePath( Optional<String> typePath ){
+        //noinspection OptionalAssignedToNull
+        if( typePath==null )throw new IllegalArgumentException( "typePath==null" );
         this.typePath = typePath;
     }
     //endregion
@@ -114,7 +117,7 @@ public class RecTypeAnnotation implements RecordByteCode, GetAnnotationByteCodes
         var tp = getTypePath();
         v.visitTypeAnnotation(
             getTypeRef(),
-            tp!=null ? TypePath.fromString(tp) : null,
+            tp.map(TypePath::fromString).orElse(null),
             desc().getRaw(),
             isVisible()
         );

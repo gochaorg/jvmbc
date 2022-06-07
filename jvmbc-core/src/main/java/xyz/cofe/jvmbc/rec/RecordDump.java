@@ -1,9 +1,8 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.rec;
 
 import org.objectweb.asm.*;
-import xyz.cofe.jvmbc.rec.RecAnnotation;
-import xyz.cofe.jvmbc.rec.RecEnd;
-import xyz.cofe.jvmbc.rec.RecTypeAnnotation;
+import xyz.cofe.jvmbc.ann.AnnotationDump;
+import xyz.cofe.jvmbc.ByteCode;
 
 import java.util.function.Consumer;
 

@@ -1,4 +1,7 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.cls;
+
+import xyz.cofe.jvmbc.AccFlags;
+import xyz.cofe.jvmbc.AccFlagsProperty;
 
 /**
  * Флаги которые применимы к классу / модулю

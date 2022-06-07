@@ -1,7 +1,8 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.mth;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
@@ -11,9 +12,10 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.TypePath;
+import xyz.cofe.jvmbc.ann.AnnotationDump;
+import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.bm.LdcType;
 import xyz.cofe.jvmbc.bm.MHandle;
-import xyz.cofe.jvmbc.mth.*;
 
 /**
  * Создает дамп байт кода метода, используется в AsmQuery.
@@ -190,7 +192,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
         dump.byteCode( this.byteCodeConsumer,ta );
 
         ta.setTypeRef(typeRef);
-        ta.setTypePath(typePath!=null ? typePath.toString() : null);
+        ta.setTypePath(typePath!=null ? Optional.of(typePath.toString()) : Optional.empty());
         ta.desc().setRaw(descriptor);
         ta.setVisible(visible);
 
@@ -644,7 +646,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
         dump.byteCode( this.byteCodeConsumer,ia );
 
         ia.setTypeRef(typeRef);
-        ia.setTypePath(typePath!=null ? typePath.toString() : null);
+        ia.setTypePath(typePath!=null ? Optional.of(typePath.toString()) : Optional.empty());
         ia.desc().setRaw(descriptor);
         ia.setVisible(visible);
 
@@ -747,7 +749,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
         dump.byteCode( this.byteCodeConsumer,a );
 
         a.setTypeRef(typeRef);
-        a.setTypePath(typePath!=null ? typePath.toString() : null);
+        a.setTypePath(typePath!=null ? Optional.of(typePath.toString()) : Optional.empty());
         if( start!=null ){
             a.setStartLabels(Arrays.stream(start).map(s -> s!=null ? s.toString() : null).toArray(String[]::new));
         }

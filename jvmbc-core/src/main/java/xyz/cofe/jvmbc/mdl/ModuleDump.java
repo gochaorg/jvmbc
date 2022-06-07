@@ -1,7 +1,7 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.mdl;
 
 import org.objectweb.asm.ModuleVisitor;
-import xyz.cofe.jvmbc.mdl.*;
+import xyz.cofe.jvmbc.ByteCode;
 
 import java.util.ArrayList;
 import java.util.List;

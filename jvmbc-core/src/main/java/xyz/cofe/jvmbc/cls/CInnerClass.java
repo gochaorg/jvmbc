@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import org.objectweb.asm.ClassWriter;
 import xyz.cofe.jvmbc.AccFlags;
 import xyz.cofe.jvmbc.AccFlagsProperty;
-import xyz.cofe.jvmbc.InnerClassFlags;
 
 public class CInnerClass implements ClsByteCode, ClazzWriter, AccFlagsProperty, InnerClassFlags {
     private static final long serialVersionUID = 1;

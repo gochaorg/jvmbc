@@ -1,5 +1,6 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.fld;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -9,7 +10,8 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.TypePath;
 import org.objectweb.asm.TypeReference;
-import xyz.cofe.jvmbc.fld.*;
+import xyz.cofe.jvmbc.ann.AnnotationDump;
+import xyz.cofe.jvmbc.ByteCode;
 
 /**
  * Создание дампа поля класса
@@ -114,7 +116,7 @@ public class FieldDump extends FieldVisitor {
         dump.byteCode( byteCodeConsumer, ta );
 
         ta.setTypeRef(typeRef);
-        ta.setTypePath(typePath!=null ? typePath.toString() : null);
+        ta.setTypePath(typePath!=null ? Optional.of(typePath.toString()) : Optional.empty());
         ta.desc().setRaw(descriptor);
         ta.setVisible(visible);
 

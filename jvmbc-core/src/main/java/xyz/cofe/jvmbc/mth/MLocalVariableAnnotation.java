@@ -1,9 +1,6 @@
 package xyz.cofe.jvmbc.mth;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.TypePath;
@@ -63,12 +60,14 @@ public class MLocalVariableAnnotation extends MAbstractBC
     }
     //endregion
     //region typePath : String
-    protected String typePath;
-    public String getTypePath(){
+    protected Optional<String> typePath = Optional.empty();
+    public Optional<String> getTypePath(){
         return typePath;
     }
 
-    public void setTypePath(String typePath){
+    public void setTypePath(Optional<String> typePath){
+        //noinspection OptionalAssignedToNull
+        if( typePath==null )throw new IllegalArgumentException( "typePath==null" );
         this.typePath = typePath;
     }
     //endregion
@@ -171,7 +170,7 @@ public class MLocalVariableAnnotation extends MAbstractBC
 
         var av = v.visitLocalVariableAnnotation(
             getTypeRef(),
-            tp!=null ? TypePath.fromString(tp) : null,
+            tp.map(TypePath::fromString).orElse(null),
             ctx.labelsGet(getStartLabels()),
             ctx.labelsGet(getEndLabels()),
             getIndex(),

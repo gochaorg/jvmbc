@@ -1,4 +1,7 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.mth;
+
+import xyz.cofe.jvmbc.AccFlags;
+import xyz.cofe.jvmbc.AccFlagsProperty;
 
 public interface ParameterFlags extends AccFlagsProperty {
     //region final : boolean

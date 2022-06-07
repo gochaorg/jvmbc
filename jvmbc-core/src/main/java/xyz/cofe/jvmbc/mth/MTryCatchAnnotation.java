@@ -3,6 +3,8 @@ package xyz.cofe.jvmbc.mth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.TypePath;
 import xyz.cofe.jvmbc.ByteCode;
@@ -22,7 +24,7 @@ public class MTryCatchAnnotation extends MAbstractBC
     public MTryCatchAnnotation(){}
     public MTryCatchAnnotation(int typeRef, String typePath, String descriptor, boolean visible){
         this.typeRef = typeRef;
-        this.typePath = typePath;
+        this.typePath = typePath!=null ? Optional.of(typePath) : Optional.empty();
         this.desc().setRaw(descriptor);
         this.visible = visible;
     }
@@ -63,12 +65,14 @@ public class MTryCatchAnnotation extends MAbstractBC
     }
     //endregionGetAnnotationByteCodes
     //region typePath : String
-    protected String typePath;
-    public String getTypePath(){
+    protected Optional<String> typePath = Optional.empty();
+    public Optional<String> getTypePath(){
         return typePath;
     }
 
-    public void setTypePath(String typePath){
+    public void setTypePath(Optional<String> typePath){
+        //noinspection OptionalAssignedToNull
+        if( typePath==null )throw new IllegalArgumentException( "typePath==null" );
         this.typePath = typePath;
     }
     //endregion
@@ -136,7 +140,7 @@ public class MTryCatchAnnotation extends MAbstractBC
         var tp = getTypePath();
         var av = v.visitTryCatchAnnotation(
             getTypeRef(),
-            tp!=null ? TypePath.fromString(tp) : null,
+            tp.map(TypePath::fromString).orElse(null),
             desc().getRaw(),
             isVisible()
         );

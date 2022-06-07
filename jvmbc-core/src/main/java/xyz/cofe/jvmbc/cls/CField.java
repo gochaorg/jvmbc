@@ -7,7 +7,6 @@ import org.objectweb.asm.ClassWriter;
 import xyz.cofe.jvmbc.AccFlags;
 import xyz.cofe.jvmbc.AccFlagsProperty;
 import xyz.cofe.jvmbc.TDesc;
-import xyz.cofe.jvmbc.FieldFlags;
 import xyz.cofe.jvmbc.fld.FieldByteCode;
 import xyz.cofe.jvmbc.fld.FieldEnd;
 

@@ -1,11 +1,8 @@
 package xyz.cofe.jvmbc.cls;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import org.objectweb.asm.ClassWriter;
 import xyz.cofe.jvmbc.*;

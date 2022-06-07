@@ -1,5 +1,6 @@
 package xyz.cofe.jvmbc.cls;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.objectweb.asm.ClassWriter;
@@ -16,8 +17,8 @@ public class CSource implements ClsByteCode, ClazzWriter {
     public CSource(){
     }
     public CSource(String source, String debug){
-        this.source = source;
-        this.debug = debug;
+        this.source = source!=null ? Optional.of(source) : Optional.empty();
+        this.debug = debug!=null ? Optional.of(debug) : Optional.empty();
     }
 
     /**
@@ -47,22 +48,22 @@ public class CSource implements ClsByteCode, ClazzWriter {
     }
 
     //region source : String
-    protected String source;
-    public String getSource(){
+    protected Optional<String> source;
+    public Optional<String> getSource(){
         return source;
     }
-    public void setSource(String source){
+    public void setSource(Optional<String> source){
         this.source = source;
     }
     //endregion
     //region debug : String
-    protected String debug;
+    protected Optional<String> debug;
 
-    public String getDebug(){
+    public Optional<String> getDebug(){
         return debug;
     }
 
-    public void setDebug(String debug){
+    public void setDebug(Optional<String> debug){
         this.debug = debug;
     }
     //endregion
@@ -70,13 +71,16 @@ public class CSource implements ClsByteCode, ClazzWriter {
     @Override
     public String toString(){
         return CSource.class.getSimpleName()+" " +
-            "source=" + (source!=null ? "\""+source+"\"" : "null") +
-            ", debug=" + (debug!=null ? "\""+debug+"\"" : "null");
+            "source=" +source +
+            ", debug="+debug;
     }
 
     @Override
     public void write(ClassWriter v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        v.visitSource(getSource(),getDebug());
+        v.visitSource(
+            getSource().orElse(null),
+            getDebug().orElse(null)
+        );
     }
 }

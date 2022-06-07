@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.ann;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -6,13 +6,7 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import xyz.cofe.jvmbc.ann.AEnd;
-import xyz.cofe.jvmbc.ann.AEnum;
-import xyz.cofe.jvmbc.ann.APair;
-import xyz.cofe.jvmbc.ann.AnnotationByteCode;
-import xyz.cofe.jvmbc.ann.EmAArray;
-import xyz.cofe.jvmbc.ann.EmANameDesc;
-import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
+import xyz.cofe.jvmbc.ByteCode;
 
 /**
  * Создание дампа байт-кода аннотаций

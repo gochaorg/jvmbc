@@ -4,17 +4,14 @@ import java.io.IOError;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import xyz.cofe.jvmbc.ClassDump;
 import xyz.cofe.jvmbc.JavaClassName;
 import xyz.cofe.jvmbc.AccFlags;
 import xyz.cofe.jvmbc.AccFlagsProperty;
 import xyz.cofe.jvmbc.ByteCode;
-import xyz.cofe.jvmbc.ClassFlags;
 import xyz.cofe.jvmbc.io.IOFun;
 import xyz.cofe.jvmbc.mth.MethodByteCode;
 
@@ -67,7 +64,9 @@ public class CBegin<
         superName = sample.getSuperName();
         if( sample.interfaces!=null )interfaces = Arrays.copyOf(sample.interfaces, sample.interfaces.length);
 
-        source = sample.source!=null ? sample.source.clone() : null;
+        source = sample.source!=null && sample.source.isPresent()
+            ? sample.source.map(CSource::clone)
+            : Optional.empty();
         outerClass = sample.outerClass!=null ? sample.outerClass.clone() : null;
         nestHost = sample.nestHost!=null ? sample.nestHost.clone() : null;
         permittedSubclass = sample.permittedSubclass!=null ? sample.permittedSubclass.clone() : null;
@@ -419,19 +418,19 @@ public class CBegin<
     /**
      * Содержит имя исходного класса/файла отладки (debug)
      */
-    protected CSource source;
+    protected Optional<CSource> source = Optional.empty();
 
     /**
      * Возвращает имя исходного файла
      * @return имя исходного файла
      */
-    public CSource getSource(){ return source; }
+    public Optional<CSource> getSource(){ return source; }
 
     /**
      * Указывает имя исходного файла
      * @param s имя исходного файла
      */
-    public void setSource(CSource s){ source = s; }
+    public void setSource(Optional<CSource> s){ source = s; }
     //endregion
     //region outerClass : COuterClass
     protected COuterClass outerClass;
@@ -644,7 +643,7 @@ public class CBegin<
     @Override
     public List<ByteCode> nodes(){
         ArrayList<ByteCode> r = new ArrayList<>();
-        if( source!=null )r.add(source);
+        if( source!=null && source.isPresent() )r.add(source.get());
         if( outerClass!=null )r.add(outerClass);
         if( nestHost!=null )r.add(nestHost);
         if( permittedSubclass!=null )r.add(permittedSubclass);
@@ -688,7 +687,8 @@ public class CBegin<
         v.visit( getVersion(), getAccess(), getName(), getSignature(), getSuperName(), getInterfaces() );
 
         var src = source;
-        if( src!=null )src.write(v);
+        //noinspection OptionalAssignedToNull
+        if( src!=null )src.ifPresent( _src -> _src.write(v));
 
         var nh = nestHost;
         if( nh!=null )nh.write(v);
