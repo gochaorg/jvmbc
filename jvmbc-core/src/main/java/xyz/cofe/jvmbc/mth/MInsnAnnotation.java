@@ -9,14 +9,19 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.TypePath;
 import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.TDesc;
+import xyz.cofe.jvmbc.TypeRefProperty;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
 
 public class MInsnAnnotation extends MAbstractBC
     implements
-        ByteCode, AnnotationDef, GetAnnotationByteCodes,
-        MethodWriter
+        ByteCode,
+        AnnotationDef,
+        GetAnnotationByteCodes,
+        MethodWriter,
+        TypeRefProperty,
+    TypeRefMInstAnn
 {
     private static final long serialVersionUID = 1;
 

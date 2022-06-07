@@ -4,6 +4,7 @@ import org.objectweb.asm.RecordComponentVisitor;
 import org.objectweb.asm.TypePath;
 import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.TDesc;
+import xyz.cofe.jvmbc.TypeRefProperty;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
 
@@ -12,7 +13,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class RecTypeAnnotation implements RecordByteCode, GetAnnotationByteCodes {
+public class RecTypeAnnotation
+    implements
+        RecordByteCode,
+        GetAnnotationByteCodes,
+        TypeRefProperty,
+    TypeRefRecTypeAnn
+{
     public RecTypeAnnotation(){}
     public RecTypeAnnotation( RecTypeAnnotation sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );

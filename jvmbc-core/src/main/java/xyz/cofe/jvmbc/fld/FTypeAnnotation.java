@@ -9,11 +9,19 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.TypePath;
 import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.TDesc;
+import xyz.cofe.jvmbc.TypeRefProperty;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
 
-public class FTypeAnnotation implements FieldByteCode, AnnotationDef, GetAnnotationByteCodes {
+public class FTypeAnnotation
+    implements
+        FieldByteCode,
+        AnnotationDef,
+        GetAnnotationByteCodes,
+        TypeRefProperty,
+        TypeRefFTypeAnn
+{
     private static final long serialVersionUID = 1;
 
     /**

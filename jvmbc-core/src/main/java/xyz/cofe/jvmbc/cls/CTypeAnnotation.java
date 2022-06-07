@@ -11,13 +11,14 @@ import org.objectweb.asm.TypePath;
 import org.objectweb.asm.TypeReference;
 import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.TDesc;
+import xyz.cofe.jvmbc.TypeRefProperty;
 import xyz.cofe.jvmbc.ann.AnnotationByteCode;
 import xyz.cofe.jvmbc.ann.AnnotationDef;
 import xyz.cofe.jvmbc.ann.GetAnnotationByteCodes;
 
 public class CTypeAnnotation
     implements ClsByteCode, AnnotationDef, GetAnnotationByteCodes,
-    ClazzWriter
+    ClazzWriter, TypeRefProperty, TypeRefCTypeAnn
 {
     private static final long serialVersionUID = 1;
 
