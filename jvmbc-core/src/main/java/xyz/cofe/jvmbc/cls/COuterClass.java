@@ -76,7 +76,7 @@ public class COuterClass implements ClsByteCode, ClazzWriter {
      * Возвращает дескриптор типа данных
      * @return Дескриптор типа данных
      */
-    public TDesc desc(){
+    public TDesc desc(){ //todo optional
         if( descProperty!=null )return descProperty;
         descProperty = new TDesc();
         return descProperty;

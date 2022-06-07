@@ -56,7 +56,7 @@ public class MParameter extends MAbstractBC implements MethodWriter, AccFlagsPro
     }
     //endregion
     //region name : String
-    private String name;
+    private String name; //todo optional
 
     /**
      * parameter name or {@literal null} if none is provided.

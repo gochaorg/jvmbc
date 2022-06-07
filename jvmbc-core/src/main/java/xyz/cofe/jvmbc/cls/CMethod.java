@@ -134,7 +134,7 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
     /**
      * сигнатура generic параметров и результата
      */
-    protected String signature;
+    protected String signature; //todo optional
 
     /**
      * Возвращает сигнатуру generic параметров и результата

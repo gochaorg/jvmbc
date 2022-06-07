@@ -169,7 +169,7 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
     /**
      * сигнатура, в случае Generic
      */
-    protected String signature;
+    protected String signature; // //todo optional
 
     /**
      * Возвращает сигнатуру в случае Generic типа
@@ -191,7 +191,7 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
     /**
      * значение поля
      */
-    protected Object value;
+    protected Object value; // //todo optional
 
     /**
      * Возвращает значение поля

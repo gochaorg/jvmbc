@@ -58,7 +58,7 @@ public class CInnerClass implements ClsByteCode, ClazzWriter, AccFlagsProperty, 
     }
     //endregion
     //region outerName : String
-    protected String outerName;
+    protected String outerName; //todo optional
     public String getOuterName(){
         return outerName;
     }
@@ -67,7 +67,7 @@ public class CInnerClass implements ClsByteCode, ClazzWriter, AccFlagsProperty, 
     }
     //endregion
     //region innerName : String
-    protected String innerName;
+    protected String innerName; //todo optional
     public String getInnerName(){
         return innerName;
     }

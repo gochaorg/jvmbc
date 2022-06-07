@@ -52,7 +52,7 @@ public class CRecord implements ClsByteCode {
         return desc;
     }
 
-    protected String sign;
+    protected String sign; //todo optional
 
     public String getSign(){
         return sign;
