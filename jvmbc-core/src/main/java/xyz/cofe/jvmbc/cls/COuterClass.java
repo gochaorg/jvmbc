@@ -1,5 +1,6 @@
 package xyz.cofe.jvmbc.cls;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.objectweb.asm.ClassWriter;
@@ -14,7 +15,7 @@ public class COuterClass implements ClsByteCode, ClazzWriter {
     public COuterClass(){}
     public COuterClass(String owner, String name, String descriptor){
         this.owner = owner;
-        this.name = name;
+        this.name = name!=null ? Optional.of(name) : Optional.empty();
         this.desc().setRaw(descriptor);
     }
 
@@ -55,11 +56,13 @@ public class COuterClass implements ClsByteCode, ClazzWriter {
     }
     //endregion
     //region name : String
-    protected String name;
-    public String getName(){
+    protected Optional<String> name = Optional.empty();
+    public Optional<String> getName(){
         return name;
     }
-    public void setName(String name){
+    public void setName(Optional<String> name){
+        //noinspection OptionalAssignedToNull
+        if( name==null )throw new IllegalArgumentException( "name==null" );
         this.name = name;
     }
     //endregion
@@ -91,6 +94,6 @@ public class COuterClass implements ClsByteCode, ClazzWriter {
     @Override
     public void write(ClassWriter v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        v.visitOuterClass(getOwner(),getName(), desc().getRaw());
+        v.visitOuterClass(getOwner(),getName().orElse(null), desc().getRaw());
     }
 }

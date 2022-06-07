@@ -169,7 +169,7 @@ public class ClassDump<
         CModule cmod = new CModule();
         cmod.setName(name);
         cmod.setAccess(access);
-        cmod.setVersion(version);
+        cmod.setVersion(version!=null ? Optional.of(version) : Optional.empty());
         ModuleDump moduleDump = new ModuleDump(api){
             @Override
             protected Modulo newModulo(){
@@ -204,6 +204,16 @@ public class ClassDump<
         emit(new CNestHost(nestHost));
     }
 
+    /**
+     * Visits the enclosing class of the class. This method must be called only if the class has an
+     * enclosing class.
+     *
+     * @param owner internal name of the enclosing class of the class.
+     * @param name the name of the method that contains the class, or {@literal null} if the class is
+     *     not enclosed in a method of its enclosing class.
+     * @param descriptor the descriptor of the method that contains the class, or {@literal null} if
+     *     the class is not enclosed in a method of its enclosing class.
+     */
     @Override
     public void visitOuterClass(String owner, String name, String descriptor){
         int ci = currentIndexGetAndInc();

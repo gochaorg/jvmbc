@@ -53,6 +53,8 @@ public class CSource implements ClsByteCode, ClazzWriter {
         return source;
     }
     public void setSource(Optional<String> source){
+        //noinspection OptionalAssignedToNull
+        if( source==null )throw new IllegalArgumentException( "source==null" );
         this.source = source;
     }
     //endregion
@@ -64,6 +66,8 @@ public class CSource implements ClsByteCode, ClazzWriter {
     }
 
     public void setDebug(Optional<String> debug){
+        //noinspection OptionalAssignedToNull
+        if( debug==null )throw new IllegalArgumentException( "debug==null" );
         this.debug = debug;
     }
     //endregion

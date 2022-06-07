@@ -3,7 +3,9 @@ package xyz.cofe.jvmbc.cls;
 import org.objectweb.asm.ClassWriter;
 import xyz.cofe.jvmbc.mdl.Modulo;
 
-public class CModule extends Modulo implements ClsByteCode {
+import java.util.Optional;
+
+public class CModule extends Modulo implements ClsByteCode, ModuleFlags {
     public CModule(){
     }
 
@@ -35,13 +37,15 @@ public class CModule extends Modulo implements ClsByteCode {
     }
     //endregion
     //region version : String
-    protected String version;
+    protected Optional<String> version = Optional.empty();
 
-    public String getVersion(){
+    public Optional<String> getVersion(){
         return version;
     }
 
-    public void setVersion( String version ){
+    public void setVersion( Optional<String> version ){
+        //noinspection OptionalAssignedToNull
+        if( version==null )throw new IllegalArgumentException( "version==null" );
         this.version = version;
     }
     //endregion
@@ -55,7 +59,7 @@ public class CModule extends Modulo implements ClsByteCode {
     public void write( ClassWriter v ){
         if( v==null )throw new IllegalArgumentException( "v==null" );
 
-        var modv = v.visitModule(getName(), getAccess(), getVersion());
+        var modv = v.visitModule(getName(), getAccess(), getVersion().orElse(null));
 
         //noinspection ConstantConditions
         if( modv!=null ) write(modv);
