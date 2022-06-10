@@ -3,7 +3,7 @@ package xyz.cofe.jvmbc.mth;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.objectweb.asm.Label;
-import xyz.cofe.jvmbc.bm.MHandle;
+import xyz.cofe.jvmbc.bm.MethodHandle;
 
 /**
  * Контекст записи метода
@@ -40,7 +40,7 @@ public class MethodWriterCtx {
         return res;
     }
 
-    public org.objectweb.asm.Handle bootstrapArgument(MHandle targetCallArg, org.objectweb.asm.Handle bootstrap){
+    public org.objectweb.asm.Handle bootstrapArgument( MethodHandle targetCallArg, org.objectweb.asm.Handle bootstrap){
         if( targetCallArg==null )throw new IllegalArgumentException( "targetCallArg==null" );
 
         String name  = targetCallArg.getName();

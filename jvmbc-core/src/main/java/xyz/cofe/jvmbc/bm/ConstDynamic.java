@@ -1,9 +1,7 @@
 package xyz.cofe.jvmbc.bm;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.objectweb.asm.ConstantDynamic;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,11 +46,11 @@ public class ConstDynamic implements BootstrapMethArg {
     }
     //endregion
     //region bootstrapMethod : MHandle
-    private MHandle bootstrapMethod;
-    public MHandle getBootstrapMethod(){
+    private MethodHandle bootstrapMethod;
+    public MethodHandle getBootstrapMethod(){
         return bootstrapMethod;
     }
-    public void setBootstrapMethod( MHandle bootstrapMethod ){
+    public void setBootstrapMethod( MethodHandle bootstrapMethod ){
         this.bootstrapMethod = bootstrapMethod;
     }
     //endregion

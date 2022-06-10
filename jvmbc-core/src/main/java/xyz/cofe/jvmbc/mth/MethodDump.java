@@ -13,7 +13,7 @@ import org.objectweb.asm.TypePath;
 import xyz.cofe.jvmbc.ann.AnnotationDump;
 import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.bm.LdcType;
-import xyz.cofe.jvmbc.bm.MHandle;
+import xyz.cofe.jvmbc.bm.MethodHandle;
 
 /**
  * Создает дамп байт кода метода, используется в AsmQuery.
@@ -542,7 +542,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
         } else if ( value instanceof Handle) {
             // ...
             var hdl = (Handle) value;
-            var hdl0 = new MHandle(hdl);
+            var hdl0 = new MethodHandle(hdl);
             emit(new MLdcInsn(hdl0,LdcType.Handle));
         } else if ( value instanceof ConstantDynamic ) {
             // ...

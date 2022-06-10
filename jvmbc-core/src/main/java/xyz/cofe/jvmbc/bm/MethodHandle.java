@@ -6,15 +6,15 @@ import xyz.cofe.jvmbc.MDesc;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class MHandle implements Serializable, BootstrapMethArg {
+public class MethodHandle implements Serializable, BootstrapMethArg {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
-    public MHandle(){
+    public MethodHandle(){
     }
-    public MHandle(org.objectweb.asm.Handle sample){
+    public MethodHandle( org.objectweb.asm.Handle sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         tag = sample.getTag();
         desc().setRaw(sample.getDesc());
@@ -27,7 +27,7 @@ public class MHandle implements Serializable, BootstrapMethArg {
      * Конструктор копирования
      * @param sample образец
      */
-    public MHandle(MHandle sample){
+    public MethodHandle( MethodHandle sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         tag = sample.getTag();
         descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
@@ -36,8 +36,8 @@ public class MHandle implements Serializable, BootstrapMethArg {
         iface = sample.isIface();
     }
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public MHandle clone(){
-        return new MHandle(this);
+    public MethodHandle clone(){
+        return new MethodHandle(this);
     }
 
     //region tag : int
@@ -102,7 +102,7 @@ public class MHandle implements Serializable, BootstrapMethArg {
 
     @Override
     public String toString(){
-        return MHandle.class.getSimpleName()+" { " +
+        return MethodHandle.class.getSimpleName()+" { " +
             "tag=" + tag +
             ", desc='" + desc() + '\'' +
             ", name='" + name + '\'' +
@@ -115,7 +115,7 @@ public class MHandle implements Serializable, BootstrapMethArg {
     public boolean equals(Object o){
         if( this == o ) return true;
         if( o == null || getClass() != o.getClass() ) return false;
-        MHandle handle = (MHandle) o;
+        MethodHandle handle = (MethodHandle) o;
         return
             tag == handle.tag &&
             iface == handle.iface &&

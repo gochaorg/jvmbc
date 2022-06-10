@@ -4,7 +4,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import xyz.cofe.jvmbc.bm.BootstrapMethArg;
 import xyz.cofe.jvmbc.bm.LdcType;
-import xyz.cofe.jvmbc.bm.MHandle;
+import xyz.cofe.jvmbc.bm.MethodHandle;
 
 /**
  * <a href="https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html#jvms-6.5.ldc">Push item from run-time constant pool</a>
@@ -63,6 +63,7 @@ public class MLdcInsn extends MAbstractBC implements MethodWriter {
      */
     public MLdcInsn(){
     }
+
     public MLdcInsn(Object value, LdcType ldcType){
         this.value = value;
         this.ldcType = ldcType;
@@ -119,7 +120,7 @@ public class MLdcInsn extends MAbstractBC implements MethodWriter {
             case String: v.visitLdcInsn((String)getValue()); break;
             case Float: v.visitLdcInsn((Float)getValue()); break;
             case Handle:
-                var hdl1 = (MHandle)getValue();
+                var hdl1 = (MethodHandle)getValue();
                 var hdl0 = new org.objectweb.asm.Handle(
                     hdl1.getTag(), hdl1.getOwner(), hdl1.getName(), hdl1.desc().getRaw(), hdl1.isIface()
                 );

@@ -6,7 +6,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import xyz.cofe.jvmbc.MDesc;
 import xyz.cofe.jvmbc.bm.IntArg;
-import xyz.cofe.jvmbc.bm.MHandle;
+import xyz.cofe.jvmbc.bm.MethodHandle;
 import xyz.cofe.jvmbc.bm.StringArg;
 import xyz.cofe.jvmbc.bm.TypeArg;
 import xyz.cofe.jvmbc.bm.BootstrapMethArg;
@@ -191,7 +191,7 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
         this.name = name;
         desc().setRaw(descriptor);
         if( handle!=null ){
-            this.bootstrapMethodHandle = new MHandle(handle);
+            this.bootstrapMethodHandle = new MethodHandle(handle);
         }
 
         if(args!=null){
@@ -210,7 +210,7 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
                 }else if( a instanceof Type ){
                     bootstrapMethodArguments.add(new TypeArg(((Type)a).toString()));
                 }else if( a instanceof org.objectweb.asm.Handle ){
-                    bootstrapMethodArguments.add(new MHandle((org.objectweb.asm.Handle)a));
+                    bootstrapMethodArguments.add(new MethodHandle((org.objectweb.asm.Handle)a));
                 }else {
                     throw new IllegalArgumentException("unsupported bootstrapMethodArgument "+a);
                 }
@@ -264,11 +264,11 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
     }
     //endregion
     //region bootstrapMethodHandle : MHandle
-    private MHandle bootstrapMethodHandle;
-    public MHandle getBootstrapMethodHandle(){
+    private MethodHandle bootstrapMethodHandle;
+    public MethodHandle getBootstrapMethodHandle(){
         return bootstrapMethodHandle;
     }
-    public void setBootstrapMethodHandle(MHandle bootstrapMethodHandle){
+    public void setBootstrapMethodHandle( MethodHandle bootstrapMethodHandle){
         this.bootstrapMethodHandle = bootstrapMethodHandle;
     }
     //endregion
@@ -330,8 +330,8 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
                 arg = build((DoubleArg) sarg);
             }else if( sarg instanceof TypeArg ){
                 arg = build((TypeArg)sarg);
-            }else if( sarg instanceof MHandle ){
-                arg = build((MHandle)sarg, hdl, ctx);
+            }else if( sarg instanceof MethodHandle ){
+                arg = build((MethodHandle)sarg, hdl, ctx);
             }else {
                 throw new UnsupportedOperationException("can't feetch BootstrapMethodArgument from "+sarg);
             }
@@ -347,7 +347,7 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
     protected Object build(DoubleArg arg){ return arg.getValue(); }
     protected Object build(StringArg arg){ return arg.getValue(); }
     protected Object build(TypeArg arg){ return Type.getType(arg.getType()); }
-    protected Object build(MHandle arg, org.objectweb.asm.Handle bm, MethodWriterCtx ctx){
+    protected Object build( MethodHandle arg, org.objectweb.asm.Handle bm, MethodWriterCtx ctx){
         if( arg==null )throw new IllegalArgumentException("target handle is null");
         return ctx.bootstrapArgument(arg, bm);
     }
