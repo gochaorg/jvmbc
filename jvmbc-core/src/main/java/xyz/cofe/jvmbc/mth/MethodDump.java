@@ -1,8 +1,6 @@
 package xyz.cofe.jvmbc.mth;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
@@ -12,7 +10,6 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.TypePath;
-import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.ann.AnnotationDump;
 import xyz.cofe.jvmbc.ByteCode;
 import xyz.cofe.jvmbc.bm.LdcType;
@@ -355,7 +352,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      */
     @Override
     public void visitIntInsn(int opcode, int operand){
-        emit(new MIntInsn(opcode,operand));
+        emit(new MInt(opcode,operand));
     }
 
     /**
@@ -368,7 +365,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      */
     @Override
     public void visitVarInsn(int opcode, int var){
-        emit(new MVarInsn(opcode,var));
+        emit(new MVar(opcode,var));
     }
 
     /**
@@ -382,7 +379,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      */
     @Override
     public void visitTypeInsn(int opcode, String type){
-        emit(new MTypeInsn(opcode,type));
+        emit(new MType(opcode,type));
     }
 
     /**
@@ -429,7 +426,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      */
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface){
-        emit(new MMethodInsn(opcode,owner,name,descriptor,isInterface));
+        emit(new MMethod(opcode,owner,name,descriptor,isInterface));
     }
 
     /**
@@ -458,7 +455,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      */
     @Override
     public void visitJumpInsn(int opcode, Label label){
-        emit(new MJumpInsn(opcode, label!=null ? label.toString():null));
+        emit(new MJump(opcode, label!=null ? label.toString():null));
     }
 
     /**
@@ -564,7 +561,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      */
     @Override
     public void visitIincInsn(int var, int increment){
-        emit(new MIincInsn(var,increment));
+        emit(new MIinc(var,increment));
     }
 
     /**
@@ -581,7 +578,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
         String defLbl = dflt!=null ? dflt.toString() : null;
         String[] lbls = labels!=null ?
             List.of(labels).stream().map(l -> l != null ? l.toString() : null).toArray(String[]::new) : null;
-        emit(new MTableSwitchInsn(min,max,defLbl,lbls));
+        emit(new MTableSwitch(min,max,defLbl,lbls));
     }
 
     /**
@@ -597,7 +594,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
         String defLbl = dflt!=null ? dflt.toString() : null;
         String[] lbls = labels!=null ?
             List.of(labels).stream().map(l -> l != null ? l.toString() : null).toArray(String[]::new) : null;
-        emit(new MLookupSwitchInsn(defLbl, keys, lbls));
+        emit(new MLookupSwitch(defLbl, keys, lbls));
     }
 
     /**
@@ -608,7 +605,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      */
     @Override
     public void visitMultiANewArrayInsn(String descriptor, int numDimensions){
-        emit(new MMultiANewArrayInsn(descriptor,numDimensions));
+        emit(new MMultiANewArray(descriptor,numDimensions));
     }
 
     /**

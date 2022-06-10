@@ -82,13 +82,13 @@ MyClass
 * реализуют интерфейс. Поэтому invokeinterface должен будет проверить во время 
 * выполнения, существует ли метод в таблице, и потенциально вызвать исключение.
  */
-public class MMethodInsn extends MAbstractBC implements MethodWriter {
+public class MMethod extends MAbstractBC implements MethodWriter {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
-    public MMethodInsn(){}
+    public MMethod(){}
     
     /**
      * Конструктор
@@ -111,7 +111,7 @@ public class MMethodInsn extends MAbstractBC implements MethodWriter {
      * @param iface if the method's owner class is an interface.
      * <br> если класс владельца метода является интерфейсом.
      */
-    public MMethodInsn(int op, String owner, String name, String descriptor, boolean iface){
+    public MMethod( int op, String owner, String name, String descriptor, boolean iface){
         this.opcode = op;
         this.owner = owner;
         this.name = name;
@@ -123,7 +123,7 @@ public class MMethodInsn extends MAbstractBC implements MethodWriter {
      * Конструктор копирования
      * @param sample образец
      */
-    public MMethodInsn(MMethodInsn sample){
+    public MMethod( MMethod sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         opcode = sample.opcode;
         owner = sample.owner;
@@ -132,7 +132,7 @@ public class MMethodInsn extends MAbstractBC implements MethodWriter {
         iface = sample.iface;
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod") public MMethodInsn clone(){ return new MMethodInsn(this); }
+    @SuppressWarnings("MethodDoesntCallSuperMethod") public MMethod clone(){ return new MMethod(this); }
 
     //region opcode : int
     private int opcode;
@@ -190,7 +190,7 @@ public class MMethodInsn extends MAbstractBC implements MethodWriter {
     //endregion
 
     public String toString(){
-        return MMethodInsn.class.getSimpleName()+
+        return MMethod.class.getSimpleName()+
             " opcode="+OpCode.code(opcode).map(OpCode::name).orElse("?")+"#"+opcode+"" +
             " owner="+owner+" name="+name+" desc="+desc()+" iface="+iface
             ;

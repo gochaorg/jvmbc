@@ -11,20 +11,20 @@ import xyz.cofe.jvmbc.ByteCode;
  * 
  * см {@link OpCode#ANEWARRAY}, {@link OpCode#CHECKCAST}, {@link OpCode#INSTANCEOF}
  */
-public class MTypeInsn extends MAbstractBC implements ByteCode, MethodWriter {
+public class MType extends MAbstractBC implements ByteCode, MethodWriter {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
-    public MTypeInsn(){}
+    public MType(){}
     
     /**
      * Конструктор
      * @param op код инструкции
      * @param type тип
      */
-    public MTypeInsn(int op, String type){
+    public MType( int op, String type){
         this.opcode = op;
         this.type = type;
     }
@@ -33,13 +33,13 @@ public class MTypeInsn extends MAbstractBC implements ByteCode, MethodWriter {
      * Конструктор копирования
      * @param sample образец
      */
-    public MTypeInsn(MTypeInsn sample){
+    public MType( MType sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         opcode = sample.opcode;
         type = sample.type;
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod") public MTypeInsn clone(){ return new MTypeInsn(this); }
+    @SuppressWarnings("MethodDoesntCallSuperMethod") public MType clone(){ return new MType(this); }
 
     //region opcode : int
     private int opcode;
@@ -81,7 +81,7 @@ public class MTypeInsn extends MAbstractBC implements ByteCode, MethodWriter {
     //endregion
 
     public String toString(){
-        return MTypeInsn.class.getSimpleName()+
+        return MType.class.getSimpleName()+
             " opcode="+OpCode.code(opcode).map(OpCode::name).orElse("?")+"#"+opcode+
             " operand="+ type
             ;

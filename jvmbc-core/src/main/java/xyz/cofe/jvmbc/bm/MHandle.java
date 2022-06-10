@@ -1,5 +1,6 @@
 package xyz.cofe.jvmbc.bm;
 
+import org.objectweb.asm.Handle;
 import xyz.cofe.jvmbc.MDesc;
 
 import java.io.Serializable;
@@ -126,5 +127,15 @@ public class MHandle implements Serializable, BootstrapMethArg {
     @Override
     public int hashCode(){
         return Objects.hash(tag, desc().getRaw(), name, owner, iface);
+    }
+
+    public org.objectweb.asm.Handle toHandle(){
+        return new Handle(
+            getTag(),
+            getOwner(),
+            getName(),
+            descProperty!=null ? descProperty.getRaw() : null,
+            isIface()
+        );
     }
 }

@@ -11,6 +11,9 @@
 
     <artifactId>jvmbc-core</artifactId>
 
+    <properties>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.ow2.asm</groupId>
@@ -36,6 +39,11 @@
             <groupId>xyz.cofe</groupId>
             <artifactId>text</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <version>${checkerframework.version}</version>
         </dependency>
     </dependencies>
 

@@ -78,13 +78,13 @@ import xyz.cofe.jvmbc.ByteCode;
  * а также адрес, который может быть вычислен по умолчанию, должен быть адресом кода 
  * операции инструкции внутри метода, который содержит эту инструкцию tablewitch.
  */
-public class MTableSwitchInsn extends MAbstractBC implements ByteCode, MethodWriter {
+public class MTableSwitch extends MAbstractBC implements ByteCode, MethodWriter {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
-    public MTableSwitchInsn(){}
+    public MTableSwitch(){}
     
     /**
      * Конструктор
@@ -94,7 +94,7 @@ public class MTableSwitchInsn extends MAbstractBC implements ByteCode, MethodWri
      * @param labels beginnings of the handler blocks. {@code labels[i]} is the beginning of the
      * handler block for the {@code min + i} key.
      */
-    public MTableSwitchInsn(int min, int max, String dflt, String... labels){
+    public MTableSwitch( int min, int max, String dflt, String... labels){
         this.min = min;
         this.max = max;
         this.defaultLabel = dflt;
@@ -105,7 +105,7 @@ public class MTableSwitchInsn extends MAbstractBC implements ByteCode, MethodWri
      * Конструктор копирования
      * @param sample образец
      */
-    public MTableSwitchInsn(MTableSwitchInsn sample){
+    public MTableSwitch( MTableSwitch sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
 
         min = sample.min;
@@ -114,7 +114,7 @@ public class MTableSwitchInsn extends MAbstractBC implements ByteCode, MethodWri
         if( sample.labels!=null )labels = Arrays.copyOf(sample.labels, sample.labels.length);
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod") public MTableSwitchInsn clone(){ return new MTableSwitchInsn(this); }
+    @SuppressWarnings("MethodDoesntCallSuperMethod") public MTableSwitch clone(){ return new MTableSwitch(this); }
 
     //region min : int
     private int min;
@@ -196,7 +196,7 @@ public class MTableSwitchInsn extends MAbstractBC implements ByteCode, MethodWri
     //endregion
 
     public String toString(){
-        return MTableSwitchInsn.class.getSimpleName()+
+        return MTableSwitch.class.getSimpleName()+
             " min="+min+
             " max="+max+
             (defaultLabel!=null ? " defLabel="+defaultLabel : "")+

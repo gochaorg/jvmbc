@@ -20,6 +20,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <checkerframework.version>3.21.1</checkerframework.version>
     </properties>
 
     <dependencyManagement>
@@ -77,7 +78,61 @@
                 <version>1.2.3</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker-qual</artifactId>
+                <version>${checkerframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker</artifactId>
+                <version>${checkerframework.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>checker-fw</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.checkerframework</groupId>
+                    <artifactId>checker-qual</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.checkerframework</groupId>
+                    <artifactId>checker</artifactId>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <fork>true</fork> <!-- Must fork or else JVM arguments are ignored. -->
+                            <compilerArguments>
+                                <Xmaxerrs>10000</Xmaxerrs>
+                                <Xmaxwarns>10000</Xmaxwarns>
+                            </compilerArguments>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>org.checkerframework</groupId>
+                                    <artifactId>checker</artifactId>
+                                    <version>${checkerframework.version}</version>
+                                </path>
+                            </annotationProcessorPaths>
+                            <annotationProcessors>
+                                <!-- Add all the checkers you want to enable here -->
+                                <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>
+                            </annotationProcessors>
+                            <compilerArgs>
+                                <!-- <arg>-Awarns</arg> --> <!-- -Awarns turns type-checking errors into warnings. -->
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

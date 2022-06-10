@@ -32,14 +32,14 @@ import org.objectweb.asm.MethodVisitor;
  * The iinc opcode can be used in conjunction with the wide instruction (§wide)
  * to access a local variable using a two-byte unsigned index and to increment it by a two-byte immediate signed value.
  */
-public class MIincInsn extends MAbstractBC implements MethodWriter {
+public class MIinc extends MAbstractBC implements MethodWriter {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
-    public MIincInsn(){}
-    public MIincInsn(int variable, int increment){
+    public MIinc(){}
+    public MIinc( int variable, int increment){
         this.variable = variable;
         this.increment = increment;
     }
@@ -48,13 +48,13 @@ public class MIincInsn extends MAbstractBC implements MethodWriter {
      * Конструктор копирования
      * @param sample образец
      */
-    public MIincInsn(MIincInsn sample){
+    public MIinc( MIinc sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         variable = sample.getVariable();
         increment = sample.getIncrement();
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod") public MIincInsn clone(){ return new MIincInsn(this); }
+    @SuppressWarnings("MethodDoesntCallSuperMethod") public MIinc clone(){ return new MIinc(this); }
 
     //region variable : int
     /**
@@ -99,7 +99,7 @@ public class MIincInsn extends MAbstractBC implements MethodWriter {
     //endregion
 
     public String toString(){
-        return MIincInsn.class.getSimpleName()+
+        return MIinc.class.getSimpleName()+
             " variable="+variable+
             " increment="+increment;
     }

@@ -53,15 +53,15 @@ import xyz.cofe.jvmbc.TDesc;
  * <p>
  * The array class referenced via the run-time constant pool may have more dimensions than the dimensions operand of the multianewarray instruction. In that case, only the first dimensions of the dimensions of the array are created.
  */
-public class MMultiANewArrayInsn extends MAbstractBC implements MethodWriter {
+public class MMultiANewArray extends MAbstractBC implements MethodWriter {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
-    public MMultiANewArrayInsn(){
+    public MMultiANewArray(){
     }
-    public MMultiANewArrayInsn(String descriptor, int numDimensions){
+    public MMultiANewArray( String descriptor, int numDimensions){
         descProperty = new TDesc(descriptor);
         this.numDimensions = numDimensions;
     }
@@ -70,13 +70,13 @@ public class MMultiANewArrayInsn extends MAbstractBC implements MethodWriter {
      * Конструктор копирования
      * @param sample образец
      */
-    public MMultiANewArrayInsn(MMultiANewArrayInsn sample){
+    public MMultiANewArray( MMultiANewArray sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
         numDimensions = sample.numDimensions;
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod") public MMultiANewArrayInsn clone(){ return new MMultiANewArrayInsn(this); }
+    @SuppressWarnings("MethodDoesntCallSuperMethod") public MMultiANewArray clone(){ return new MMultiANewArray(this); }
 
     //region desc() - дескриптор типа
     /**
@@ -114,7 +114,7 @@ public class MMultiANewArrayInsn extends MAbstractBC implements MethodWriter {
     //endregion
 
     public String toString(){
-        return MMultiANewArrayInsn.class.getSimpleName()+
+        return MMultiANewArray.class.getSimpleName()+
             " descriptor="+getDesc()+
             " numDimensions="+numDimensions;
     }

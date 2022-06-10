@@ -1,6 +1,7 @@
 module xyz.cofe.jvmbc.core {
     requires org.objectweb.asm;
     requires org.slf4j;
+    requires org.checkerframework.checker.qual;
 
     exports xyz.cofe.jvmbc;
     exports xyz.cofe.jvmbc.ann;

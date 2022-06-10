@@ -30,14 +30,14 @@ import org.objectweb.asm.MethodVisitor;
  * {@link OpCode#IFNULL} or 
  * {@link OpCode#IFNONNULL}.
  */
-public class MJumpInsn extends MAbstractBC implements MethodWriter {
+public class MJump extends MAbstractBC implements MethodWriter {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
-    public MJumpInsn(){}
-    public MJumpInsn(int op, String label){
+    public MJump(){}
+    public MJump( int op, String label){
         this.opcode = op;
         this.label = label;
     }
@@ -46,13 +46,13 @@ public class MJumpInsn extends MAbstractBC implements MethodWriter {
      * Конструктор копирования
      * @param sample образец
      */
-    public MJumpInsn(MJumpInsn sample){
+    public MJump( MJump sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         opcode = sample.getOpcode();
         label = sample.getLabel();
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod") public MJumpInsn clone(){ return new MJumpInsn(this); }
+    @SuppressWarnings("MethodDoesntCallSuperMethod") public MJump clone(){ return new MJump(this); }
 
     //region opcode : int
     private int opcode;
@@ -140,7 +140,7 @@ public class MJumpInsn extends MAbstractBC implements MethodWriter {
     //endregion
 
     public String toString(){
-        return MJumpInsn.class.getSimpleName()+
+        return MJump.class.getSimpleName()+
             " opcode="+OpCode.code(opcode).map(OpCode::name).orElse("?")+"#"+opcode+
             " label="+label;
     }

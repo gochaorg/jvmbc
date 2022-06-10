@@ -36,7 +36,12 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
      * @param signature сигнатура generic параметров и результата
      * @param exceptions исключения генерируемые методом
      */
-    public CMethod( EmptyList<LIST, MethodByteCode> newList, int access, String name, String descriptor, String signature, String[] exceptions){
+    public CMethod( EmptyList<LIST, MethodByteCode> newList,
+                    int access,
+                    String name,
+                    String descriptor,
+                    String signature,
+                    String[] exceptions){
         if( newList==null )throw new IllegalArgumentException( "newList==null" );
         this.newList = newList;
         this.access = access;

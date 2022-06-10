@@ -64,14 +64,14 @@ import org.objectweb.asm.Opcodes;
  *                Opcodes#T_CHAR}, {@link Opcodes#T_FLOAT}, {@link Opcodes#T_DOUBLE}, {@link Opcodes#T_BYTE},
  *                {@link Opcodes#T_SHORT}, {@link Opcodes#T_INT} or {@link Opcodes#T_LONG}.
  */
-public class MIntInsn extends MAbstractBC implements MethodWriter {
+public class MInt extends MAbstractBC implements MethodWriter {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
-    public MIntInsn(){}
-    public MIntInsn(int op, int operand){
+    public MInt(){}
+    public MInt( int op, int operand){
         this.opcode = op;
         this.operand = operand;
     }
@@ -80,13 +80,13 @@ public class MIntInsn extends MAbstractBC implements MethodWriter {
      * Конструктор копирования
      * @param sample образец
      */
-    public MIntInsn(MIntInsn sample){
+    public MInt( MInt sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         opcode = sample.getOpcode();
         operand = sample.getOperand();
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod") public MIntInsn clone(){ return new MIntInsn(this); }
+    @SuppressWarnings("MethodDoesntCallSuperMethod") public MInt clone(){ return new MInt(this); }
 
     //region opcode : int
     private int opcode;
@@ -112,7 +112,7 @@ public class MIntInsn extends MAbstractBC implements MethodWriter {
     //endregion
 
     public String toString(){
-        return MIntInsn.class.getSimpleName()+
+        return MInt.class.getSimpleName()+
             " opcode="+OpCode.code(opcode).map(OpCode::name).orElse("?")+"#"+opcode+
             " operand="+operand
             ;

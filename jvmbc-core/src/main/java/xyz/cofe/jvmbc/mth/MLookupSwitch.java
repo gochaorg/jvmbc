@@ -104,13 +104,13 @@ import org.objectweb.asm.MethodVisitor;
  * <p> Пары совпадения-смещения сортируются для поддержки процедур поиска, 
  * которые работают быстрее, чем линейный поиск.
  */
-public class MLookupSwitchInsn extends MAbstractBC implements MethodWriter {
+public class MLookupSwitch extends MAbstractBC implements MethodWriter {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
-    public MLookupSwitchInsn(){}
+    public MLookupSwitch(){}
     
     /**
      * Конструктор
@@ -119,7 +119,7 @@ public class MLookupSwitchInsn extends MAbstractBC implements MethodWriter {
      * @param labels начала блоков обработчика. {@code labels [i]} - начало
      * блок-обработчик для ключа {@code keys [i]}.
      */
-    public MLookupSwitchInsn(String defHdl, int[] keys, String[] labels){
+    public MLookupSwitch( String defHdl, int[] keys, String[] labels){
         this.defaultHandlerLabel = defHdl;
         this.keys = keys;
         this.labels = labels;
@@ -129,14 +129,14 @@ public class MLookupSwitchInsn extends MAbstractBC implements MethodWriter {
      * Конструктор копирования
      * @param sample образец
      */
-    public MLookupSwitchInsn(MLookupSwitchInsn sample){
+    public MLookupSwitch( MLookupSwitch sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         defaultHandlerLabel = sample.defaultHandlerLabel;
         if( sample.keys!=null )keys = Arrays.copyOf(sample.keys,sample.keys.length);
         if( sample.labels!=null )labels = Arrays.copyOf(sample.labels,sample.labels.length);
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod") public MLookupSwitchInsn clone(){ return new MLookupSwitchInsn(this); }
+    @SuppressWarnings("MethodDoesntCallSuperMethod") public MLookupSwitch clone(){ return new MLookupSwitch(this); }
 
     //region defaultHandlerLabel - начало блока обработчика по умолчанию.
     private String defaultHandlerLabel;
@@ -199,7 +199,7 @@ public class MLookupSwitchInsn extends MAbstractBC implements MethodWriter {
     //endregion
 
     public String toString(){
-        return MLookupSwitchInsn.class.getSimpleName()+" defHandlerLabel="+defaultHandlerLabel+(
+        return MLookupSwitch.class.getSimpleName()+" defHandlerLabel="+defaultHandlerLabel+(
             keys!=null ? " keys="+Arrays.asList(keys) : ""
             )+(
                 labels!=null ? " label="+Arrays.asList(labels) : ""
