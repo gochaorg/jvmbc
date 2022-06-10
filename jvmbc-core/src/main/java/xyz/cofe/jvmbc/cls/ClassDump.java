@@ -141,6 +141,23 @@ public class ClassDump<
         currentIndex.set(i);
     }
 
+    /**
+     * Visits the header of the class.
+     *
+     * @param version the class version. The minor version is stored in the 16 most significant bits,
+     *     and the major version in the 16 least significant bits.
+     * @param access the class's access flags (see {@link Opcodes}). This parameter also indicates if
+     *     the class is deprecated {@link Opcodes#ACC_DEPRECATED} or a record {@link
+     *     Opcodes#ACC_RECORD}.
+     * @param name the internal name of the class (see {@link Type#getInternalName()}).
+     * @param signature the signature of this class. May be {@literal null} if the class is not a
+     *     generic one, and does not extend or implement generic classes or interfaces.
+     * @param superName the internal of name of the super class (see {@link Type#getInternalName()}).
+     *     For interfaces, the super class is {@link Object}. May be {@literal null}, but only for the
+     *     {@link Object} class.
+     * @param interfaces the internal names of the class's interfaces (see {@link
+     *     Type#getInternalName()}). May be {@literal null}.
+     */
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces){
         var c = classFactory.cbegin(version,access,name,signature,superName,interfaces);
@@ -149,6 +166,14 @@ public class ClassDump<
         emit(c);
     }
 
+    /**
+     * Visits the source of the class.
+     *
+     * @param source the name of the source file from which the class was compiled. May be {@literal
+     *     null}.
+     * @param debug additional debug information to compute the correspondence between source and
+     *     compiled elements of the class. May be {@literal null}.
+     */
     @Override
     public void visitSource(String source, String debug){
         int ci = currentIndexGetAndInc();
@@ -162,6 +187,16 @@ public class ClassDump<
         emit(c);
     }
 
+    /**
+     * Visit the module corresponding to the class.
+     *
+     * @param name the fully qualified name (using dots) of the module.
+     * @param access the module access flags, among {@code ACC_OPEN}, {@code ACC_SYNTHETIC} and {@code
+     *     ACC_MANDATED}.
+     * @param version the module version, or {@literal null}.
+     * @return a visitor to visit the module values, or {@literal null} if this visitor is not
+     *     interested in visiting this module.
+     */
     @Override
     public ModuleVisitor visitModule(String name, int access, String version){
         //dump("module name="+name+" access="+(new AccFlags(access).flags())+" version="+version);
@@ -191,6 +226,16 @@ public class ClassDump<
         return moduleDump;
     }
 
+    /**
+     * Visits the nest host class of the class. A nest is a set of classes of the same package that
+     * share access to their private members. One of these classes, called the host, lists the other
+     * members of the nest, which in turn should link to the host of their nest. This method must be
+     * called only once and only if the visited class is a non-host member of a nest. A class is
+     * implicitly its own nest, so it's invalid to call this method with the visited class name as
+     * argument.
+     *
+     * @param nestHost the internal name of the host class of the nest.
+     */
     @Override
     public void visitNestHost(String nestHost){
         int ci = currentIndexGetAndInc();
@@ -227,6 +272,14 @@ public class ClassDump<
         emit(c);
     }
 
+    /**
+     * Visits an annotation of the class.
+     *
+     * @param descriptor the class descriptor of the annotation class.
+     * @param visible {@literal true} if the annotation is visible at runtime.
+     * @return a visitor to visit the annotation values, or {@literal null} if this visitor is not
+     *     interested in visiting this annotation.
+     */
     @Override
     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible){
         int ci = currentIndexGetAndInc();
@@ -275,6 +328,15 @@ public class ClassDump<
         dump("ann "+attribute);
     }
 
+    /**
+     * Visits a member of the nest. A nest is a set of classes of the same package that share access
+     * to their private members. One of these classes, called the host, lists the other members of the
+     * nest, which in turn should link to the host of their nest. This method must be called only if
+     * the visited class is the host of a nest. A nest host is implicitly a member of its own nest, so
+     * it's invalid to call this method with the visited class name as argument.
+     *
+     * @param nestMember the internal name of a nest member.
+     */
     @Override
     public void visitNestMember(String nestMember){
         int ci = currentIndexGetAndInc();
@@ -285,6 +347,12 @@ public class ClassDump<
         emit(c);
     }
 
+    /**
+     * Visits a permitted subclasses. A permitted subclass is one of the allowed subclasses of the
+     * current class.
+     *
+     * @param permittedSubclass the internal name of a permitted subclass.
+     */
     @Override
     public void visitPermittedSubclass(String permittedSubclass){
         int ci = currentIndexGetAndInc();
@@ -295,6 +363,18 @@ public class ClassDump<
         emit(c);
     }
 
+    /**
+     * Visits information about an inner class. This inner class is not necessarily a member of the
+     * class being visited.
+     *
+     * @param name the internal name of an inner class (see {@link Type#getInternalName()}).
+     * @param outerName the internal name of the class to which the inner class belongs (see {@link
+     *     Type#getInternalName()}). May be {@literal null} for not member classes.
+     * @param innerName the (simple) name of the inner class inside its enclosing class. May be
+     *     {@literal null} for anonymous inner classes.
+     * @param access the access flags of the inner class as originally declared in the enclosing
+     *     class.
+     */
     @Override
     public void visitInnerClass(String name, String outerName, String innerName, int access){
         int ci = currentIndexGetAndInc();
@@ -337,6 +417,24 @@ public class ClassDump<
         return dump;
     }
 
+    /**
+     * Visits a field of the class.
+     *
+     * @param access the field's access flags (see {@link Opcodes}). This parameter also indicates if
+     *     the field is synthetic and/or deprecated.
+     * @param name the field's name.
+     * @param descriptor the field's descriptor (see {@link Type}).
+     * @param signature the field's signature. May be {@literal null} if the field's type does not use
+     *     generic types.
+     * @param value the field's initial value. This parameter, which may be {@literal null} if the
+     *     field does not have an initial value, must be an {@link Integer}, a {@link Float}, a {@link
+     *     Long}, a {@link Double} or a {@link String} (for {@code int}, {@code float}, {@code long}
+     *     or {@code String} fields respectively). <i>This parameter is only used for static
+     *     fields</i>. Its value is ignored for non static fields, which must be initialized through
+     *     bytecode instructions in constructors or methods.
+     * @return a visitor to visit field annotations and attributes, or {@literal null} if this class
+     *     visitor is not interested in visiting these annotations and attributes.
+     */
     @Override
     public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value){
         int ci = currentIndexGetAndInc();
@@ -356,6 +454,22 @@ public class ClassDump<
         return dump;
     }
 
+    /**
+     * Visits a method of the class. This method <i>must</i> return a new {@link MethodVisitor}
+     * instance (or {@literal null}) each time it is called, i.e., it should not return a previously
+     * returned visitor.
+     *
+     * @param access the method's access flags (see {@link Opcodes}). This parameter also indicates if
+     *     the method is synthetic and/or deprecated.
+     * @param name the method's name.
+     * @param descriptor the method's descriptor (see {@link Type}).
+     * @param signature the method's signature. May be {@literal null} if the method parameters,
+     *     return type and exceptions do not use generic types.
+     * @param exceptions the internal names of the method's exception classes (see {@link
+     *     Type#getInternalName()}). May be {@literal null}.
+     * @return an object to visit the byte code of the method, or {@literal null} if this class
+     *     visitor is not interested in visiting the code of this method.
+     */
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions){
         int ci = currentIndexGetAndInc();

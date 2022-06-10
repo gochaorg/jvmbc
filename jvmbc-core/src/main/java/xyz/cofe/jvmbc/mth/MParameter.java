@@ -5,6 +5,8 @@ import org.objectweb.asm.Opcodes;
 import xyz.cofe.jvmbc.AccFlags;
 import xyz.cofe.jvmbc.AccFlagsProperty;
 
+import java.util.Optional;
+
 /**
  * Visits a parameter of this method.
  */
@@ -17,7 +19,7 @@ public class MParameter extends MAbstractBC implements MethodWriter, AccFlagsPro
     public MParameter(){}
     public MParameter(String name, int access){
         this.access = access;
-        this.name = name;
+        this.name = name!=null ? Optional.of(name) : Optional.empty();
     }
 
     /**
@@ -56,13 +58,13 @@ public class MParameter extends MAbstractBC implements MethodWriter, AccFlagsPro
     }
     //endregion
     //region name : String
-    private String name; //todo optional
+    private Optional<String> name = Optional.empty();
 
     /**
      * parameter name or {@literal null} if none is provided.
      * @return parameter name
      */
-    public String getName(){
+    public Optional<String> getName(){
         return name;
     }
 
@@ -70,7 +72,9 @@ public class MParameter extends MAbstractBC implements MethodWriter, AccFlagsPro
      * parameter name or {@literal null} if none is provided.
      * @param name parameter name
      */
-    public void setName(String name){
+    public void setName(Optional<String> name){
+        //noinspection OptionalAssignedToNull
+        if( name==null )throw new IllegalArgumentException( "name==null" );
         this.name = name;
     }
     //endregion
@@ -85,6 +89,6 @@ public class MParameter extends MAbstractBC implements MethodWriter, AccFlagsPro
     @Override
     public void write(MethodVisitor v, MethodWriterCtx ctx){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        v.visitParameter(getName(),getAccess());
+        v.visitParameter(getName().orElse(null),getAccess());
     }
 }

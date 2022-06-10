@@ -3,6 +3,7 @@ package xyz.cofe.jvmbc.cls;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.objectweb.asm.ClassWriter;
 import xyz.cofe.jvmbc.*;
@@ -41,7 +42,7 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
         this.access = access;
         this.name = name;
         desc().setRaw(descriptor);
-        this.signature = signature;
+        this.signature = signature!=null ? Optional.of(signature) : Optional.empty();
         this.exceptions = exceptions;
     }
 
@@ -134,13 +135,13 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
     /**
      * сигнатура generic параметров и результата
      */
-    protected String signature; //todo optional
+    protected Optional<String> signature;
 
     /**
      * Возвращает сигнатуру generic параметров и результата
      * @return сигнатура generic параметров и результата
      */
-    public String getSignature(){
+    public Optional<String> getSignature(){
         return signature;
     }
 
@@ -148,7 +149,9 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
      * Указывает сигнатуру generic параметров и результата
      * @param signature сигнатура generic параметров и результата
      */
-    public void setSignature(String signature){
+    public void setSignature(Optional<String> signature){
+        //noinspection OptionalAssignedToNull
+        if( signature==null )throw new IllegalArgumentException( "signature==null" );
         this.signature = signature;
     }
     //endregion
@@ -214,7 +217,7 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
     public void write(ClassWriter v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
         var mv = v.visitMethod(
-            getAccess(),getName(), desc().getRaw(), getSignature(),getExceptions()
+            getAccess(),getName(), desc().getRaw(), getSignature().orElse(null),getExceptions()
             );
 
         var ctx = new MethodWriterCtx();

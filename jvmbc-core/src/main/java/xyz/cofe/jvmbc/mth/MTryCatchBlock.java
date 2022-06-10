@@ -3,6 +3,8 @@ package xyz.cofe.jvmbc.mth;
 import org.objectweb.asm.MethodVisitor;
 import xyz.cofe.jvmbc.ByteCode;
 
+import java.util.Optional;
+
 /**
  * try catch block
  */
@@ -20,7 +22,7 @@ public class MTryCatchBlock extends MAbstractBC
         this.labelStart = start;
         this.labelEnd = end;
         this.labelHandler = handler;
-        this.type = type;
+        this.type = type!=null ? Optional.of(type) : Optional.empty();
     }
 
     /**
@@ -82,18 +84,20 @@ public class MTryCatchBlock extends MAbstractBC
     }
     //endregion
     //region type : String
-    private String type; //todo optional
+    private Optional<String> type = Optional.empty(); //todo optional
 
     /**
      * the internal name of the type of exceptions handled by the handler, or {@literal null}
      * to catch any exceptions (for "finally" blocks).
      * @return type
      */
-    public String getType(){
+    public Optional<String> getType(){
         return type;
     }
 
-    public void setType(String type){
+    public void setType(Optional<String> type){
+        //noinspection OptionalAssignedToNull
+        if( type==null )throw new IllegalArgumentException( "type==null" );
         this.type = type;
     }
     //endregion
@@ -118,7 +122,7 @@ public class MTryCatchBlock extends MAbstractBC
             ls!=null ? ctx.labelCreateOrGet(ls) : null,
             le!=null ? ctx.labelCreateOrGet(le) : null,
             lh!=null ? ctx.labelCreateOrGet(lh) : null,
-            getType()
+            getType().orElse(null)
         );
     }
 }
