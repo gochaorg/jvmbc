@@ -1,14 +1,14 @@
 package xyz.cofe.jvmbc;
 
 /**
- * Представление signature для generic типов
+ * Представление signature для generic методов
  */
-public class Sign {
+public class MSign {
     /**
      * Конструктор
      * @param raw сырое представление
      */
-    public Sign(String raw){
+    public MSign( String raw){
         if( raw==null )throw new IllegalArgumentException( "raw==null" );
         this.raw = raw;
     }
@@ -17,12 +17,12 @@ public class Sign {
      * Конструктор копирования
      * @param sample образец
      */
-    public Sign(Sign sample){
+    public MSign( MSign sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         raw = sample.raw;
     }
 
-    public Sign clone(){ return new Sign(this); }
+    public MSign clone(){ return new MSign(this); }
 
     protected String raw;
 
