@@ -1,10 +1,13 @@
 package xyz.cofe.jvmbc.mth;
 
+import org.objectweb.asm.ConstantDynamic;
+import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-import xyz.cofe.jvmbc.bm.BootstrapMethArg;
-import xyz.cofe.jvmbc.bm.LdcType;
-import xyz.cofe.jvmbc.bm.MethodHandle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import xyz.cofe.jvmbc.bm.*;
+import xyz.cofe.jvmbc.fn.Either;
 
 /**
  * <a href="https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html#jvms-6.5.ldc">Push item from run-time constant pool</a>
@@ -57,14 +60,44 @@ import xyz.cofe.jvmbc.bm.MethodHandle;
 * }
 * </pre>
  */
-public class MLdcInsn extends MAbstractBC implements MethodWriter {
+public class MLdc extends MAbstractBC implements MethodWriter {
+    private static final Logger log = LoggerFactory.getLogger(MLdc.class);
+    public static Either<String,BootstrapMethArg> toBootstrapArg( Object value ){
+        if( value==null )return Either.left("value is null");
+        if( value instanceof Integer )return Either.right(new IntArg( (Integer)value ));
+        if( value instanceof Float )return Either.right(new FloatArg( (Float) value ));
+        if( value instanceof Long )return Either.right(new LongArg( (Long)value ));
+        if( value instanceof Double )return Either.right(new DoubleArg( (Double)value ));
+        if( value instanceof org.objectweb.asm.Type ){
+            var tvalue = (org.objectweb.asm.Type)value;
+            int sort = tvalue.getSort();
+            if (sort == org.objectweb.asm.Type.OBJECT) {
+                log.error("unimplemented ldc, type, sort=OBJECT, value={}",tvalue);
+                return Either.left("unimplemented ldc, type, sort=OBJECT, value="+tvalue);
+            }
+            if (sort == org.objectweb.asm.Type.ARRAY) {
+                log.error("unimplemented ldc, type, sort=ARRAY, value={}",tvalue);
+                return Either.left("unimplemented ldc, type, sort=ARRAY, value="+tvalue);
+            }
+            if (sort == org.objectweb.asm.Type.METHOD) {
+                log.error("unimplemented ldc, type, sort=METHOD, value={}",tvalue);
+                return Either.left("unimplemented ldc, type, sort=METHOD, value="+tvalue);
+            }
+            return Either.left("not supported ldc, type, value="+value);
+        }else{
+            if( value instanceof Handle ) return Either.right(new MethodHandle( (Handle)value ));
+            if( value instanceof ConstantDynamic ) return Either.right(new ConstDynamic( (ConstantDynamic)value ));
+        }
+        return Either.left("unknown type "+value);
+    }
+
     /**
      * Конструктор по умолчанию
      */
-    public MLdcInsn(){
+    public MLdc(){
     }
 
-    public MLdcInsn(Object value, LdcType ldcType){
+    public MLdc( Object value, LdcType ldcType){
         this.value = value;
         this.ldcType = ldcType;
     }
@@ -73,7 +106,7 @@ public class MLdcInsn extends MAbstractBC implements MethodWriter {
      * Конструктор копирования
      * @param sample образец
      */
-    public MLdcInsn(MLdcInsn sample){
+    public MLdc( MLdc sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         ldcType = sample.getLdcType();
         if( sample.value instanceof BootstrapMethArg ){
@@ -83,7 +116,7 @@ public class MLdcInsn extends MAbstractBC implements MethodWriter {
         }
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod") public MLdcInsn clone(){ return new MLdcInsn(this); }
+    @SuppressWarnings("MethodDoesntCallSuperMethod") public MLdc clone(){ return new MLdc(this); }
 
     //region ldcType : LdcType
     private LdcType ldcType;
@@ -104,7 +137,7 @@ public class MLdcInsn extends MAbstractBC implements MethodWriter {
     }
     //endregion
     public String toString(){
-        return MLdcInsn.class.getSimpleName()+
+        return MLdc.class.getSimpleName()+
             " ldcType="+ldcType+
             " value="+value;
     }

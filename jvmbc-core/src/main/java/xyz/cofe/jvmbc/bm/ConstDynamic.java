@@ -1,6 +1,7 @@
 package xyz.cofe.jvmbc.bm;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.objectweb.asm.ConstantDynamic;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,11 @@ public class ConstDynamic implements BootstrapMethArg {
     @Override
     public ConstDynamic clone(){
         return new ConstDynamic(this);
+    }
+
+    public ConstDynamic(@NonNull ConstantDynamic constantDynamic){
+        //noinspection ConstantConditions
+        if( constantDynamic==null )throw new IllegalArgumentException( "constantDynamic==null" );
     }
 
     //region name : String
@@ -65,6 +71,10 @@ public class ConstDynamic implements BootstrapMethArg {
     //endregion
 
 //    public ConstantDynamic toConstantDynamic(){
-//
+//        return new ConstantDynamic(
+//            getName(),
+//            getDesc(),
+//            bootstrapMethod!=null ? bootstrapMethod.toHandle() : null,
+//        )
 //    }
 }

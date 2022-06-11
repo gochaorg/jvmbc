@@ -173,16 +173,16 @@ indexbyte2
 * <p> These invariants mean that an invokedynamic instruction which is bound to a call site object never throws a NullPointerException or a java.lang.invoke.WrongMethodTypeException.
 * <br> Эти инварианты означают, что invokedynamic инструкция, которая привязана к объекту сайта вызова, никогда не вызывает исключение NullPointerException или java.lang.invoke.WrongMethodTypeException.
  */
-public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
+public class MInvokeDynamic extends MAbstractBC implements MethodWriter {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
-    public MInvokeDynamicInsn(){
+    public MInvokeDynamic(){
     }
 
-    public MInvokeDynamicInsn(
+    public MInvokeDynamic(
         String name,
         String descriptor,
         org.objectweb.asm.Handle handle,
@@ -222,7 +222,7 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
      * Конструктор копирования
      * @param sample образец
      */
-    public MInvokeDynamicInsn(MInvokeDynamicInsn sample){
+    public MInvokeDynamic( MInvokeDynamic sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         name = sample.getName();
         descProperty = sample.descProperty!=null ? sample.descProperty.clone() : null;
@@ -236,7 +236,7 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
         }
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod") public MInvokeDynamicInsn clone(){ return new MInvokeDynamicInsn(this); }
+    @SuppressWarnings("MethodDoesntCallSuperMethod") public MInvokeDynamic clone(){ return new MInvokeDynamic(this); }
 
     //region name : String
     private String name;
@@ -286,7 +286,7 @@ public class MInvokeDynamicInsn extends MAbstractBC implements MethodWriter {
     //endregion
 
     public String toString(){
-        return MInvokeDynamicInsn.class.getSimpleName()+
+        return MInvokeDynamic.class.getSimpleName()+
             " name="+name+
             " descriptor="+desc()+
             " bootstrapMethodHandle="+bootstrapMethodHandle+

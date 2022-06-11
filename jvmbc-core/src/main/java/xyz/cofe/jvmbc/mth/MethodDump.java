@@ -441,7 +441,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      */
     @Override
     public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle, Object... bootstrapMethodArguments){
-        emit(new MInvokeDynamicInsn(name,descriptor,bootstrapMethodHandle,bootstrapMethodArguments));
+        emit(new MInvokeDynamic(name,descriptor,bootstrapMethodHandle,bootstrapMethodArguments));
     }
 
     /**
@@ -514,28 +514,28 @@ public class MethodDump extends MethodVisitor implements Opcodes {
     @Override
     public void visitLdcInsn(Object value){
         if ( value instanceof Integer) {
-            emit(new MLdcInsn(value, LdcType.Integer));
+            emit(new MLdc(value, LdcType.Integer));
         } else if ( value instanceof Float) {
-            emit(new MLdcInsn(value,LdcType.Float));
+            emit(new MLdc(value,LdcType.Float));
         } else if ( value instanceof Long) {
-            emit(new MLdcInsn(value,LdcType.Long));
+            emit(new MLdc(value,LdcType.Long));
         } else if ( value instanceof Double) {
-            emit(new MLdcInsn(value,LdcType.Double));
+            emit(new MLdc(value,LdcType.Double));
         } else if ( value instanceof String) {
-            emit(new MLdcInsn(value,LdcType.String));
+            emit(new MLdc(value,LdcType.String));
         } else if ( value instanceof org.objectweb.asm.Type) {
             var tvalue = (org.objectweb.asm.Type)value;
             int sort = tvalue.getSort();
 
             if (sort == org.objectweb.asm.Type.OBJECT) {
-                emit(new MLdcInsn(tvalue.getDescriptor(),LdcType.Object));
+                emit(new MLdc(tvalue.getDescriptor(),LdcType.Object));
                 //throw new IllegalArgumentException("not impl ldc object");
             } else if (sort == org.objectweb.asm.Type.ARRAY) {
-                emit(new MLdcInsn(tvalue.getDescriptor(),LdcType.Array));
+                emit(new MLdc(tvalue.getDescriptor(),LdcType.Array));
                 //throw new IllegalArgumentException("not impl ldc array");
             } else if (sort == org.objectweb.asm.Type.METHOD) {
                 // ...
-                emit(new MLdcInsn(tvalue.getDescriptor(),LdcType.Method));
+                emit(new MLdc(tvalue.getDescriptor(),LdcType.Method));
             } else {
                 throw new UnsupportedOperationException("unsupported ldc sort="+sort);
             }
@@ -543,7 +543,7 @@ public class MethodDump extends MethodVisitor implements Opcodes {
             // ...
             var hdl = (Handle) value;
             var hdl0 = new MethodHandle(hdl);
-            emit(new MLdcInsn(hdl0,LdcType.Handle));
+            emit(new MLdc(hdl0,LdcType.Handle));
         } else if ( value instanceof ConstantDynamic ) {
             // ...
             throw new UnsupportedOperationException("not impl ldc ConstantDynamic");

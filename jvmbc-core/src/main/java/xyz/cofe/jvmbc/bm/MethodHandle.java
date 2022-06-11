@@ -14,7 +14,12 @@ public class MethodHandle implements Serializable, BootstrapMethArg {
      */
     public MethodHandle(){
     }
-    public MethodHandle( org.objectweb.asm.Handle sample){
+
+    /**
+     * Конструктор из образца asm
+     * @param sample образец
+     */
+    public MethodHandle( org.objectweb.asm.Handle sample ){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         tag = sample.getTag();
         desc().setRaw(sample.getDesc());
