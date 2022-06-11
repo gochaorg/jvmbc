@@ -59,4 +59,16 @@ public class Either<LEFT,RIGHT> {
         if( map==null )throw new IllegalArgumentException( "map==null" );
         return isRight ? Optional.of(map.apply(rightValue)) : Optional.empty();
     }
+
+    public RIGHT orError( F1<LEFT,? extends Error> genErr ) {
+        if( genErr==null )throw new IllegalArgumentException( "genErr==null" );
+        if( isRight )return rightValue;
+        throw genErr.apply(leftValue);
+    }
+
+    public RIGHT orRuntimeError( F1<LEFT,? extends RuntimeException> genErr ) {
+        if( genErr==null )throw new IllegalArgumentException( "genErr==null" );
+        if( isRight )return rightValue;
+        throw genErr.apply(leftValue);
+    }
 }

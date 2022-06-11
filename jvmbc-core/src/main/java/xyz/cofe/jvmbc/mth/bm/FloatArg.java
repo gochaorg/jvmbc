@@ -14,6 +14,7 @@ public class FloatArg implements BootstrapMethArg {
         value = v;
     }
 
+    //region clone
     /**
      * Конструктор копирования
      * @param sample образец
@@ -24,7 +25,8 @@ public class FloatArg implements BootstrapMethArg {
     }
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     public FloatArg clone(){ return new FloatArg(this); }
-
+    //endregion
+    //region value : Float
     private Float value;
     public Float getValue(){
         return value;
@@ -32,8 +34,14 @@ public class FloatArg implements BootstrapMethArg {
     public void setValue(Float value){
         this.value = value;
     }
+    //endregion
 
     public String toString(){
         return "FloatArg{"+value+"}";
+    }
+
+    @Override
+    public Object toAsmValue(){
+        return getValue();
     }
 }

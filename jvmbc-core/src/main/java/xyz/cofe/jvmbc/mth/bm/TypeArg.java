@@ -1,5 +1,9 @@
 package xyz.cofe.jvmbc.mth.bm;
 
+import org.objectweb.asm.Type;
+
+import java.util.Optional;
+
 /**
  * Аргумент bootstrap метода
  */
@@ -10,8 +14,13 @@ public class TypeArg implements BootstrapMethArg {
      * Конструктор по умолчанию
      */
     public TypeArg(){}
-    public TypeArg(String type){
-        this.type = type;
+
+    /**
+     * Конструктор
+     * @param type тип
+     */
+    public TypeArg(Type type){
+        this.type = type!=null ? type.toString() : null;
     }
 
     /**
@@ -35,5 +44,16 @@ public class TypeArg implements BootstrapMethArg {
 
     public String toString(){
         return "Type "+type;
+    }
+
+    public Optional<Type> toType(){
+        return type!=null ?
+            Optional.of(Type.getType(type)) :
+            Optional.empty();
+    }
+
+    @Override
+    public Object toAsmValue(){
+        return toType().orElse(null);
     }
 }

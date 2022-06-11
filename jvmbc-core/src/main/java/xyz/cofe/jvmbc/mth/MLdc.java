@@ -1,13 +1,9 @@
 package xyz.cofe.jvmbc.mth;
 
-import org.objectweb.asm.ConstantDynamic;
-import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.cofe.jvmbc.mth.bm.*;
-import xyz.cofe.jvmbc.fn.Either;
 
 /**
  * <a href="https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html#jvms-6.5.ldc">Push item from run-time constant pool</a>
@@ -62,34 +58,6 @@ import xyz.cofe.jvmbc.fn.Either;
  */
 public class MLdc extends MAbstractBC implements MethodWriter {
     private static final Logger log = LoggerFactory.getLogger(MLdc.class);
-    public static Either<String,BootstrapMethArg> toBootstrapArg( Object value ){
-        if( value==null )return Either.left("value is null");
-        if( value instanceof Integer )return Either.right(new IntArg( (Integer)value ));
-        if( value instanceof Float )return Either.right(new FloatArg( (Float) value ));
-        if( value instanceof Long )return Either.right(new LongArg( (Long)value ));
-        if( value instanceof Double )return Either.right(new DoubleArg( (Double)value ));
-        if( value instanceof org.objectweb.asm.Type ){
-            var tvalue = (org.objectweb.asm.Type)value;
-            int sort = tvalue.getSort();
-            if (sort == org.objectweb.asm.Type.OBJECT) {
-                log.error("unimplemented ldc, type, sort=OBJECT, value={}",tvalue);
-                return Either.left("unimplemented ldc, type, sort=OBJECT, value="+tvalue);
-            }
-            if (sort == org.objectweb.asm.Type.ARRAY) {
-                log.error("unimplemented ldc, type, sort=ARRAY, value={}",tvalue);
-                return Either.left("unimplemented ldc, type, sort=ARRAY, value="+tvalue);
-            }
-            if (sort == org.objectweb.asm.Type.METHOD) {
-                log.error("unimplemented ldc, type, sort=METHOD, value={}",tvalue);
-                return Either.left("unimplemented ldc, type, sort=METHOD, value="+tvalue);
-            }
-            return Either.left("not supported ldc, type, value="+value);
-        }else{
-            if( value instanceof Handle ) return Either.right(new MethodHandle( (Handle)value ));
-            if( value instanceof ConstantDynamic ) return Either.right(new ConstDynamic( (ConstantDynamic)value ));
-        }
-        return Either.left("unknown type "+value);
-    }
 
     /**
      * Конструктор по умолчанию
@@ -97,80 +65,39 @@ public class MLdc extends MAbstractBC implements MethodWriter {
     public MLdc(){
     }
 
-    public MLdc( Object value, LdcType ldcType){
-        this.value = value;
-        this.ldcType = ldcType;
+    public MLdc( Object value ){
+        this.value = BootstrapMethArg.from(value).orRuntimeError(err -> new IllegalArgumentException("MLdc: "+err));
     }
 
     /**
      * Конструктор копирования
      * @param sample образец
      */
-    public MLdc( MLdc sample){
+    public MLdc( MLdc sample ){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
-        ldcType = sample.getLdcType();
-        if( sample.value instanceof BootstrapMethArg ){
-            value = ((BootstrapMethArg)sample.value).clone();
-        }else{
-            value = sample.value;
-        }
+        value = sample.value.clone();
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod") public MLdc clone(){ return new MLdc(this); }
 
-    //region ldcType : LdcType
-    private LdcType ldcType;
-    public LdcType getLdcType(){
-        return ldcType;
-    }
-    public void setLdcType(LdcType ldcType){
-        this.ldcType = ldcType;
-    }
-    //endregion
     //region value
-    private Object value;
+    private BootstrapMethArg value;
     public Object getValue(){
         return value;
     }
-    public void setValue(Object value){
+    public void setValue(BootstrapMethArg value){
+        if( value==null )throw new IllegalArgumentException( "value==null" );
         this.value = value;
     }
     //endregion
     public String toString(){
         return MLdc.class.getSimpleName()+
-            " ldcType="+ldcType+
             " value="+value;
     }
 
     @Override
     public void write(MethodVisitor v, MethodWriterCtx ctx){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-
-        switch( getLdcType() ){
-            case Long: v.visitLdcInsn((Long)getValue()); break;
-            case Integer: v.visitLdcInsn((Integer)getValue()); break;
-            case Double: v.visitLdcInsn((Double)getValue()); break;
-            case String: v.visitLdcInsn((String)getValue()); break;
-            case Float: v.visitLdcInsn((Float)getValue()); break;
-            case Handle:
-                var hdl1 = (MethodHandle)getValue();
-                var hdl0 = new org.objectweb.asm.Handle(
-                    hdl1.getTag(), hdl1.getOwner(), hdl1.getName(), hdl1.desc().getRaw(), hdl1.isIface()
-                );
-                v.visitLdcInsn(hdl0);
-                break;
-            case Array:
-            case Method:
-            case Object:
-                if( value==null )throw new IllegalStateException("value is null");
-                if( value instanceof Type ){
-                    v.visitLdcInsn(value);
-                }else{
-                    v.visitLdcInsn(Type.getType(value.toString()));
-                }
-                break;
-            default:
-                throw new UnsupportedOperationException("not impl for ldc type = "+getLdcType());
-        }
+        v.visitLdcInsn(value.toAsmValue());
     }
 }

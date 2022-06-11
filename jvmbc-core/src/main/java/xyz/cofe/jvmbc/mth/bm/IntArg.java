@@ -14,6 +14,7 @@ public class IntArg implements BootstrapMethArg {
         value = v;
     }
 
+    //region clone
     /**
      * Конструктор копирования
      * @param sample образец
@@ -24,7 +25,8 @@ public class IntArg implements BootstrapMethArg {
     }
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     public IntArg clone(){ return new IntArg(this); }
-
+    //endregion
+    //region value : Integer
     private Integer value;
 
     public Integer getValue(){
@@ -34,8 +36,14 @@ public class IntArg implements BootstrapMethArg {
     public void setValue(Integer value){
         this.value = value;
     }
+    //endregion
 
     public String toString(){
         return "IntArg{"+value+"}";
+    }
+
+    @Override
+    public Object toAsmValue(){
+        return getValue();
     }
 }

@@ -1,5 +1,9 @@
 package xyz.cofe.jvmbc.mth.bm;
 
+import org.objectweb.asm.ConstantDynamic;
+import org.objectweb.asm.Handle;
+import xyz.cofe.jvmbc.fn.Either;
+
 import java.io.Serializable;
 
 /**
@@ -10,4 +14,21 @@ import java.io.Serializable;
  */
 public interface BootstrapMethArg extends Serializable {
     public BootstrapMethArg clone();
+    public Object toAsmValue();
+
+    public static Either<String,BootstrapMethArg> from( Object value ){
+        if( value==null )return Either.left("value is null");
+        if( value instanceof Integer )return Either.right(new IntArg( (Integer)value ));
+        if( value instanceof Float )return Either.right(new FloatArg( (Float) value ));
+        if( value instanceof Long )return Either.right(new LongArg( (Long)value ));
+        if( value instanceof Double )return Either.right(new DoubleArg( (Double)value ));
+        if( value instanceof org.objectweb.asm.Type ){
+            var tvalue = (org.objectweb.asm.Type)value;
+            return Either.right(new TypeArg(tvalue));
+        }else{
+            if( value instanceof Handle ) return Either.right(new MethodHandle( (Handle)value ));
+            if( value instanceof ConstantDynamic ) return Either.right(new ConstDynamic( (ConstantDynamic)value ));
+        }
+        return Either.left("unknown type "+value);
+    }
 }

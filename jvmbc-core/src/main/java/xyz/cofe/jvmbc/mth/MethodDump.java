@@ -436,8 +436,14 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      * @param descriptor               the method's descriptor (see {@link org.objectweb.asm.Type}).
      * @param bootstrapMethodHandle    the bootstrap method.
      * @param bootstrapMethodArguments the bootstrap method constant arguments. Each argument must be
-     *                                 an {@link Integer}, {@link Float}, {@link Long}, {@link Double}, {@link String}, {@link
-     *                                 org.objectweb.asm.Type}, {@link Handle} or {@link org.objectweb.asm.ConstantDynamic} value. This method is allowed to modify
+     *                                 an {@link Integer},
+     *                                 {@link Float},
+     *                                 {@link Long},
+     *                                 {@link Double},
+     *                                 {@link String}, {@link org.objectweb.asm.Type},
+     *                                 {@link Handle} or
+     *                                 {@link org.objectweb.asm.ConstantDynamic}
+     *                                 value. This method is allowed to modify
      */
     @Override
     public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle, Object... bootstrapMethodArguments){
@@ -504,53 +510,16 @@ public class MethodDump extends MethodVisitor implements Opcodes {
      * }
      * </pre>
      *
-     * @param value the constant to be loaded on the stack. This parameter must be a non null {@link
-     *              Integer}, a {@link Float}, a {@link Long}, a {@link Double}, a {@link String}, a {@link
-     *              org.objectweb.asm.Type} of OBJECT or ARRAY sort for {@code .class} constants, for classes whose version is
-     *              49, a {@link org.objectweb.asm.Type} of METHOD sort for MethodType, a {@link Handle} for MethodHandle
-     *              constants, for classes whose version is 51 or a {@link org.objectweb.asm.ConstantDynamic} for a constant
-     *              dynamic for classes whose version is 55.
+     * @param value the constant to be loaded on the stack. This parameter must be a non null
+     *              {@link Integer}, a {@link Float}, a {@link Long}, a {@link Double}, a {@link String},
+     *              a {@link org.objectweb.asm.Type} of OBJECT or ARRAY sort for {@code .class} constants,
+     *              for classes whose version is 49, a {@link org.objectweb.asm.Type} of METHOD sort for MethodType,
+     *              a {@link Handle} for MethodHandle constants, for classes whose version is 51 or a
+     *              {@link org.objectweb.asm.ConstantDynamic} for a constant dynamic for classes whose version is 55.
      */
     @Override
     public void visitLdcInsn(Object value){
-        if ( value instanceof Integer) {
-            emit(new MLdc(value, LdcType.Integer));
-        } else if ( value instanceof Float) {
-            emit(new MLdc(value,LdcType.Float));
-        } else if ( value instanceof Long) {
-            emit(new MLdc(value,LdcType.Long));
-        } else if ( value instanceof Double) {
-            emit(new MLdc(value,LdcType.Double));
-        } else if ( value instanceof String) {
-            emit(new MLdc(value,LdcType.String));
-        } else if ( value instanceof org.objectweb.asm.Type) {
-            var tvalue = (org.objectweb.asm.Type)value;
-            int sort = tvalue.getSort();
-
-            if (sort == org.objectweb.asm.Type.OBJECT) {
-                emit(new MLdc(tvalue.getDescriptor(),LdcType.Object));
-                //throw new IllegalArgumentException("not impl ldc object");
-            } else if (sort == org.objectweb.asm.Type.ARRAY) {
-                emit(new MLdc(tvalue.getDescriptor(),LdcType.Array));
-                //throw new IllegalArgumentException("not impl ldc array");
-            } else if (sort == org.objectweb.asm.Type.METHOD) {
-                // ...
-                emit(new MLdc(tvalue.getDescriptor(),LdcType.Method));
-            } else {
-                throw new UnsupportedOperationException("unsupported ldc sort="+sort);
-            }
-        } else if ( value instanceof Handle) {
-            // ...
-            var hdl = (Handle) value;
-            var hdl0 = new MethodHandle(hdl);
-            emit(new MLdc(hdl0,LdcType.Handle));
-        } else if ( value instanceof ConstantDynamic ) {
-            // ...
-            throw new UnsupportedOperationException("not impl ldc ConstantDynamic");
-        } else {
-            throw new UnsupportedOperationException("unsupported ldc of "+ value);
-        }
-        //super.visitLdcInsn(value);
+        emit(new MLdc(value));
     }
 
     /**

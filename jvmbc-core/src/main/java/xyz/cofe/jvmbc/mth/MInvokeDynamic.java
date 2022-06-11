@@ -1,6 +1,7 @@
 package xyz.cofe.jvmbc.mth;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -196,24 +197,12 @@ public class MInvokeDynamic extends MAbstractBC implements MethodWriter {
 
         if(args!=null){
             bootstrapMethodArguments = new ArrayList<>();
-            for( var a : args ){
-                if( a instanceof Integer ){
-                    bootstrapMethodArguments.add(new IntArg((Integer) a));
-                }else if( a instanceof Float ){
-                    bootstrapMethodArguments.add(new FloatArg((Float) a));
-                }else if( a instanceof Long ){
-                    bootstrapMethodArguments.add(new LongArg((Long) a));
-                }else if( a instanceof Double ){
-                    bootstrapMethodArguments.add(new DoubleArg((Double) a));
-                }else if( a instanceof String ){
-                    bootstrapMethodArguments.add(new StringArg((String) a));
-                }else if( a instanceof Type ){
-                    bootstrapMethodArguments.add(new TypeArg(((Type)a).toString()));
-                }else if( a instanceof org.objectweb.asm.Handle ){
-                    bootstrapMethodArguments.add(new MethodHandle((org.objectweb.asm.Handle)a));
-                }else {
-                    throw new IllegalArgumentException("unsupported bootstrapMethodArgument "+a);
-                }
+            for( var a:args ){
+                bootstrapMethodArguments.add(
+                    BootstrapMethArg.from(a).orRuntimeError(
+                        err -> new IllegalArgumentException("MInvokeDynamic "+err)
+                    )
+                );
             }
         }
     }
@@ -314,41 +303,7 @@ public class MInvokeDynamic extends MAbstractBC implements MethodWriter {
             throw new IllegalStateException("getBootstrapMethodArguments() return null");
         }
 
-        Object[] args = new Object[bma.size()];
-        for( int ai=0; ai<args.length; ai++ ){
-            Object arg = null;
-            var sarg = bma.get(ai);
-            if( sarg instanceof IntArg ){
-                arg = build((IntArg) sarg);
-            }else if( sarg instanceof StringArg ){
-                arg = build((StringArg)sarg);
-            }else if( sarg instanceof FloatArg ){
-                arg = build((FloatArg) sarg);
-            }else if( sarg instanceof LongArg ){
-                arg = build((LongArg) sarg);
-            }else if( sarg instanceof DoubleArg ){
-                arg = build((DoubleArg) sarg);
-            }else if( sarg instanceof TypeArg ){
-                arg = build((TypeArg)sarg);
-            }else if( sarg instanceof MethodHandle ){
-                arg = build((MethodHandle)sarg, hdl, ctx);
-            }else {
-                throw new UnsupportedOperationException("can't feetch BootstrapMethodArgument from "+sarg);
-            }
-            args[ai] = arg;
-        }
-
-        v.visitInvokeDynamicInsn(getName(), desc().getRaw(), hdl,args);
-    }
-
-    protected Object build(IntArg arg){ return arg.getValue(); }
-    protected Object build(LongArg arg){ return arg.getValue(); }
-    protected Object build(FloatArg arg){ return arg.getValue(); }
-    protected Object build(DoubleArg arg){ return arg.getValue(); }
-    protected Object build(StringArg arg){ return arg.getValue(); }
-    protected Object build(TypeArg arg){ return Type.getType(arg.getType()); }
-    protected Object build( MethodHandle arg, org.objectweb.asm.Handle bm, MethodWriterCtx ctx){
-        if( arg==null )throw new IllegalArgumentException("target handle is null");
-        return ctx.bootstrapArgument(arg, bm);
+        Object[] args1 = getBootstrapMethodArguments().stream().map(a -> a.toAsmValue()).toArray();
+        v.visitInvokeDynamicInsn(getName(), desc().getRaw(), hdl, args1);
     }
 }

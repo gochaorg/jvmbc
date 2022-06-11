@@ -38,4 +38,9 @@ public class LongArg implements BootstrapMethArg {
     public String toString(){
         return "LongArg{"+value+"}";
     }
+
+    @Override
+    public Object toAsmValue(){
+        return getValue();
+    }
 }

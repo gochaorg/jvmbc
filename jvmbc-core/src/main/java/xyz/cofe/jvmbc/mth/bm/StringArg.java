@@ -71,4 +71,9 @@ public class StringArg implements BootstrapMethArg {
         }
         return "StringArg{"+sb+"}";
     }
+
+    @Override
+    public Object toAsmValue(){
+        return getValue();
+    }
 }

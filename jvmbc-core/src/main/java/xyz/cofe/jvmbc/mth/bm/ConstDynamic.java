@@ -3,6 +3,7 @@ package xyz.cofe.jvmbc.mth.bm;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.objectweb.asm.ConstantDynamic;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,21 @@ public class ConstDynamic implements BootstrapMethArg {
     public ConstDynamic(@NonNull ConstantDynamic constantDynamic){
         //noinspection ConstantConditions
         if( constantDynamic==null )throw new IllegalArgumentException( "constantDynamic==null" );
+        name = constantDynamic.getName();
+        desc = constantDynamic.getDescriptor();
+
+        var bm = constantDynamic.getBootstrapMethod();
+        bootstrapMethod = bm!=null ? new MethodHandle(bm) : null;
+
+        args = new ArrayList<>();
+        for( var ai=0;ai<constantDynamic.getBootstrapMethodArgumentCount();ai++ ){
+            var a = constantDynamic.getBootstrapMethodArgument(ai);
+            args.add(
+                BootstrapMethArg
+                    .from(a)
+                    .orRuntimeError( (err)-> new IllegalArgumentException("ConstDynamic"))
+            );
+        }
     }
 
     //region name : String
@@ -70,11 +86,18 @@ public class ConstDynamic implements BootstrapMethArg {
     }
     //endregion
 
-//    public ConstantDynamic toConstantDynamic(){
-//        return new ConstantDynamic(
-//            getName(),
-//            getDesc(),
-//            bootstrapMethod!=null ? bootstrapMethod.toHandle() : null,
-//        )
-//    }
+    public ConstantDynamic toConstantDynamic(){
+        return new ConstantDynamic(
+            getName(),
+            getDesc(),
+            bootstrapMethod!=null ? bootstrapMethod.toHandle() : null,
+            args == null ? null :
+                args.stream().map( arg -> arg.toAsmValue() ).toArray()
+        );
+    }
+
+    @Override
+    public Object toAsmValue(){
+        return toConstantDynamic();
+    }
 }

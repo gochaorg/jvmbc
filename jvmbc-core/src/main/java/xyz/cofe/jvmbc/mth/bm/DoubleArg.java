@@ -13,7 +13,7 @@ public class DoubleArg implements BootstrapMethArg {
     public DoubleArg(Double v){
         value = v;
     }
-
+    //region clone
     /**
      * Конструктор копирования
      * @param sample образец
@@ -24,7 +24,9 @@ public class DoubleArg implements BootstrapMethArg {
     }
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     public DoubleArg clone(){ return new DoubleArg(this); }
+    //endregion
 
+    //region value : Double
     private Double value;
     public Double getValue(){
         return value;
@@ -32,8 +34,14 @@ public class DoubleArg implements BootstrapMethArg {
     public void setValue(Double value){
         this.value = value;
     }
+    //endregion
 
     public String toString(){
         return "DoubleArg{"+value+"}";
+    }
+
+    @Override
+    public Object toAsmValue(){
+        return getValue();
     }
 }

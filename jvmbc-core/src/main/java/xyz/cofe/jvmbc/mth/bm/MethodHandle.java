@@ -143,4 +143,9 @@ public class MethodHandle implements Serializable, BootstrapMethArg {
             isIface()
         );
     }
+
+    @Override
+    public Object toAsmValue(){
+        return toHandle();
+    }
 }
