@@ -12,8 +12,8 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.TypePath;
 import xyz.cofe.jvmbc.ann.AnnotationDump;
 import xyz.cofe.jvmbc.ByteCode;
-import xyz.cofe.jvmbc.bm.LdcType;
-import xyz.cofe.jvmbc.bm.MethodHandle;
+import xyz.cofe.jvmbc.mth.bm.LdcType;
+import xyz.cofe.jvmbc.mth.bm.MethodHandle;
 
 /**
  * Создает дамп байт кода метода, используется в AsmQuery.

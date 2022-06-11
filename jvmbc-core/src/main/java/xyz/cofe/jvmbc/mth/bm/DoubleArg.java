@@ -1,16 +1,16 @@
-package xyz.cofe.jvmbc.bm;
+package xyz.cofe.jvmbc.mth.bm;
 
 /**
  * Аргумент bootstrap метода
  */
-public class LongArg implements BootstrapMethArg {
+public class DoubleArg implements BootstrapMethArg {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
-    public LongArg(){}
-    public LongArg(Long v){
+    public DoubleArg(){}
+    public DoubleArg(Double v){
         value = v;
     }
 
@@ -18,24 +18,22 @@ public class LongArg implements BootstrapMethArg {
      * Конструктор копирования
      * @param sample образец
      */
-    public LongArg(LongArg sample){
+    public DoubleArg(DoubleArg sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         value = sample.getValue();
     }
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public LongArg clone(){ return new LongArg(this); }
+    public DoubleArg clone(){ return new DoubleArg(this); }
 
-    //region value : Long
-    private Long value;
-    public Long getValue(){
+    private Double value;
+    public Double getValue(){
         return value;
     }
-    public void setValue(Long value){
+    public void setValue(Double value){
         this.value = value;
     }
-    //endregion
 
     public String toString(){
-        return "LongArg{"+value+"}";
+        return "DoubleArg{"+value+"}";
     }
 }

@@ -5,14 +5,14 @@ import java.util.List;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import xyz.cofe.jvmbc.MDesc;
-import xyz.cofe.jvmbc.bm.IntArg;
-import xyz.cofe.jvmbc.bm.MethodHandle;
-import xyz.cofe.jvmbc.bm.StringArg;
-import xyz.cofe.jvmbc.bm.TypeArg;
-import xyz.cofe.jvmbc.bm.BootstrapMethArg;
-import xyz.cofe.jvmbc.bm.DoubleArg;
-import xyz.cofe.jvmbc.bm.FloatArg;
-import xyz.cofe.jvmbc.bm.LongArg;
+import xyz.cofe.jvmbc.mth.bm.IntArg;
+import xyz.cofe.jvmbc.mth.bm.MethodHandle;
+import xyz.cofe.jvmbc.mth.bm.StringArg;
+import xyz.cofe.jvmbc.mth.bm.TypeArg;
+import xyz.cofe.jvmbc.mth.bm.BootstrapMethArg;
+import xyz.cofe.jvmbc.mth.bm.DoubleArg;
+import xyz.cofe.jvmbc.mth.bm.FloatArg;
+import xyz.cofe.jvmbc.mth.bm.LongArg;
 
 /**
  * <a href="https://habr.com/ru/post/328240/">Хорошая статья о Что там с JEP-303 или изобретаем invokedynamic</a>

@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc.bm;
+package xyz.cofe.jvmbc.mth.bm;
 
 import java.io.Serializable;
 

@@ -10,4 +10,4 @@
  *     <li><a href="https://www.baeldung.com/java-invoke-dynamic">BAELDUNG: An Introduction to Invoke Dynamic in the JVM</a></li>
  * </ul>
  */
-package xyz.cofe.jvmbc.bm;
+package xyz.cofe.jvmbc.mth.bm;

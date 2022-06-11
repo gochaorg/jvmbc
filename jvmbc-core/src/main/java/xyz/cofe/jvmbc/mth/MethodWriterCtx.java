@@ -3,7 +3,7 @@ package xyz.cofe.jvmbc.mth;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.objectweb.asm.Label;
-import xyz.cofe.jvmbc.bm.MethodHandle;
+import xyz.cofe.jvmbc.mth.bm.MethodHandle;
 
 /**
  * Контекст записи метода

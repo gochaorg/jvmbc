@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc.bm;
+package xyz.cofe.jvmbc.mth.bm;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.objectweb.asm.ConstantDynamic;

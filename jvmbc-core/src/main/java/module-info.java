@@ -5,7 +5,7 @@ module xyz.cofe.jvmbc.core {
 
     exports xyz.cofe.jvmbc;
     exports xyz.cofe.jvmbc.ann;
-    exports xyz.cofe.jvmbc.bm;
+    exports xyz.cofe.jvmbc.mth.bm;
     exports xyz.cofe.jvmbc.cls;
     exports xyz.cofe.jvmbc.fld;
     exports xyz.cofe.jvmbc.mth;
