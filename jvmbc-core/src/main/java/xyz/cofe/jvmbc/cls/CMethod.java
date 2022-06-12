@@ -51,6 +51,7 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
         this.exceptions = exceptions;
     }
 
+    //region clone
     /**
      * Конструктор копирования
      * @param sample образец
@@ -75,6 +76,7 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
     public CMethod<LIST> clone(){
         return new CMethod<>(this);
     }
+    //endregion
 
     //region access : int - флаги доступа к методу
     /**
