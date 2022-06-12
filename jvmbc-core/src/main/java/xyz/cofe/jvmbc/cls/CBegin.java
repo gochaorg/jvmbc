@@ -8,10 +8,7 @@ import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import xyz.cofe.jvmbc.JavaClassName;
-import xyz.cofe.jvmbc.AccFlags;
-import xyz.cofe.jvmbc.AccFlagsProperty;
-import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.*;
 import xyz.cofe.jvmbc.io.IOFun;
 import xyz.cofe.jvmbc.mth.MethodByteCode;
 
@@ -46,7 +43,7 @@ public class CBegin<
         this.version = version;
         this.access = access;
         this.name = name;
-        this.signature = signature;
+        this.signature = signature!=null ? Optional.of(new Sign(signature)) : Optional.empty();
         this.superName = superName;
         this.interfaces = interfaces;
     }
@@ -351,13 +348,13 @@ public class CBegin<
     /**
      * Сигнатура в случае Generic класса/интерфейса или null
      */
-    protected String signature;
+    protected Optional<Sign> signature = Optional.empty();
 
     /**
      * Возвращает сигнатуру generic
      * @return сигнатура или null
      */
-    public String getSignature(){
+    public Optional<Sign> getSignature(){
         return signature;
     }
 
@@ -365,7 +362,9 @@ public class CBegin<
      * Указывает сигнатуру generic
      * @param signature сигнатура или null
      */
-    public void setSignature(String signature){
+    public void setSignature(Optional<Sign> signature){
+        //noinspection OptionalAssignedToNull
+        if( signature==null )throw new IllegalArgumentException( "signature==null" );
         this.signature = signature;
     }
     //endregion
@@ -684,7 +683,7 @@ public class CBegin<
     public void write( ClassWriter v ){
         if( v==null )throw new IllegalArgumentException( "v==null" );
 
-        v.visit( getVersion(), getAccess(), getName(), getSignature(), getSuperName(), getInterfaces() );
+        v.visit( getVersion(), getAccess(), getName(), getSignature().map(Sign::getRaw).orElse(null), getSuperName(), getInterfaces() );
 
         var src = source;
         //noinspection OptionalAssignedToNull

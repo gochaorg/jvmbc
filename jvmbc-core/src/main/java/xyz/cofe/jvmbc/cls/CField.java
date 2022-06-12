@@ -2,10 +2,12 @@ package xyz.cofe.jvmbc.cls;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import org.objectweb.asm.ClassWriter;
 import xyz.cofe.jvmbc.AccFlags;
 import xyz.cofe.jvmbc.AccFlagsProperty;
+import xyz.cofe.jvmbc.Sign;
 import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.fld.FieldByteCode;
 import xyz.cofe.jvmbc.fld.FieldEnd;
@@ -72,7 +74,7 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
         this.access = access;
         this.name = name;
         descProperty = new TDesc(descriptor);
-        this.signature = signature;
+        this.signature = signature!=null ? Optional.of(new Sign(signature)) : Optional.empty();
         this.value = value;
     }
 
@@ -176,13 +178,13 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
     /**
      * сигнатура, в случае Generic
      */
-    protected String signature; // //todo optional
+    protected Optional<Sign> signature = Optional.empty(); // //todo optional
 
     /**
      * Возвращает сигнатуру в случае Generic типа
      * @return сигнатура или null
      */
-    public String getSignature(){
+    public Optional<Sign> getSignature(){
         return signature;
     }
 
@@ -190,7 +192,9 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
      * Указывает сигнатуру в случае Generic типа
      * @param signature сигнатура или null
      */
-    public void setSignature(String signature){
+    public void setSignature(Optional<Sign> signature){
+        //noinspection OptionalAssignedToNull
+        if( signature==null )throw new IllegalArgumentException( "signature==null" );
         this.signature = signature;
     }
     //endregion
@@ -254,7 +258,13 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
     @Override
     public void write(ClassWriter v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        var fv = v.visitField(getAccess(),getName(), getDesc().getRaw(), getSignature(),getValue());
+        var fv = v.visitField(
+            getAccess(),
+            getName(),
+            getDesc().getRaw(),
+            getSignature().map(Sign::getRaw).orElse(null),
+            getValue()
+        );
         var body = fieldByteCodes;
         if( body!=null ){
             for( var b : body ){

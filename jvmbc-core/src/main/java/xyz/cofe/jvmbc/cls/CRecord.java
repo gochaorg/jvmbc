@@ -2,11 +2,13 @@ package xyz.cofe.jvmbc.cls;
 
 import org.objectweb.asm.ClassWriter;
 import xyz.cofe.jvmbc.ByteCode;
+import xyz.cofe.jvmbc.Sign;
 import xyz.cofe.jvmbc.TDesc;
 import xyz.cofe.jvmbc.rec.RecordByteCode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CRecord implements ClsByteCode {
@@ -15,7 +17,7 @@ public class CRecord implements ClsByteCode {
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         this.name = sample.getName();
         if( sample.descProperty!=null )descProperty = sample.descProperty.clone();
-        this.sign = sample.getSign();
+        this.signature = sample.getSignature();
 
         if( sample.recordByteCodes!=null ){
             recordByteCodes = new ArrayList<>();
@@ -28,12 +30,12 @@ public class CRecord implements ClsByteCode {
             });
         }
     }
-    public CRecord(String name, String desc, String sign){
+    public CRecord(String name, String desc, String signature ){
         if( name==null )throw new IllegalArgumentException( "name==null" );
         if( desc==null )throw new IllegalArgumentException( "desc==null" );
         this.name = name;
         descProperty = new TDesc(desc);
-        this.sign = sign;
+        this.signature = signature!=null ? Optional.of(new Sign(signature)) : Optional.empty();
     }
 
     protected String name;
@@ -69,16 +71,21 @@ public class CRecord implements ClsByteCode {
     }
     //endregion
 
-    protected String sign; //todo optional
+    //region signature
+    protected Optional<Sign> signature = Optional.empty();
 
-    public String getSign(){
-        return sign;
+    public Optional<Sign> getSignature(){
+        return signature;
     }
 
-    public void setSign( String sign ){
-        this.sign = sign;
+    public void setSignature( Optional<Sign> signature ){
+        //noinspection OptionalAssignedToNull
+        if( signature==null )throw new IllegalArgumentException( "signature==null" );
+        this.signature = signature;
     }
+    //endregion
 
+    //region recordByteCodes : List<RecordByteCode>
     protected List<RecordByteCode> recordByteCodes;
     public List<RecordByteCode> getRecordByteCodes(){
         if( recordByteCodes!=null ) return recordByteCodes;
@@ -88,11 +95,16 @@ public class CRecord implements ClsByteCode {
     public void setRecordByteCodes(List<RecordByteCode> recordByteCodes){
         this.recordByteCodes = recordByteCodes;
     }
+    //endregion
 
     @Override
     public void write( ClassWriter v ){
         if( v==null )throw new IllegalArgumentException( "v==null" );
-        var recVisit = v.visitRecordComponent(getName(), getDesc().getRaw(), getSign());
+        var recVisit = v.visitRecordComponent(
+            getName(),
+            getDesc().getRaw(),
+            getSignature().map(Sign::getRaw).orElse(null)
+        );
         //noinspection ConstantConditions
         if( recVisit!=null ){
             getRecordByteCodes().forEach( recBc -> {

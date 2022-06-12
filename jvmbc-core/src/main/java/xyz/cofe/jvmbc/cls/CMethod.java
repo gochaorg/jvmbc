@@ -47,7 +47,7 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
         this.access = access;
         this.name = name;
         desc().setRaw(descriptor);
-        this.signature = signature!=null ? Optional.of(signature) : Optional.empty();
+        this.signature = signature!=null ? Optional.of(new MSign(signature)) : Optional.empty();
         this.exceptions = exceptions;
     }
 
@@ -140,13 +140,13 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
     /**
      * сигнатура generic параметров и результата
      */
-    protected Optional<String> signature;
+    protected Optional<MSign> signature;
 
     /**
      * Возвращает сигнатуру generic параметров и результата
      * @return сигнатура generic параметров и результата
      */
-    public Optional<String> getSignature(){
+    public Optional<MSign> getSignature(){
         return signature;
     }
 
@@ -154,7 +154,7 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
      * Указывает сигнатуру generic параметров и результата
      * @param signature сигнатура generic параметров и результата
      */
-    public void setSignature(Optional<String> signature){
+    public void setSignature(Optional<MSign> signature){
         //noinspection OptionalAssignedToNull
         if( signature==null )throw new IllegalArgumentException( "signature==null" );
         this.signature = signature;
@@ -222,7 +222,7 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
     public void write(ClassWriter v){
         if( v==null )throw new IllegalArgumentException( "v==null" );
         var mv = v.visitMethod(
-            getAccess(),getName(), desc().getRaw(), getSignature().orElse(null),getExceptions()
+            getAccess(),getName(), desc().getRaw(), getSignature().map(MSign::getRaw).orElse(null),getExceptions()
             );
 
         var ctx = new MethodWriterCtx();

@@ -1,6 +1,7 @@
 package xyz.cofe.jvmbc.mth;
 
 import org.objectweb.asm.MethodVisitor;
+import xyz.cofe.jvmbc.Sign;
 import xyz.cofe.jvmbc.TDesc;
 
 import java.util.Optional;
@@ -28,7 +29,7 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
     public MLocalVariable(String name, String descriptor, String signature, String labelStart, String labelEnd, int index){
         this.name = name;
         descProperty = new TDesc(descriptor);
-        this.signature = signature!=null ? Optional.of(signature) : Optional.empty();
+        this.signature = signature!=null ? Optional.of(new Sign(signature)) : Optional.empty();
         this.labelStart = labelStart;
         this.labelEnd = labelEnd;
         this.index = index;
@@ -92,14 +93,14 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
         descProperty = desc;
     }
     //endregion
-    //region signature : String - сигнатура для Generic типа локальной переменной или null // todo optional
-    private Optional<String> signature = Optional.empty();
+    //region signature : String - сигнатура для Generic типа локальной переменной или null
+    private Optional<Sign> signature = Optional.empty();
     
     /**
      * Возвращает сигнатура для Generic типа локальной переменной или null
      * @return сигнатура или null
      */
-    public Optional<String> getSignature(){
+    public Optional<Sign> getSignature(){
         return signature;
     }
     
@@ -107,7 +108,7 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
      * Указывает сигнатура для Generic типа локальной переменной или null
      * @param signature сигнатура или null
      */
-    public void setSignature(Optional<String> signature){
+    public void setSignature(Optional<Sign> signature){
         //noinspection OptionalAssignedToNull
         if( signature==null )throw new IllegalArgumentException( "signature==null" );
         this.signature = signature;
@@ -192,7 +193,7 @@ public class MLocalVariable extends MAbstractBC implements MethodWriter {
         v.visitLocalVariable(
             getName(),
             getDesc().getRaw(),
-            getSignature().orElse(null),
+            getSignature().map(Sign::getRaw).orElse(null),
             ls!=null ? ctx.labelGet(ls) : null,
             le!=null ? ctx.labelGet(le) : null,
             getIndex()

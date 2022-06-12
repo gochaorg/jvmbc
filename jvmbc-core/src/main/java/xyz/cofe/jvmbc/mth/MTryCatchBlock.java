@@ -84,7 +84,7 @@ public class MTryCatchBlock extends MAbstractBC
     }
     //endregion
     //region type : String
-    private Optional<String> type = Optional.empty(); //todo optional
+    private Optional<String> type = Optional.empty();
 
     /**
      * the internal name of the type of exceptions handled by the handler, or {@literal null}
