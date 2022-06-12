@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.samples;
 
 @Ann1
 public class SampleAnn {

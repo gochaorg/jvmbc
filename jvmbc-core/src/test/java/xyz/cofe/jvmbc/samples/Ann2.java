@@ -1,9 +1,10 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.samples;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Ann3 {
-    int num() default 1;
+public @interface Ann2 {
+    String value();
 }

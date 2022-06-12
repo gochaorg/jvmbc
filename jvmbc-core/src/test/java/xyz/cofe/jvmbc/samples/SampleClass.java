@@ -1,6 +1,5 @@
-package xyz.cofe.jvmbc;
+package xyz.cofe.jvmbc.samples;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;

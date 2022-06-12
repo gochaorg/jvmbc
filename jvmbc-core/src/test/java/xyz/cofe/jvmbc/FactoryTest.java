@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import xyz.cofe.jvmbc.cls.CBegin;
 import xyz.cofe.jvmbc.cls.ClassFactory;
 import xyz.cofe.jvmbc.mth.MCode;
+import xyz.cofe.jvmbc.samples.SampleClass;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
