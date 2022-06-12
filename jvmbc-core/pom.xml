@@ -69,4 +69,21 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>asm-analysis</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm-tree</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm-analysis</artifactId>
+                    <version>9.2</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
 </project>
