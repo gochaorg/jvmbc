@@ -22,6 +22,7 @@ public interface BootstrapMethArg extends Serializable {
         if( value instanceof Float )return Either.right(new FloatArg( (Float) value ));
         if( value instanceof Long )return Either.right(new LongArg( (Long)value ));
         if( value instanceof Double )return Either.right(new DoubleArg( (Double)value ));
+        if( value instanceof String )return Either.right(new StringArg( (String)value ));
         if( value instanceof org.objectweb.asm.Type ){
             var tvalue = (org.objectweb.asm.Type)value;
             return Either.right(new TypeArg(tvalue));
@@ -29,6 +30,6 @@ public interface BootstrapMethArg extends Serializable {
             if( value instanceof Handle ) return Either.right(new MethodHandle( (Handle)value ));
             if( value instanceof ConstantDynamic ) return Either.right(new ConstDynamic( (ConstantDynamic)value ));
         }
-        return Either.left("unknown type "+value);
+        return Either.left("unknown type \""+value+"\""+(value!=null ? " "+value.getClass() : "") );
     }
 }
