@@ -225,12 +225,21 @@ public class MFieldInsn extends MAbstractBC implements MethodWriter {
 
     @SuppressWarnings("MethodDoesntCallSuperMethod") public MFieldInsn clone(){ return new MFieldInsn(this); }
 
-    //region opcode
+    //region opcode : int - код инструкции
     private int opcode;
+
+    /**
+     * Возвращает код инструкции
+     * @return код инструкции
+     */
     public int getOpcode(){
         return opcode;
     }
 
+    /**
+     * Указывает код инструкции
+     * @param opcode код инструкции
+     */
     public void setOpcode(int opcode){
         this.opcode = opcode;
     }

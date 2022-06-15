@@ -80,7 +80,6 @@ public class MLocalVariableAnnotation extends MAbstractBC
     public int getTypeRef(){
         return typeRef;
     }
-
     public void setTypeRef(int typeRef){
         this.typeRef = typeRef;
     }

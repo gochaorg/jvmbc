@@ -374,7 +374,7 @@ import org.objectweb.asm.MethodVisitor;
  *     </tr>
  * </table>
  */
-public class MInsn extends MAbstractBC implements MethodWriter {
+public class MInsn extends MAbstractBC implements MethodWriter, OpcodeProperty {
     private static final long serialVersionUID = 1;
 
     /**
@@ -394,13 +394,21 @@ public class MInsn extends MAbstractBC implements MethodWriter {
 
     @SuppressWarnings("MethodDoesntCallSuperMethod") public MInsn clone(){ return new MInsn(this); }
 
-    //region opcode
+    //region opcode : int - код инструкции
     private int opcode;
 
+    /**
+     * Возвращает код инструкции
+     * @return код инструкции
+     */
     public int getOpcode(){
         return opcode;
     }
 
+    /**
+     * Указывает код инструкции
+     * @param opcode код инструкции
+     */
     public void setOpcode(int opcode){
         this.opcode = opcode;
     }

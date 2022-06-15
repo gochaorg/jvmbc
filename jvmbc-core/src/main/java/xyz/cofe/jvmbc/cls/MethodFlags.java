@@ -1,7 +1,10 @@
 package xyz.cofe.jvmbc.cls;
 
+import xyz.cofe.jvmbc.AccFlag;
 import xyz.cofe.jvmbc.AccFlags;
 import xyz.cofe.jvmbc.AccFlagsProperty;
+
+import java.util.Set;
 
 @SuppressWarnings("unused")
 public interface MethodFlags extends AccFlagsProperty {
@@ -115,6 +118,14 @@ public interface MethodFlags extends AccFlagsProperty {
     }
     default void setVarArgs(boolean v){
         setAccess( new AccFlags(getAccess()).withVarArgs(v).value() );
+    }
+    //endregion
+
+    //region flags : Set<AccFlag>
+    default Set<AccFlag> getFlags(){ return AccFlag.flags(getAccess(), AccFlag.Scope.METHOD); }
+    default void setFlags(Set<AccFlag> flags){
+        if( flags==null )throw new IllegalArgumentException( "flags==null" );
+        setAccess( AccFlag.flags(flags) );
     }
     //endregion
 }

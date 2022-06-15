@@ -30,14 +30,14 @@ import org.objectweb.asm.MethodVisitor;
  * {@link OpCode#IFNULL} or 
  * {@link OpCode#IFNONNULL}.
  */
-public class MJump extends MAbstractBC implements MethodWriter {
+public class MJump extends MAbstractBC implements MethodWriter, OpcodeProperty {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
     public MJump(){}
-    public MJump( int op, String label){
+    public MJump( int op, String label ){
         this.opcode = op;
         this.label = label;
     }

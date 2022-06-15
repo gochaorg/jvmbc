@@ -3,6 +3,7 @@ package xyz.cofe.jvmbc.cls;
 import java.util.function.Consumer;
 
 import org.objectweb.asm.ClassWriter;
+import xyz.cofe.jvmbc.AccFlag;
 import xyz.cofe.jvmbc.AccFlags;
 import xyz.cofe.jvmbc.AccFlagsProperty;
 
@@ -91,7 +92,7 @@ public class CInnerClass implements ClsByteCode, ClazzWriter, AccFlagsProperty, 
             " name=" + name +
             " outerName=" + outerName +
             " innerName=" + innerName +
-            " access=" + access+("#"+new AccFlags(access).flags()) ;
+            " access=" + AccFlag.flags(access, AccFlag.Scope.INNER_CLASS)+"#"+access ;
     }
 
     @Override

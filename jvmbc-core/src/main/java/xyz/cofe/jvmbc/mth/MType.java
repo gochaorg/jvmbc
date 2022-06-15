@@ -11,7 +11,7 @@ import xyz.cofe.jvmbc.ByteCode;
  * 
  * см {@link OpCode#ANEWARRAY}, {@link OpCode#CHECKCAST}, {@link OpCode#INSTANCEOF}
  */
-public class MType extends MAbstractBC implements ByteCode, MethodWriter {
+public class MType extends MAbstractBC implements ByteCode, MethodWriter, OpcodeProperty {
     private static final long serialVersionUID = 1;
 
     /**

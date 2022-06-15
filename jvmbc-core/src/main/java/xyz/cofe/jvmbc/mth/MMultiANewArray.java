@@ -61,7 +61,7 @@ public class MMultiANewArray extends MAbstractBC implements MethodWriter {
      */
     public MMultiANewArray(){
     }
-    public MMultiANewArray( String descriptor, int numDimensions){
+    public MMultiANewArray( String descriptor, int numDimensions ){
         descProperty = new TDesc(descriptor);
         this.numDimensions = numDimensions;
     }

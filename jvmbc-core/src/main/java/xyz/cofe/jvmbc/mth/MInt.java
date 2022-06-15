@@ -64,14 +64,14 @@ import org.objectweb.asm.Opcodes;
  *                Opcodes#T_CHAR}, {@link Opcodes#T_FLOAT}, {@link Opcodes#T_DOUBLE}, {@link Opcodes#T_BYTE},
  *                {@link Opcodes#T_SHORT}, {@link Opcodes#T_INT} or {@link Opcodes#T_LONG}.
  */
-public class MInt extends MAbstractBC implements MethodWriter {
+public class MInt extends MAbstractBC implements MethodWriter, OpcodeProperty {
     private static final long serialVersionUID = 1;
 
     /**
      * Конструктор по умолчанию
      */
     public MInt(){}
-    public MInt( int op, int operand){
+    public MInt( int op, int operand ){
         this.opcode = op;
         this.operand = operand;
     }
@@ -88,13 +88,21 @@ public class MInt extends MAbstractBC implements MethodWriter {
 
     @SuppressWarnings("MethodDoesntCallSuperMethod") public MInt clone(){ return new MInt(this); }
 
-    //region opcode : int
+    //region opcode : int - код инструкции
     private int opcode;
 
+    /**
+     * Возвращает код инструкции
+     * @return код инструкции
+     */
     public int getOpcode(){
         return opcode;
     }
 
+    /**
+     * Указывает код инструкции
+     * @param opcode код инструкции
+     */
     public void setOpcode(int opcode){
         this.opcode = opcode;
     }

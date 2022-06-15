@@ -82,7 +82,7 @@ MyClass
 * реализуют интерфейс. Поэтому invokeinterface должен будет проверить во время 
 * выполнения, существует ли метод в таблице, и потенциально вызвать исключение.
  */
-public class MMethod extends MAbstractBC implements MethodWriter {
+public class MMethod extends MAbstractBC implements MethodWriter, OpcodeProperty {
     private static final long serialVersionUID = 1;
 
     /**
@@ -134,11 +134,21 @@ public class MMethod extends MAbstractBC implements MethodWriter {
 
     @SuppressWarnings("MethodDoesntCallSuperMethod") public MMethod clone(){ return new MMethod(this); }
 
-    //region opcode : int
+    //region opcode : int - код инструкции
     private int opcode;
+
+    /**
+     * Возвращает код инструкции
+     * @return код инструкции
+     */
     public int getOpcode(){
         return opcode;
     }
+
+    /**
+     * Указывает код инструкции
+     * @param opcode код инструкции
+     */
     public void setOpcode(int opcode){
         this.opcode = opcode;
     }

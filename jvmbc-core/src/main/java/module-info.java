@@ -1,7 +1,8 @@
-module xyz.cofe.jvmbc.core {
+open module xyz.cofe.jvmbc.core {
     requires org.objectweb.asm;
     requires org.slf4j;
     requires org.checkerframework.checker.qual;
+    requires java.desktop;
 
     //exports xyz.cofe.jvmbc.prop;
 

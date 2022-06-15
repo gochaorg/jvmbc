@@ -1,7 +1,10 @@
 package xyz.cofe.jvmbc.cls;
 
+import xyz.cofe.jvmbc.AccFlag;
 import xyz.cofe.jvmbc.AccFlags;
 import xyz.cofe.jvmbc.AccFlagsProperty;
+
+import java.util.Set;
 
 /**
  * Флаги которые применимы к классу / модулю
@@ -186,4 +189,9 @@ public interface ClassFlags extends AccFlagsProperty {
         setAccess( new AccFlags(getAccess()).withTransitive(v).value() );
     }
     //endregion
+    default Set<AccFlag> getFlags(){ return AccFlag.flags(getAccess(), AccFlag.Scope.CLASS); }
+    default void setFlags(Set<AccFlag> flags){
+        if( flags==null )throw new IllegalArgumentException( "flags==null" );
+        setAccess( AccFlag.flags(flags) );
+    }
 }

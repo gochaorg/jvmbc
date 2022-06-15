@@ -45,7 +45,19 @@ public class CBegin<
         this.name = name;
         this.signature = signature!=null ? Optional.of(new Sign(signature)) : Optional.empty();
         this.superName = superName;
-        this.interfaces = interfaces;
+        this.interfaces = interfaces!=null ? new ArrayList<>(Arrays.asList(interfaces)) : new ArrayList<>();
+    }
+
+    private static class Clones {
+        public final HashMap<ClsByteCode,ClsByteCode> clones = new HashMap<ClsByteCode,ClsByteCode>();
+        public <A extends ClsByteCode> A clone(A sample){
+            if( sample!=null ){
+                var clone = (A)sample.clone();
+                clones.put(sample, clone);
+                return clone;
+            }
+            return sample;
+        }
     }
 
     /**
@@ -59,7 +71,8 @@ public class CBegin<
         name = sample.getName();
         signature = sample.getSignature();
         superName = sample.getSuperName();
-        if( sample.interfaces!=null )interfaces = Arrays.copyOf(sample.interfaces, sample.interfaces.length);
+        if( sample.interfaces!=null )
+            interfaces = new ArrayList<>(sample.interfaces);
 
         source = sample.source!=null && sample.source.isPresent()
             ? sample.source.map(CSource::clone)
@@ -68,51 +81,58 @@ public class CBegin<
         nestHost = sample.nestHost!=null ? sample.nestHost.clone() : null;
         permittedSubclass = sample.permittedSubclass!=null ? sample.permittedSubclass.clone() : null;
 
+        var clones = new Clones();
+
         if( sample.annotations!=null ){
             annotations = new ArrayList<>();
             for( var a : sample.annotations ){
-                annotations.add( a!=null ? a.clone() : null );
+                annotations.add( clones.clone(a) );
             }
         }
 
         if( sample.typeAnnotations!=null ){
             typeAnnotations = new ArrayList<>();
             for( var a : sample.typeAnnotations ){
-                typeAnnotations.add( a!=null ? a.clone() : null );
+                typeAnnotations.add( clones.clone(a) );
             }
         }
 
         if( sample.nestMembers!=null ){
             nestMembers = new ArrayList<>();
             for( var a : sample.nestMembers ){
-                nestMembers.add( a!=null ? a.clone() : null );
+                nestMembers.add( clones.clone(a) );
             }
         }
 
         if( sample.innerClasses!=null ){
             innerClasses = new ArrayList<>();
             for( var a : sample.innerClasses ){
-                innerClasses.add( a!=null ? a.clone() : null );
+                innerClasses.add( clones.clone(a) );
             }
         }
 
         if( sample.fields!=null ){
             fields = new ArrayList<>();
             for( var a : sample.fields ){
-                fields.add( a!=null ? clone(a) : null );
+                fields.add( clones.clone(a) );
             }
         }
 
         if( sample.methods!=null ){
             methods = new ArrayList<>();
             for( var a : sample.methods ){
-                methods.add( a!=null ? clone(a) : null );
+                methods.add( clones.clone(a) );
             }
         }
 
         if( sample.order!=null ){
             order = new LinkedHashMap<>();
-            order.putAll(sample.order);
+            sample.order.forEach( (sampleBc, idx) -> {
+                var cloned = clones.clones.get(sampleBc);
+                if( cloned!=null ){
+                    order.put(cloned, idx);
+                }
+            });
         }
     }
 
@@ -394,13 +414,14 @@ public class CBegin<
     /**
      * имена (байт-код) интерфейсов, см {@link JavaClassName}
      */
-    protected String[] interfaces;
+    protected List<String> interfaces;
 
     /**
      * Возвращает имена (байт-код) интерфейсов, см {@link JavaClassName}
      * @return имена (байт-код) интерфейсов
      */
-    public String[] getInterfaces(){
+    public List<String> getInterfaces(){
+        if( interfaces==null )interfaces = new ArrayList<>();
         return interfaces;
     }
 
@@ -408,7 +429,8 @@ public class CBegin<
      * Указывает имена (байт-код) интерфейсов, см {@link JavaClassName}
      * @param interfaces имена (байт-код) интерфейсов
      */
-    public void setInterfaces(String[] interfaces){
+    public void setInterfaces(List<String> interfaces){
+        if( interfaces==null )throw new IllegalArgumentException( "interfaces==null" );
         this.interfaces = interfaces;
     }
     //endregion
@@ -627,11 +649,11 @@ public class CBegin<
     public String toString(){
         return this.getClass().getSimpleName()+" " +
             "version=" + version +
-            " access="+access+("#"+new AccFlags(access).flags())+
+            " access="+AccFlag.flags(access, AccFlag.Scope.CLASS)+"#"+access+
             " name=" + name +
             " signature=" + signature +
             " superName=" + superName +
-            " interfaces=" + Arrays.toString(interfaces) +
+            " interfaces=" + interfaces +
             "";
     }
 
@@ -683,7 +705,10 @@ public class CBegin<
     public void write( ClassWriter v ){
         if( v==null )throw new IllegalArgumentException( "v==null" );
 
-        v.visit( getVersion(), getAccess(), getName(), getSignature().map(Sign::getRaw).orElse(null), getSuperName(), getInterfaces() );
+        var itfs = getInterfaces();
+        v.visit( getVersion(), getAccess(), getName(), getSignature().map(Sign::getRaw).orElse(null), getSuperName(),
+            itfs!=null && !itfs.isEmpty() ? itfs.toArray(new String[0]) : null
+        );
 
         var src = source;
         //noinspection OptionalAssignedToNull

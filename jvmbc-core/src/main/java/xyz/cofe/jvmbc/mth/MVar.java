@@ -688,7 +688,7 @@ import xyz.cofe.jvmbc.ByteCode;
  * <p> Инструкцию ret не следует путать с инструкцией return (§return). Команда возврата возвращает управление от метода вызывающей стороне, не передавая никакого значения обратно вызывающей стороне.
  * <p> Код операции ret может использоваться вместе с инструкцией wide (§wide) для доступа к локальной переменной с использованием двухбайтового беззнакового индекса.
  */
-public class MVar extends MAbstractBC implements ByteCode, MethodWriter {
+public class MVar extends MAbstractBC implements ByteCode, MethodWriter, OpcodeProperty {
     private static final long serialVersionUID = 1;
 
     /**
@@ -712,11 +712,21 @@ public class MVar extends MAbstractBC implements ByteCode, MethodWriter {
 
     @SuppressWarnings("MethodDoesntCallSuperMethod") public MVar clone(){ return new MVar(this); }
 
-    //region opcode
+    //region opcode : int - код инструкции
     private int opcode;
+
+    /**
+     * Возвращает код инструкции
+     * @return код инструкции
+     */
     public int getOpcode(){
         return opcode;
     }
+
+    /**
+     * Указывает код инструкции
+     * @param opcode код инструкции
+     */
     public void setOpcode(int opcode){
         this.opcode = opcode;
     }

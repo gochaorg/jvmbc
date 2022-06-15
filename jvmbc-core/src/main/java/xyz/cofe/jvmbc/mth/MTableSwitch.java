@@ -94,7 +94,7 @@ public class MTableSwitch extends MAbstractBC implements ByteCode, MethodWriter 
      * @param labels beginnings of the handler blocks. {@code labels[i]} is the beginning of the
      * handler block for the {@code min + i} key.
      */
-    public MTableSwitch( int min, int max, String dflt, String... labels){
+    public MTableSwitch( int min, int max, String dflt, String... labels ){
         this.min = min;
         this.max = max;
         this.defaultLabel = dflt;

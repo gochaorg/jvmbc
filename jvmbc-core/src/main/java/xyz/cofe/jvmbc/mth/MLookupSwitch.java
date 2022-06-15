@@ -119,7 +119,7 @@ public class MLookupSwitch extends MAbstractBC implements MethodWriter {
      * @param labels начала блоков обработчика. {@code labels [i]} - начало
      * блок-обработчик для ключа {@code keys [i]}.
      */
-    public MLookupSwitch( String defHdl, int[] keys, String[] labels){
+    public MLookupSwitch( String defHdl, int[] keys, String[] labels ){
         this.defaultHandlerLabel = defHdl;
         this.keys = keys;
         this.labels = labels;
@@ -129,7 +129,7 @@ public class MLookupSwitch extends MAbstractBC implements MethodWriter {
      * Конструктор копирования
      * @param sample образец
      */
-    public MLookupSwitch( MLookupSwitch sample){
+    public MLookupSwitch( MLookupSwitch sample ){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         defaultHandlerLabel = sample.defaultHandlerLabel;
         if( sample.keys!=null )keys = Arrays.copyOf(sample.keys,sample.keys.length);

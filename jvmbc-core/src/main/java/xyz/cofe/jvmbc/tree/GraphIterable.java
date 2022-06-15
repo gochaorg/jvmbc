@@ -5,12 +5,22 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * Обход графа
+ * @param <N> вершина графа
+ */
 public class GraphIterable<N> implements Iterable<GraphPath<N>> {
     private final List<N> from;
     private final Function<N,Iterable<N>> follow;
     @SuppressWarnings({"unused", "OptionalUsedAsFieldOrParameterType"})
     private final Optional<Predicate<GraphPath<N>>> followable;
 
+    /**
+     * Конструктор
+     * @param from корневые вершины графа
+     * @param follow
+     * @param followable
+     */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public GraphIterable( List<N> from, Function<N,Iterable<N>> follow, Optional<Predicate<GraphPath<N>>> followable){
         if( from==null )throw new IllegalArgumentException( "from==null" );

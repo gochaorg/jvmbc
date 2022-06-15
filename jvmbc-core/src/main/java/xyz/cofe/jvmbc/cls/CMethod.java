@@ -203,7 +203,7 @@ implements ClsByteCode, ClazzWriter, AccFlagsProperty, MethodFlags
     @Override
     public String toString(){
         return "CMethod " +
-            "access="+access+("#"+new AccFlags(access).flags())+
+            "access="+AccFlag.flags(access, AccFlag.Scope.CLASS)+"#"+access+
             " name="+name +
             " descriptor=" + desc() +
             " signature=" + signature +

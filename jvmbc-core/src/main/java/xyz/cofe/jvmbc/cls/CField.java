@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import org.objectweb.asm.ClassWriter;
+import xyz.cofe.jvmbc.AccFlag;
 import xyz.cofe.jvmbc.AccFlags;
 import xyz.cofe.jvmbc.AccFlagsProperty;
 import xyz.cofe.jvmbc.Sign;
@@ -224,7 +225,7 @@ public class CField implements ClsByteCode, ClazzWriter, AccFlagsProperty, Field
     @Override
     public String toString(){
         return CField.class.getSimpleName() +
-            " access="+access+("#"+new AccFlags(access).flags())+
+            " access="+ AccFlag.flags(access, AccFlag.Scope.FIELD)+"#"+access+
             " name=" + name +
             " desc=" + getDesc() +
             " signature=" + signature +
