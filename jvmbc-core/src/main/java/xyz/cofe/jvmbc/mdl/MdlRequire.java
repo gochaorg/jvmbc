@@ -1,8 +1,9 @@
 package xyz.cofe.jvmbc.mdl;
 
 import org.objectweb.asm.ModuleVisitor;
+import xyz.cofe.jvmbc.AccFlagsProperty;
 
-public class MdlRequire implements ModuleByteCode {
+public class MdlRequire implements ModuleByteCode, AccFlagsProperty {
     public MdlRequire(){}
     public MdlRequire(MdlRequire sample){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
@@ -18,7 +19,6 @@ public class MdlRequire implements ModuleByteCode {
     public String getModule(){
         return module;
     }
-
     public void setModule( String module ){
         this.module = module;
     }
@@ -27,17 +27,14 @@ public class MdlRequire implements ModuleByteCode {
     public int getAccess(){
         return access;
     }
-
     public void setAccess( int access ){
         this.access = access;
     }
 
     protected String version;
-
     public String getVersion(){
         return version;
     }
-
     public void setVersion( String version ){
         this.version = version;
     }
