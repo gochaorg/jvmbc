@@ -24,7 +24,7 @@ public class MType extends MAbstractBC implements ByteCode, MethodWriter, Opcode
      * @param op код инструкции
      * @param type тип
      */
-    public MType( int op, String type){
+    public MType( int op, String type ){
         this.opcode = op;
         this.type = type;
     }

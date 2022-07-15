@@ -111,7 +111,7 @@ public class MMethod extends MAbstractBC implements MethodWriter, OpcodeProperty
      * @param iface if the method's owner class is an interface.
      * <br> если класс владельца метода является интерфейсом.
      */
-    public MMethod( int op, String owner, String name, String descriptor, boolean iface){
+    public MMethod( int op, String owner, String name, String descriptor, boolean iface ){
         this.opcode = op;
         this.owner = owner;
         this.name = name;

@@ -49,25 +49,36 @@ public class MLabel extends MAbstractBC implements MethodWriter {
         return MLabel.class.getSimpleName()+" name="+name;
     }
 
+    /**
+     * final - ибо на конкретный MLabel нужно ссылаться
+     * @return хеш код
+     */
     @Override
-    public int hashCode(){
-        var n = name;
-        if( n!=null )return n.hashCode();
+    public final int hashCode(){
+//        var n = name;
+//        if( n!=null )return n.hashCode();
+//        return super.hashCode();
         return super.hashCode();
     }
 
+    /**
+     * final - ибо на конкретный MLabel нужно ссылаться
+     * @param obj образец
+     * @return эквивалентны
+     */
     @Override
-    public boolean equals(Object obj){
-        if( obj==null )return false;
-        if( obj.getClass()!= MLabel.class )return false;
-        var lb = (MLabel)obj;
-        var n0 = name;
-        var n1 = lb.name;
-        if( n0==null && n1==null )return true;
-        if( n0!=null && n1==null )return false;
-        //noinspection ConstantConditions
-        if( n1!=null && n0==null )return false;
-        return n0.equals(n1);
+    public final boolean equals(Object obj){
+        return super.equals(obj);
+//        if( obj==null )return false;
+//        if( obj.getClass()!= MLabel.class )return false;
+//        var lb = (MLabel)obj;
+//        var n0 = name;
+//        var n1 = lb.name;
+//        if( n0==null && n1==null )return true;
+//        if( n0!=null && n1==null )return false;
+//        //noinspection ConstantConditions
+//        if( n1!=null && n0==null )return false;
+//        return n0.equals(n1);
     }
 
     @Override

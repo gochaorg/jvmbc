@@ -39,7 +39,7 @@ public class MIinc extends MAbstractBC implements MethodWriter {
      * Конструктор по умолчанию
      */
     public MIinc(){}
-    public MIinc( int variable, int increment){
+    public MIinc( int variable, int increment ){
         this.variable = variable;
         this.increment = increment;
     }
@@ -48,7 +48,7 @@ public class MIinc extends MAbstractBC implements MethodWriter {
      * Конструктор копирования
      * @param sample образец
      */
-    public MIinc( MIinc sample){
+    public MIinc( MIinc sample ){
         if( sample==null )throw new IllegalArgumentException( "sample==null" );
         variable = sample.getVariable();
         increment = sample.getIncrement();
