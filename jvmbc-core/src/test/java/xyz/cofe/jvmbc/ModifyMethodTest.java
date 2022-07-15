@@ -9,6 +9,9 @@ import java.lang.reflect.InvocationTargetException;
 public class ModifyMethodTest extends CommonForTest {
     @Test
     public void callAsIs(){
+        System.out.println("callAsIs");
+        System.out.println("=".repeat(80));
+
         var bc = CBegin.parseByteCode(SampleClass.class);
         try{
             var cls = Class.forName(bc.javaName().getName(),true,cloader(bc));
@@ -24,6 +27,9 @@ public class ModifyMethodTest extends CommonForTest {
 
     @Test
     public void cloneMethod(){
+        System.out.println("cloneMethod");
+        System.out.println("=".repeat(80));
+
         var bc = CBegin.parseByteCode(SampleClass.class);
         var srcMethOpt = bc.getMethods().stream().filter(m -> m.getName().equals("concat")).findFirst();
         var srcMeth = srcMethOpt.get();
