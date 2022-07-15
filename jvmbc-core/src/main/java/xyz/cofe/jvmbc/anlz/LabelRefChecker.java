@@ -24,7 +24,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Проверка ссылок, что ссылки указываю на целевые метки
+ * Проверка ссылок:
+ *
+ * <ul>
+ *   <li>что ссылки указываю на целевые метки</li>
+ *   <li>что целевые метки в коде существуют</li>
+ *   <li>что целевые метки метки в правильном порядке</li>
+ * </ul>
  *
  * {@link xyz.cofe.jvmbc.mth.MTryCatchBlock}
  * {@link xyz.cofe.jvmbc.mth.MTableSwitch}
@@ -42,7 +48,6 @@ public class LabelRefChecker
         if( body==null )throw new IllegalArgumentException( "body==null" );
         this.body = body;
     }
-
     public LabelRefChecker( CMethod<?> method ){
         if( method==null )throw new IllegalArgumentException( "method==null" );
         this.body = method.getMethodByteCodes();
@@ -68,7 +73,7 @@ public class LabelRefChecker
             this.order = order;
         }
     }
-    public AllMLabels allMLabels(){
+    protected AllMLabels allMLabels(){
         var ordIndex = 0;
         var order = new LinkedHashMap<MLabel,Integer>();
         var unnamedLabels = new LinkedHashSet<MLabel>();
@@ -110,6 +115,11 @@ public class LabelRefChecker
         return allMLabels_value;
     }
 
+    public T2<MethodByteCode, Either<String,Set<MLabel>>> check( MethodByteCode bc ){
+        if( bc==null )throw new IllegalArgumentException( "bc==null" );
+        return checkRef(bc, getAllMLabels());
+    }
+
     private T2<MethodByteCode, Either<String,Set<MLabel>>> checkRef( MethodByteCode bc, AllMLabels allLabels ){
         if( bc instanceof MTryCatchBlock ){
             return checkRef((MTryCatchBlock)bc, allLabels);
@@ -128,7 +138,6 @@ public class LabelRefChecker
         }
         return T2.of(bc,right(Set.of()));
     }
-
     private T2<MethodByteCode, Either<String,Set<MLabel>>> checkRef( MethodByteCode bc, AllMLabels allMLabels, Map<String,String> refz ){
         var err = new StringBuilder();
         var refs = new LinkedHashSet<MLabel>();
@@ -158,7 +167,6 @@ public class LabelRefChecker
             )
         );
     }
-
     private T2<MethodByteCode, Either<String,Set<MLabel>>> checkRef( MTableSwitch bc, AllMLabels allMLabels ){
         if( bc.getDefaultLabel()==null )return T2.of(bc,left("default is null"));
         var targets = new LinkedHashSet<MLabel>();
@@ -252,7 +260,6 @@ public class LabelRefChecker
 
         return T2.of(bc,right(targets));
     }
-
     private T2<MethodByteCode, Either<String,Set<MLabel>>> checkRef( MLocalVariable bc, AllMLabels allMLabels ){
         return checkRef(
             bc,
