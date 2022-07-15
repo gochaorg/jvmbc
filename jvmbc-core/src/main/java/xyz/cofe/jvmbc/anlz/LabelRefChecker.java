@@ -49,12 +49,14 @@ public class LabelRefChecker
     }
 
     public static class AllMLabels {
+        public final Map<MLabel,Integer> order;
         public final Set<MLabel> unnamedLabels;
         public final Map<String,Set<MLabel>> labelsByName;
         public final Map<String,Set<MLabel>> duplicates;
         public final Map<String,MLabel> uniques;
 
-        public AllMLabels( Set<MLabel> unnamedLabels,
+        public AllMLabels( Map<MLabel,Integer> order,
+                           Set<MLabel> unnamedLabels,
                            Map<String, Set<MLabel>> labelsByName,
                            Map<String, Set<MLabel>> duplicates,
                            Map<String, MLabel> uniques
@@ -63,9 +65,12 @@ public class LabelRefChecker
             this.labelsByName = labelsByName;
             this.duplicates = duplicates;
             this.uniques = uniques;
+            this.order = order;
         }
     }
     public AllMLabels allMLabels(){
+        var ordIndex = 0;
+        var order = new LinkedHashMap<MLabel,Integer>();
         var unnamedLabels = new LinkedHashSet<MLabel>();
         var labelsByName = new LinkedHashMap<String, Set<MLabel>>();
         for( var ins : body ){
@@ -77,6 +82,9 @@ public class LabelRefChecker
                 }else{
                     labelsByName.computeIfAbsent(name, x -> new LinkedHashSet<>()).add(mlabel);
                 }
+
+                order.put(mlabel,ordIndex);
+                ordIndex++;
             }
         }
         var duplicates = labelsByName
@@ -87,6 +95,7 @@ public class LabelRefChecker
             .collect(Collectors.toMap(Map.Entry::getKey, v->v.getValue().iterator().next()));
 
         return new AllMLabels(
+            order,
             unnamedLabels,
             labelsByName,
             duplicates,
@@ -105,11 +114,11 @@ public class LabelRefChecker
         if( bc instanceof MTryCatchBlock ){
             return checkRef((MTryCatchBlock)bc, allLabels);
         }else if( bc instanceof MTableSwitch ){
-            checkRef((MTableSwitch)bc, allLabels);
+            return checkRef((MTableSwitch)bc, allLabels);
         }else if( bc instanceof MLookupSwitch ){
-            checkRef((MLookupSwitch)bc, allLabels);
+            return checkRef((MLookupSwitch)bc, allLabels);
         }else if( bc instanceof MLocalVariableAnnotation ){
-            checkRef((MLocalVariableAnnotation)bc, allLabels);
+            return checkRef((MLocalVariableAnnotation)bc, allLabels);
         }else if( bc instanceof MLocalVariable ){
             return checkRef((MLocalVariable)bc, allLabels);
         }else if( bc instanceof MLineNumber ){
@@ -150,9 +159,100 @@ public class LabelRefChecker
         );
     }
 
-    private void checkRef( MTableSwitch bc, AllMLabels allMLabels ){}
-    private void checkRef( MLookupSwitch bc, AllMLabels allMLabels ){}
-    private void checkRef( MLocalVariableAnnotation bc, AllMLabels allMLabels ){}
+    private T2<MethodByteCode, Either<String,Set<MLabel>>> checkRef( MTableSwitch bc, AllMLabels allMLabels ){
+        if( bc.getDefaultLabel()==null )return T2.of(bc,left("default is null"));
+        var targets = new LinkedHashSet<MLabel>();
+
+        var defLbl = allMLabels.uniques.get(bc.getDefaultLabel());
+        if( defLbl==null )return T2.of(bc, left("default="+defLbl+" is miss"));
+        targets.add(defLbl);
+
+        var lbls = bc.getLabels();
+        if( lbls==null )return T2.of(bc, left("labels is null"));
+
+        for( var i=0; i< lbls.length; i++ ){
+            var lname = lbls[i];
+            if( lname==null )return T2.of(bc, left("label["+i+"] is null"));
+
+            var lbl = allMLabels.uniques.get(lname);
+            if( lbl==null )return T2.of(bc, left("label["+i+"]="+lbls[i]+" is miss"));
+            targets.add(lbl);
+        }
+
+        return T2.of(bc,right(targets));
+    }
+    private T2<MethodByteCode, Either<String,Set<MLabel>>> checkRef( MLookupSwitch bc, AllMLabels allMLabels ){
+        var targets = new LinkedHashSet<MLabel>();
+
+        var defLName = bc.getDefaultHandlerLabel();
+        if( defLName==null )return T2.of(bc,left("default is null"));
+        var defLbl = allMLabels.uniques.get(defLName);
+        if( defLbl==null )return T2.of(bc, left("default="+defLbl+" is miss"));
+        targets.add(defLbl);
+
+        var lbls = bc.getLabels();
+        if( lbls==null )return T2.of(bc, left("labels is null"));
+
+        for( var i=0; i< lbls.length; i++ ){
+            var lname = lbls[i];
+            if( lname==null )return T2.of(bc, left("label["+i+"] is null"));
+
+            var lbl = allMLabels.uniques.get(lname);
+            if( lbl==null )return T2.of(bc, left("label["+i+"]="+lbls[i]+" is miss"));
+            targets.add(lbl);
+        }
+
+        return T2.of(bc,right(targets));
+    }
+    private T2<MethodByteCode, Either<String,Set<MLabel>>> checkRef( MLocalVariableAnnotation bc, AllMLabels allMLabels ){
+        var targets = new LinkedHashSet<MLabel>();
+
+        var startLbls = bc.getStartLabels();
+        if( startLbls==null )return T2.of(bc, left("startLabels is null"));
+        for( var i=0; i< startLbls.length; i++ ){
+            var lname = startLbls[i];
+            if( lname==null )return T2.of(bc, left("startLabels["+i+"] is null"));
+
+            var lbl = allMLabels.uniques.get(lname);
+            if( lbl==null )return T2.of(bc, left("startLabels["+i+"]="+startLbls[i]+" is miss"));
+            targets.add(lbl);
+        }
+
+        var endLbls = bc.getEndLabels();
+        if( endLbls==null )return T2.of(bc, left("endLabels is null"));
+        for( var i=0; i< endLbls.length; i++ ){
+            var lname = endLbls[i];
+            if( lname==null )return T2.of(bc, left("endLabels["+i+"] is null"));
+
+            var lbl = allMLabels.uniques.get(lname);
+            if( lbl==null )return T2.of(bc, left("endLabels["+i+"]="+endLbls[i]+" is miss"));
+            targets.add(lbl);
+        }
+
+        if( endLbls.length!=startLbls.length )
+            return T2.of(bc, left("different count startLabels("+startLbls.length+") and endLabels("+endLbls.length+")"));
+
+        for( var i=0;i<startLbls.length;i++ ){
+            var startName = startLbls[i];
+            var endName = endLbls[i];
+            var startLabel = allMLabels.uniques.get(startName);
+            var endLabel = allMLabels.uniques.get(endName);
+            if( startLabel!=null && endLabel!=null ){
+                var startOrd = allMLabels.order.get(startLabel);
+                var endOrd = allMLabels.order.get(endLabel);
+                if( startOrd!=null && endOrd!=null ){
+                    if( startOrd > endOrd ){
+                        return T2.of(bc, left(
+                            "startLabel(name="+startName+", order="+startOrd+") " +
+                                "follow after endLabel(name="+endName+", ord="+endOrd+")"));
+                    }
+                }
+            }
+        }
+
+        return T2.of(bc,right(targets));
+    }
+
     private T2<MethodByteCode, Either<String,Set<MLabel>>> checkRef( MLocalVariable bc, AllMLabels allMLabels ){
         return checkRef(
             bc,
