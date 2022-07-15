@@ -2,6 +2,8 @@ package xyz.cofe.jvmbc;
 
 /**
  * Представление signature для generic методов
+ *
+ * @see Sign
  */
 public class MSign {
     /**
@@ -31,4 +33,8 @@ public class MSign {
      * @return сырое представление
      */
     public String getRaw(){ return raw; }
+
+    public String toString(){
+        return "MSign{raw="+raw+"}";
+    }
 }
