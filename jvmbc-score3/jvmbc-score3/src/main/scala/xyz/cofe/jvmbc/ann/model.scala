@@ -26,14 +26,14 @@ case class FloatArr(n:Option[String],v:Array[Float]) extends APair(n,v)
 case class DoubleArr(n:Option[String],v:Array[Double]) extends APair(n,v)
 
 object APair:
-  def apply(value:AnyRef)=apply0(null,value)
-  def apply(name:String,value:AnyRef)=
+  def apply(value:AnyRef): Either[String, APair[_]] =apply0(null,value)
+  def apply(name:String,value:AnyRef): Either[String, APair[_]] =
     require(name!=null)
     apply0(name,value)
 
   private def apply0(name:String,value:AnyRef):Either[String,APair[_]]=
     require(value!=null)
-    val name0 = if name==null then None else Some(name)
+    val name0 = Option(name)
     value match
       case _:Float => Right(FloatV(name0,value.asInstanceOf[Float]))
       case _:Double => Right(DoubleV(name0,value.asInstanceOf[Double]))

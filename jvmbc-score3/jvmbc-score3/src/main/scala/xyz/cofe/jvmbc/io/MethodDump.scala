@@ -29,7 +29,7 @@ class MethodDump(
   override def visitParameter(name:String, access:Int):Unit =
     body = Right(
       MParameter(
-        if name!=null then Some(name) else None,
+        Option(name),
         MParameterAccess(access)
       )
     ) +: body
@@ -328,17 +328,7 @@ class MethodDump(
     import FirstErr.firstErr
     import bm._
     val bmArgs:Seq[Either[String,bm.BootstrapArg]] = bootstrapMethodArguments.map { bm0 => 
-      bm0 match
-        case a:Int    => Right(IntArg(a))
-        case a:Float  => Right(FloatArg(a))
-        case a:Long   => Right(LongArg(a))
-        case a:Double => Right(DoubleArg(a))
-        case a:String => Right(StringArg(a))
-        case a:org.objectweb.asm.Type => Right(TypeArg( a.toString ))
-        case a:org.objectweb.asm.Handle => Right(bm.Handle(a))
-        // TODO need implement ConstantDynamic
-        case a:org.objectweb.asm.ConstantDynamic => Left(s"(visitInvokeDynamicInsn) unimplemented ConstantDynamic")
-        case a:AnyRef => Left(s"(visitInvokeDynamicInsn) unsupported bootstrap method arg ${a} : ${if a!=null then a.getClass else null}")
+      bm.BootstrapArg(bm0)
     }
     val bmHdl = bm.Handle(bootstrapMethodHandle)
     

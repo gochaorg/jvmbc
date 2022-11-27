@@ -96,7 +96,7 @@ case class CMethod(access:CMethodAccess,name:String,desc:MDesc,sign:Option[MSign
   with NestedThey("body")
 
 case class CMethodAccess(raw:Int)
-case class MSign(raw:String)
+case class MSign(raw:String) extends AnyVal
 
 case class CInnerClass(access:CInnerClassAccess,name:String,outerName:Option[String],innerName:Option[String]) 
   extends ClassCode
