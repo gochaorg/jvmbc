@@ -57,7 +57,7 @@ object APair:
             case "[D" => Right(DoubleArr(name0,value.asInstanceOf[Array[Double]]))
             case "[Ljava/lang/String;" | "[Ljava.lang.String;" => Right(StrArr(name0,value.asInstanceOf[Array[String]]))
             case _ => Left(s"not implemented for value=$value : ${value.getClass}")
-      case _:Serializable => Right(Undef(name0,value.asInstanceOf[String]))
+      case v:Serializable => Right(Undef(name0,v))
       case _ => Left(s"not implemented for value=$value : ${value.getClass}")
 
 case class AEnum(name:String,desc:TDesc,value:String) extends AnnCode
