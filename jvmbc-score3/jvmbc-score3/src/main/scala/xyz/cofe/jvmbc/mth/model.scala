@@ -3,7 +3,12 @@ package mth
 
 import ann.AnnCode
 import bm.BootstrapArg
-import bm.LdcType
+import bm.Handle
+import bm.ConstDynamic
+import bm.TypeArg
+import xyz.cofe.jvmbc.io.MthOut
+import org.objectweb.asm.MethodVisitor
+import xyz.cofe.jvmbc.io.MthOutCtx
 
 sealed trait MethCode extends ByteCode
 
@@ -479,8 +484,21 @@ case class MFieldInsn(op:OpCode,owner:String,name:String,desc:TDesc) extends Met
  * @param numStack
  * @param stack
  */
-case class MFrame(kind:MFrameType,numLocal:Int,local:Seq[AnyRef],numStack:Int,stack:Seq[AnyRef]) extends MethCode
-case class MFrameType(kind:Int)
+case class MFrame(
+  kind:MFrameType,
+  numLocal:Int,local:Seq[MFrameElem],
+  numStack:Int,stack:Seq[MFrameElem]
+  ) extends MethCode
+case class MFrameType(value:Int) extends AnyVal:
+  def kind:Option[MFrameKind] =
+    value match
+      case MFrameKind.F_NEW.kind    => Some(MFrameKind.F_NEW)
+      case MFrameKind.F_FULL.kind   => Some(MFrameKind.F_FULL)
+      case MFrameKind.F_APPEND.kind => Some(MFrameKind.F_APPEND)
+      case MFrameKind.F_CHOP.kind   => Some(MFrameKind.F_CHOP)
+      case MFrameKind.F_SAME.kind   => Some(MFrameKind.F_SAME)
+      case MFrameKind.F_SAME1.kind  => Some(MFrameKind.F_SAME1)
+      case _ => None
 
 /**
 - **F_NEW**
@@ -504,7 +522,7 @@ case class MFrameType(kind:Int)
   A compressed frame with exactly the same locals as the previous frame and with a single value
   on the stack.
 */
-enum MFrameKind(kind:Int):
+enum MFrameKind(val kind:Int):
   case F_NEW    extends MFrameKind(-1)
   case F_FULL   extends MFrameKind(0)
   case F_APPEND extends MFrameKind(1)
@@ -512,17 +530,35 @@ enum MFrameKind(kind:Int):
   case F_SAME   extends MFrameKind(3)
   case F_SAME1  extends MFrameKind(4)
 
-case class MFrameElem(kind:Int)
-enum MFrameElemKind(kind:Int):
-  case ITEM_TOP extends MFrameElemKind(0)
-  case ITEM_INTEGER extends MFrameElemKind(1)
-  case ITEM_FLOAT extends MFrameElemKind(2)
-  case ITEM_DOUBLE extends MFrameElemKind(3)
-  case ITEM_LONG extends MFrameElemKind(4)
-  case ITEM_NULL extends MFrameElemKind(5)
-  case ITEM_UNINITIALIZED_THIS extends MFrameElemKind(6)
-  case ITEM_OBJECT extends MFrameElemKind(7)
-  case ITEM_UNINITIALIZED extends MFrameElemKind(8)
+case class MFrameElem(value:AnyRef) extends AnyVal:
+  def kind:Option[MFrameElemKind] =
+    value match
+      case num:Int => num match
+        case 0 => Some(MFrameElemKind.TOP)
+        case 1 => Some(MFrameElemKind.INTEGER)
+        case 2 => Some(MFrameElemKind.FLOAT)
+        case 3 => Some(MFrameElemKind.DOUBLE)
+        case 4 => Some(MFrameElemKind.LONG)
+        case 5 => Some(MFrameElemKind.NULL)
+        case 6 => Some(MFrameElemKind.UNINITIALIZED_THIS)
+        case 7 => Some(MFrameElemKind.OBJECT)
+        case 8 => Some(MFrameElemKind.UNINITIALIZED)
+        case _ => None
+      case str:String =>
+        Some(MFrameElemKind.JVM_TYPE(str))
+      case _ => None
+
+enum MFrameElemKind:
+  case TOP extends MFrameElemKind
+  case INTEGER extends MFrameElemKind
+  case FLOAT extends MFrameElemKind
+  case DOUBLE extends MFrameElemKind
+  case LONG extends MFrameElemKind
+  case NULL extends MFrameElemKind
+  case UNINITIALIZED_THIS extends MFrameElemKind
+  case OBJECT extends MFrameElemKind
+  case UNINITIALIZED extends MFrameElemKind
+  case JVM_TYPE(rawName:String)
 
 /**
  * Increment local variable by constant (<a href="https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html">jvm spec</a>).
@@ -845,6 +881,18 @@ case class MJumpInsn(op:OpCode,label:String) extends MethCode
  */
 case class MLabel(name:String) extends MethCode
 
+enum LdcValue:
+  case INT(value:Int)
+  case FLOAT(value:Float)
+  case LONG(value:Long)
+  case DOUBLE(value:Double)
+  case STRING(value:String)
+  case OBJ(value:TypeArg)
+  case ARR(value:TypeArg)
+  case METHOD(value:TypeArg)
+  case HANDLE(value:Handle)
+  case CONST_DYNAMIC(value:ConstDynamic)
+
 /**
  * <a href="https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html#jvms-6.5.ldc">Push item from run-time constant pool</a>
  * <p> Описание
@@ -898,9 +946,31 @@ case class MLabel(name:String) extends MethCode
  * @param value
  * @param ldcType
  */
-case class MLdcInsn(value:AnyRef) extends MethCode {
-    //lazy val ldcType:LdcType
-}
+case class MLdcInsn(value:LdcValue) extends MethCode
+
+object MLdcInsn:
+  def apply(value:AnyRef):Either[String,MLdcInsn] =
+    value match
+      case num:Int => Right(new MLdcInsn(LdcValue.INT(num)))
+      case num:Float => Right(new MLdcInsn(LdcValue.FLOAT(num)))
+      case num:Long => Right(new MLdcInsn(LdcValue.LONG(num)))
+      case num:Double => Right(new MLdcInsn(LdcValue.DOUBLE(num)))
+      case str:String => Right(new MLdcInsn(LdcValue.STRING(str)))
+      case tip:org.objectweb.asm.Type =>
+        tip.getSort() match
+          case org.objectweb.asm.Type.OBJECT => 
+            Right(new MLdcInsn(LdcValue.OBJ(bm.TypeArg(tip.toString()))))
+          case org.objectweb.asm.Type.ARRAY =>
+            Right(new MLdcInsn(LdcValue.ARR(bm.TypeArg(tip.toString()))))
+          case org.objectweb.asm.Type.METHOD =>
+            Right(new MLdcInsn(LdcValue.METHOD(bm.TypeArg(tip.toString()))))
+          case _ => 
+            Left(s"Not parsed MLdcInsn($value), sort=${tip.getSort()}")
+      case hdl:org.objectweb.asm.Handle => 
+        Right(new MLdcInsn(LdcValue.HANDLE(bm.Handle(hdl))))
+      case d:org.objectweb.asm.ConstantDynamic => 
+        bm.ConstDynamic(d).flatMap( cd => MLdcInsn(cd) )
+      case _ => Left(s"Not parsed MLdcInsn($value)")
 
 /** 
  * Номер строки в исходном коде
@@ -1216,7 +1286,7 @@ case class MMultiANewArrayInsn(desc:TDesc,numDimensions:Int)
 case class MParameter(name:Option[String],access:MParameterAccess) 
   extends MethCode
 
-case class MParameterAccess(raw:Int)
+case class MParameterAccess(raw:Int) extends AnyVal
 
 /** 
  * @param param

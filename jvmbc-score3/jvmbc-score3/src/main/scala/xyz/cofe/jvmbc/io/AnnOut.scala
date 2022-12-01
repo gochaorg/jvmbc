@@ -52,3 +52,6 @@ object AnnOut:
         case a@FloatArr(n, v)  => summon[AnnOut[FloatArr]].write(out,a)
         case a@DoubleArr(n, v) => summon[AnnOut[DoubleArr]].write(out,a)
       
+  given AnnOut[Seq[AnnCode]] with
+    def write(out: AnnotationVisitor, v: Seq[AnnCode]): Unit = 
+      v.foreach( a => summon[AnnOut[AnnCode]].write(out,a) )

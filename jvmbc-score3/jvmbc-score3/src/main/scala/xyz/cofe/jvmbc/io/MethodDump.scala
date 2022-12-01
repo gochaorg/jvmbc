@@ -212,9 +212,9 @@ class MethodDump(
     body = Right(MFrame(
       MFrameType(frameType),
       numLocal,
-      local,
+      local.map(e => MFrameElem(e)),
       numStack,
-      stack
+      stack.map(e => MFrameElem(e))
     )) +: body
 
   /**
@@ -403,7 +403,7 @@ class MethodDump(
    *              dynamic for classes whose version is 55.
    */
   override def visitLdcInsn(value:AnyRef):Unit =
-    body = Right(MLdcInsn(value)) +: body
+    body = MLdcInsn(value) +: body
 
   /**
    * Visits an IINC instruction.

@@ -47,9 +47,6 @@ object ConstDynamic:
     )
 
 
-enum LdcType:
-  case INT, FLOAT, LONG, DOUBLE, STRING, OBJECT, ARRAY, METHOD, HANDLE, CONST_DYNAMIC
-
 object BootstrapArg:
   def apply(arg:AnyRef):Either[String,BootstrapArg] = arg match
     case a: Int => Right(IntArg(a))
