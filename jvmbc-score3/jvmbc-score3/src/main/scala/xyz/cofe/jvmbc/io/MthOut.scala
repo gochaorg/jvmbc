@@ -235,4 +235,37 @@ object MthOut:
         code.variable
       )
 
-  
+  given MthOut[MethCode] with
+    def write(out: MethodVisitor, code: MethCode)(using ctx: MthOutCtx): Unit = 
+      code match
+        case c:MCode => summon[MthOut[MCode]].write(out,c)
+        case c:MEnd => summon[MthOut[MEnd]].write(out,c)
+        case c:MInst =>  summon[MthOut[MInst]].write(out,c)
+        case c:MAnnotableParameterCount =>  summon[MthOut[MAnnotableParameterCount]].write(out,c)
+        case c:MAnnotation =>  summon[MthOut[MAnnotation]].write(out,c)
+        case c:MAnnotationDefault =>  summon[MthOut[MAnnotationDefault]].write(out,c)
+        case c:MFieldInsn =>  summon[MthOut[MFieldInsn]].write(out,c)
+        case c:MFrame =>  summon[MthOut[MFrame]].write(out,c)
+        case c:MIincInsn =>  summon[MthOut[MIincInsn]].write(out,c)
+        case c:MInsnAnnotation =>  summon[MthOut[MInsnAnnotation]].write(out,c)
+        case c:MIntInsn =>  summon[MthOut[MIntInsn]].write(out,c)
+        case c:MInvokeDynamicInsn =>  summon[MthOut[MInvokeDynamicInsn]].write(out,c)
+        case c:MJumpInsn =>  summon[MthOut[MJumpInsn]].write(out,c)
+        case c:MLabel =>  summon[MthOut[MLabel]].write(out,c)
+        case c:MLdcInsn =>  summon[MthOut[MLdcInsn]].write(out,c)
+        case c:MLineNumber =>  summon[MthOut[MLineNumber]].write(out,c)
+        case c:MLocalVariable =>  summon[MthOut[MLocalVariable]].write(out,c)
+        case c:MLocalVariableAnnotation =>  summon[MthOut[MLocalVariableAnnotation]].write(out,c)
+        case c:MLookupSwitchInsn =>  summon[MthOut[MLookupSwitchInsn]].write(out,c)
+        case c:MMaxs =>  summon[MthOut[MMaxs]].write(out,c)
+        case c:MMethodInsn =>  summon[MthOut[MMethodInsn]].write(out,c)
+        case c:MMultiANewArrayInsn =>  summon[MthOut[MMultiANewArrayInsn]].write(out,c)
+        case c:MParameter =>  summon[MthOut[MParameter]].write(out,c)
+        case c:MParameterAnnotation =>  summon[MthOut[MParameterAnnotation]].write(out,c)
+        case c:MTableSwitchInsn =>  summon[MthOut[MTableSwitchInsn]].write(out,c)
+        case c:MTryCatchAnnotation =>  summon[MthOut[MTryCatchAnnotation]].write(out,c)
+        case c:MTryCatchBlock =>  summon[MthOut[MTryCatchBlock]].write(out,c)
+        case c:MTypeAnnotation =>  summon[MthOut[MTypeAnnotation]].write(out,c)
+        case c:MTypeInsn =>  summon[MthOut[MTypeInsn]].write(out,c)
+        case c:MVarInsn =>  summon[MthOut[MVarInsn]].write(out,c)
+      
