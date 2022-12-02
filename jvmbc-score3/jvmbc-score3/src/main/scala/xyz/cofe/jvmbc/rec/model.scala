@@ -9,7 +9,13 @@ case class RecAnnotation(desc:TDesc, visible:Boolean, annotations:Seq[AnnCode])
   extends RecordCode 
   with NestedThey("annotations")
 
-case class RecTypeAnnotation(typeRef:RTypeRef, typePath:Option[String], desc:TDesc, visible:Boolean, annotations:Seq[AnnCode]) 
+case class RecTypeAnnotation(
+  typeRef:RTypeRef, 
+  typePath:Option[String], 
+  desc:TDesc, 
+  visible:Boolean, 
+  annotations:Seq[AnnCode]
+) 
   extends RecordCode 
   with NestedThey("annotations")
   
