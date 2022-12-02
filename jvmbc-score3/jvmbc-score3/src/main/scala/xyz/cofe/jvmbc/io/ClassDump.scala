@@ -390,6 +390,7 @@ extends ClassVisitor(_api, null)
         source,
         module0,
         nestHost,
+        outerClass,
         ann,
         tann,
         nestMembers,

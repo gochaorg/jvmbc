@@ -3,9 +3,23 @@ package xyz.cofe.jvmbc.io
 import org.objectweb.asm.MethodVisitor
 import xyz.cofe.jvmbc.mth._
 import xyz.cofe.jvmbc.ann.AnnCode
+import org.objectweb.asm.Label
 
 trait MthOutCtx:
   def label(name:String):org.objectweb.asm.Label
+
+object MthOutCtx:
+  def newCtx:MthOutCtx = new MthOutCtx {
+    var labels = Map[String,org.objectweb.asm.Label]()
+    override def label(name: String): Label = 
+      val lb0 = labels.get(name)
+      if lb0.isEmpty then
+        val lb1 = new org.objectweb.asm.Label()
+        labels = labels + ( name -> lb1 )
+        lb1
+      else
+        lb0.get
+  }
 
 trait MthOut[V]:
   def write(out: MethodVisitor, code:V)(using ctx:MthOutCtx):Unit
@@ -268,4 +282,8 @@ object MthOut:
         case c:MTypeAnnotation =>  summon[MthOut[MTypeAnnotation]].write(out,c)
         case c:MTypeInsn =>  summon[MthOut[MTypeInsn]].write(out,c)
         case c:MVarInsn =>  summon[MthOut[MVarInsn]].write(out,c)
+
+  given [V:MthOut]:MthOut[Seq[V]] with
+    def write(out: MethodVisitor, code: Seq[V])(using ctx: MthOutCtx): Unit = 
+      code.foreach { c => summon[MthOut[V]].write(out,c) }
       

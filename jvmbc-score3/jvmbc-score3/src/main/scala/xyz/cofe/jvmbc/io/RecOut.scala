@@ -34,3 +34,6 @@ object RecOut:
         case r:RecTypeAnnotation => summon[RecOut[RecTypeAnnotation]].write(out,r)
         case r:RecEnd => summon[RecOut[RecEnd]].write(out,r)
       
+  given [V:RecOut]:RecOut[Seq[V]] with
+    def write(out: RecordComponentVisitor, v: Seq[V]): Unit = 
+      v.foreach { v => summon[RecOut[V]].write(out, v) }

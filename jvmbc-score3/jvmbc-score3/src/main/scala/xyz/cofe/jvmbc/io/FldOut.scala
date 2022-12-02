@@ -35,4 +35,8 @@ object FldOut:
         case f:FAnnotation => summon[FldOut[FAnnotation]].write(out, f)
         case f:FieldEnd => summon[FldOut[FieldEnd]].write(out, f)
         case f:FTypeAnnotation => summon[FldOut[FTypeAnnotation]].write(out, f)
+
+  given [V:FldOut]:FldOut[Seq[V]] with
+    def write(out: FieldVisitor, v: Seq[V]): Unit = 
+      v.foreach { v => summon[FldOut[V]].write(out,v) }
       

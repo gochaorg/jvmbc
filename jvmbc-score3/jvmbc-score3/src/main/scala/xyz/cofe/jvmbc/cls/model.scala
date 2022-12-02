@@ -11,11 +11,20 @@ import xyz.cofe.jvmbc.fld.FieldCode
 sealed trait ClassCode extends ByteCode
 
 /** аннотации прикрепленные к классу */
-case class CAnnotation(desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends ClassCode with NestedThey("annotations")
+case class CAnnotation(
+  desc:TDesc,
+  visible:Boolean,
+  annotations:Seq[AnnCode]
+) extends ClassCode with NestedThey("annotations")
 
 /** аннотации прикрепленные к классу */
-case class CTypeAnnotation(typeRef:CTypeRef,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) 
-  extends ClassCode 
+case class CTypeAnnotation(
+  typeRef:CTypeRef,
+  typePath:Option[String],
+  desc:TDesc,
+  visible:Boolean,
+  annotations:Seq[AnnCode]
+) extends ClassCode 
 
 /**
  * имя исходного класса/файла отладки (debug)
@@ -29,7 +38,12 @@ case class CSource(source:Option[String],debug:Option[String])
  * @param access Доступ
  * @param version Версия
  */
-case class CModule(name:String,access:CModuleAccess,version:Option[String],body:Modulo) 
+case class CModule(
+  name:String,
+  access:CModuleAccess,
+  version:Option[String],
+  body:Modulo
+) 
   extends ClassCode 
   with NestedThey("body")
 
@@ -37,7 +51,7 @@ case class CModule(name:String,access:CModuleAccess,version:Option[String],body:
  * Доступ модуля
  * @param raw флаги доступ
  */
-case class CModuleAccess(raw:Int)
+case class CModuleAccess(raw:Int) extends AnyVal
 
 case class CPermittedSubclass(permittedSubclass:String) 
   extends ClassCode
@@ -86,22 +100,36 @@ case class CNestHost(nestHost:String) extends ClassCode
  *       accessDecode="[Private]"
  *       descriptor="Ljava/lang/String;"
  */
-case class CField(access:Int,name:String,desc:TDesc,sign:Option[Sign],value:Option[AnyRef], body:Seq[FieldCode]) 
-  extends ClassCode 
+case class CField(
+  access:Int,
+  name:String,
+  desc:TDesc,
+  sign:Option[Sign],
+  value:Option[AnyRef],
+  body:Seq[FieldCode]
+) extends ClassCode 
   with NestedThey("body")
 
 /** Описывает метод класса */
-case class CMethod(access:CMethodAccess,name:String,desc:MDesc,sign:Option[MSign],exceptions:Seq[String],body:Seq[MethCode])
+case class CMethod(
+  access:CMethodAccess,
+  name:String,
+  desc:MDesc,
+  sign:Option[MSign],exceptions:Seq[String],body:Seq[MethCode])
   extends ClassCode 
   with NestedThey("body")
 
-case class CMethodAccess(raw:Int)
+case class CMethodAccess(raw:Int) extends AnyVal
 case class MSign(raw:String) extends AnyVal
 
-case class CInnerClass(access:CInnerClassAccess,name:String,outerName:Option[String],innerName:Option[String]) 
-  extends ClassCode
+case class CInnerClass(
+  access:CInnerClassAccess,
+  name:String,
+  outerName:Option[String],
+  innerName:Option[String]
+) extends ClassCode
 
-case class CInnerClassAccess(raw:Int)
+case class CInnerClassAccess(raw:Int) extends AnyVal
 
 /** 
  * Record класс
@@ -139,6 +167,7 @@ case class CBegin(
   source:Option[CSource]=None,
   module:Option[CModule]=None,
   nestHost:Option[CNestHost]=None,
+  outerClass:Option[COuterClass] = None,
   annotations:Seq[CAnnotation]=List(),
   typeAnnotations:Seq[CTypeAnnotation]=List(),
   nestMembers:Seq[CNestMember]=List(),
