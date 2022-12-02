@@ -13,6 +13,12 @@ case class FAnnotation(desc:TDesc,visible:Boolean,annotations:Seq[AnnCode])
 case class FieldEnd() 
   extends FieldCode
 
-case class FTypeAnnotation(typeRef:ATypeRef,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) 
+case class FTypeAnnotation(
+  typeRef:ATypeRef,
+  typePath:Option[String],
+  desc:TDesc,
+  visible:Boolean,
+  annotations:Seq[AnnCode]
+) 
   extends FieldCode 
   with NestedThey("annotations")
