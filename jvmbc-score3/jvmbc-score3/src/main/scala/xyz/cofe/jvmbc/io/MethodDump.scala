@@ -13,6 +13,48 @@ import org.objectweb.asm.Attribute
 import org.objectweb.asm.Handle
 import org.objectweb.asm.Label
 
+/**
+order: 
+  
+( {@code visitParameter} )* 
+[ {@code visitAnnotationDefault} ] 
+( {@code visitAnnotation} 
+| {@code visitAnnotableParameterCount}
+| {@code visitParameterAnnotation} {@code visitTypeAnnotation} 
+| {@code visitAttribute} 
+)* 
+[ {@code visitCode} 
+  ( {@code visitFrame} 
+  | {@code visit<i>X</i>Insn} 
+  | {@code visitLabel} 
+  | {@code visitInsnAnnotation} 
+  | {@code visitTryCatchBlock} 
+  | {@code visitTryCatchAnnotation} 
+  | {@code visitLocalVariable} 
+  | {@code visitLocalVariableAnnotation} 
+  | {@code visitLineNumber} 
+  )* 
+  {@code visitMaxs} 
+] 
+{@code visitEnd}
+.
+
+In addition, the {@code visit<i>X</i>Insn} and {@code visitLabel} methods must be called in the
+sequential order of the bytecode instructions of the visited code, 
+
+{@code visitInsnAnnotation} must be called <i>after</i> the annotated instruction, 
+
+{@code visitTryCatchBlock} must be called <i>before</i> the labels passed as arguments have been visited, 
+
+{@code visitTryCatchBlockAnnotation} must be called <i>after</i> the corresponding try catch block has
+been visited, 
+
+and the {@code visitLocalVariable}, 
+{@code visitLocalVariableAnnotation} and 
+{@code visitLineNumber} 
+methods must be called <i>after</i> the labels passed as arguments have been visited.
+
+  */
 class MethodDump(
   private val _api:Int,
   atEnd:Option[Either[String,Seq[MethCode]]=>Unit]=None

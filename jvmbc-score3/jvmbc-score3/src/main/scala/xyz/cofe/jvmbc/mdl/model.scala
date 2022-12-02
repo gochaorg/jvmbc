@@ -25,19 +25,21 @@ case class ModRequire(
   version:Option[String]
 ) extends ModuleCode
 
-case class ModRequireAccess(raw:Int)
+case class ModRequireAccess(raw:Int) extends AnyVal
 
 case class ModExport(packaze:String, access:ModExportAccess, modules:Seq[String]) 
   extends ModuleCode
   with NestedThey("modules")
 
-case class ModExportAccess(raw:Int)
+case class ModExportAccess(raw:Int) extends AnyVal
 
 case class ModOpen(packaze:String, access:ModOpenAccess, modules:Seq[String]) 
   extends ModuleCode
   with NestedThey("modules")
 
-case class ModOpenAccess(raw:Int)
+case class ModOpenAccess(raw:Int) extends AnyVal
 
 case class ModUse(service:String) extends ModuleCode
 case class ModProvide(service:String, providers:Seq[String]) extends ModuleCode
+
+case class ModEnd() extends ModuleCode
