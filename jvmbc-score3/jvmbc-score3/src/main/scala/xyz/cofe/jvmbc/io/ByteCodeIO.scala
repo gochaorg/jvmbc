@@ -35,7 +35,6 @@ object ByteCodeIO {
       try 
         stream = url.openStream()
         val bytes = stream.readAllBytes()
-        println(s"read ${bytes.length} bytes")
         val result = parse(bytes)
         result
       catch

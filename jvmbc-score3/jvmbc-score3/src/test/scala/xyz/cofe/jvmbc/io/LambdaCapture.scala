@@ -17,10 +17,16 @@ class LambdaCapture extends AnyFunSuite {
              """.stripMargin)
     ByteCodeIO.parse(some.getClass().getClassLoader(), JavaName(sl.getImplClass())) match
       case Left(value) => println(s"byte code not load: $value")
-      case Right(value) => 
+      case Right(cbegin) => 
         println(s"byte code loaded")
+        cbegin.methods.foreach { mth => 
+          println(s"method name=${mth.name} sign=${mth.sign} desc=${mth.desc.raw}") 
+        }
+        cbegin.methods.find( m => m.name == sl.getImplMethodName && m.desc.raw == sl.getImplMethodSignature ).foreach { mth => 
+          println(s"method ${mth.name} desc: ${mth.desc}")
+          mth.body.foreach { println }
+        }
     
-
   test("capture the lambda") {
     capture( (a:Any) => {
       println("this lambda")
