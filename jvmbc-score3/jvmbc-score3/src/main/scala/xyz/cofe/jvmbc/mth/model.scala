@@ -533,7 +533,7 @@ enum MFrameKind(val kind:Int):
 case class MFrameElem(value:AnyRef) extends AnyVal:
   def kind:Option[MFrameElemKind] =
     value match
-      case num:Int => num match
+      case num:java.lang.Integer => num match
         case 0 => Some(MFrameElemKind.TOP)
         case 1 => Some(MFrameElemKind.INTEGER)
         case 2 => Some(MFrameElemKind.FLOAT)
@@ -951,10 +951,10 @@ case class MLdcInsn(value:LdcValue) extends MethCode
 object MLdcInsn:
   def apply(value:AnyRef):Either[String,MLdcInsn] =
     value match
-      case num:Int => Right(new MLdcInsn(LdcValue.INT(num)))
-      case num:Float => Right(new MLdcInsn(LdcValue.FLOAT(num)))
-      case num:Long => Right(new MLdcInsn(LdcValue.LONG(num)))
-      case num:Double => Right(new MLdcInsn(LdcValue.DOUBLE(num)))
+      case num:java.lang.Integer => Right(new MLdcInsn(LdcValue.INT(num)))
+      case num:java.lang.Float => Right(new MLdcInsn(LdcValue.FLOAT(num)))
+      case num:java.lang.Long => Right(new MLdcInsn(LdcValue.LONG(num)))
+      case num:java.lang.Double => Right(new MLdcInsn(LdcValue.DOUBLE(num)))
       case str:String => Right(new MLdcInsn(LdcValue.STRING(str)))
       case tip:org.objectweb.asm.Type =>
         tip.getSort() match

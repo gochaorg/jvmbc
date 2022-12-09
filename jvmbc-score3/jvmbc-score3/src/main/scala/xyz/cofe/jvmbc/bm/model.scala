@@ -49,10 +49,10 @@ object ConstDynamic:
 
 object BootstrapArg:
   def apply(arg:AnyRef):Either[String,BootstrapArg] = arg match
-    case a: Int => Right(IntArg(a))
-    case a: Float => Right(FloatArg(a))
-    case a: Long => Right(LongArg(a))
-    case a: Double => Right(DoubleArg(a))
+    case a: java.lang.Integer => Right(IntArg(a))
+    case a: java.lang.Float => Right(FloatArg(a))
+    case a: java.lang.Long => Right(LongArg(a))
+    case a: java.lang.Double => Right(DoubleArg(a))
     case a: String => Right(StringArg(a))
     case a: org.objectweb.asm.Type => Right(TypeArg(a.toString))
     case a: org.objectweb.asm.Handle => Right(bm.Handle(a))
