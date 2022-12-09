@@ -17,8 +17,8 @@ class ParserTest extends AnyFunSuite {
     val sampleByteCode = strm.readAllBytes
     strm.close
 
-    val parser = ByteCodeIO.parser
-    parser.parse(sampleByteCode) match
+    //val parser = ByteCodeIO.parser
+    ByteCodeIO.parse(sampleByteCode) match
       case Left(err) => println(err)
       case Right(cbegin) =>
         println(cbegin.name)
