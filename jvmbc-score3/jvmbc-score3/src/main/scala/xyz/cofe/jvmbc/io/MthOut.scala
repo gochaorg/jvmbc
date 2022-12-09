@@ -65,9 +65,9 @@ object MthOut:
       out.visitFrame(
         code.kind.value,
         code.numLocal,
-        code.local.toArray,
+        code.local.map(el => el.map(_.value).orNull).toArray,
         code.numStack,
-        code.stack.toArray
+        code.stack.map(el => el.map(_.value).orNull).toArray
       )
 
   given MthOut[MIincInsn] with

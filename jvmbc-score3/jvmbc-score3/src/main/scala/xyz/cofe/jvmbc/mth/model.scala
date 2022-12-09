@@ -486,8 +486,8 @@ case class MFieldInsn(op:OpCode,owner:String,name:String,desc:TDesc) extends Met
  */
 case class MFrame(
   kind:MFrameType,
-  numLocal:Int,local:Seq[MFrameElem],
-  numStack:Int,stack:Seq[MFrameElem]
+  numLocal:Int,local:Seq[Option[MFrameElem]],
+  numStack:Int,stack:Seq[Option[MFrameElem]]
   ) extends MethCode
 case class MFrameType(value:Int) extends AnyVal:
   def kind:Option[MFrameKind] =

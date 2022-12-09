@@ -254,9 +254,19 @@ class MethodDump(
     body = Right(MFrame(
       MFrameType(frameType),
       numLocal,
-      local.map(e => MFrameElem(e)),
+      local.map { e => 
+        if e!=null then
+          Some(MFrameElem(e))
+        else
+          None
+      },
       numStack,
-      stack.map(e => MFrameElem(e))
+      stack.map { e => 
+        if e!=null then
+          Some(MFrameElem(e))
+        else
+          None
+      }
     )) +: body
 
   /**
