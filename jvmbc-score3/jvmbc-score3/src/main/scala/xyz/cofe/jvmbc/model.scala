@@ -284,3 +284,4 @@ enum TypeRefKind(raw:Int):
   case METHOD_INVOCATION_TYPE_ARGUMENT extends TypeRefKind(0x49)
   case CONSTRUCTOR_REFERENCE_TYPE_ARGUMENT extends TypeRefKind(0x4A)
   case METHOD_REFERENCE_TYPE_ARGUMENT extends TypeRefKind(0x4B)
+
