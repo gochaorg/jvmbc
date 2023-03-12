@@ -20,14 +20,26 @@ case class SPtr(string:String, value:Int):
   def +(offsetValue:Int):SPtr = copy(value = value+offsetValue)
   def -(offsetValue:Int):SPtr = copy(value = value-offsetValue)
 
-trait Pattern[P]:
-  def test(ptr:SPtr):Either[String,(P,SPtr)]
-  def alt(altPattern:Pattern[P]):Pattern[P] = 
+trait Pattern[A]:
+  def test(ptr:SPtr):Either[String,(A,SPtr)]
+  def alt(altPattern:Pattern[A]):Pattern[A] = 
     val self = this
-    new Pattern[P] {
-      override def test(ptr: SPtr): Either[String, (P, SPtr)] = 
+    new Pattern[A] {
+      override def test(ptr: SPtr): Either[String, (A, SPtr)] = 
         self.test(ptr).orElse( altPattern.test(ptr) )
     }
+  def seq[B](p:Pattern[B]):Pattern[(A,B)] = 
+    val base = this
+    new Pattern[(A,B)] {
+      override def test(ptr: SPtr): Either[String, ((A, B), SPtr)] = 
+        base.test(ptr).flatMap { case (a,ptr2) => 
+          p.test(ptr2).map { case (b,ptr3) => 
+            ( (a,b),ptr3 )
+          }
+        }
+    }
+  def +[B](p:Pattern[B]):Pattern[(A,B)] = seq[B](p)
+  def |(altPattern:Pattern[A]):Pattern[A] = alt(altPattern)
 
 def matchz[T](str:String)(tok:String=>T):Pattern[T] = 
   new Pattern[T] {
@@ -38,77 +50,3 @@ def matchz[T](str:String)(tok:String=>T):Pattern[T] =
       else
         Left(s"not match $str")
   }
-
-case class Head[H,T](head:H, tail:T)
-case object HNil
-
-extension [A]( base:Pattern[A] )
-  def +[B]( next:Pattern[B] ):Head[Pattern[B],Pattern[A]] = 
-    Head(next,base)
-
-extension [A,B]( hlist:Head[Pattern[B],Pattern[A]] )
-  def tupled:Pattern[(A,B)] =
-    new Pattern[(A,B)] {
-      def test(ptr: SPtr): Either[String, ((A, B), SPtr)] = {
-        hlist.tail.test(ptr).flatMap { case(a,p) => 
-          hlist.head.test(p).map { case(b,p) => 
-            ( (a,b), p )
-          }
-        }
-      }
-    }
-
-extension [A,B]( from:Head[A,B] )
-  def +[C]( ptrn:Pattern[C] ):Head[Pattern[C],Head[A,B]] =
-    Head( ptrn, from )
-
-trait TupledPattern[A]:
-  type C
-  def tupled( from:A ):Pattern[C]
-
-object TupledPattern:
-  given [A,B]:TupledPattern[Head[Pattern[B],Pattern[A]]] with
-    type C = (A,B)
-    override def tupled(from: Head[Pattern[B], Pattern[A]]): Pattern[C] = 
-      new Pattern[C] {
-        def test(ptr: SPtr): Either[String, (C, SPtr)] = 
-          from.tail.test(ptr).flatMap { case (a,p) =>
-            from.head.test(p).map { case (b,p) => 
-              ( (a,b),p )
-            }
-          }
-      }
-
-  given x[A,B](using tp:TupledPattern[B]):TupledPattern[Head[Pattern[A],B]] with
-    type C = (TupledPattern[B]#C,A)
-    override def tupled(from: Head[Pattern[A], B]): Pattern[C] = 
-      new Pattern[C] {
-        def test(ptr: SPtr): Either[String, (C, SPtr)] = 
-          tp.tupled(from.tail).test(ptr).flatMap { case (c,p) => 
-            from.head.test(p).map { case (a,p) => 
-              ( (c,a),p )
-            }
-          }
-      }
-
-extension [A](hl:A)(using tp:TupledPattern[A])
-  def tupled2:Pattern[tp.C] = new Pattern[tp.C] {
-    def test(ptr: SPtr): Either[String, (tp.C, SPtr)] = 
-      tp.tupled(hl).test(ptr)
-  }
-
-trait TupleFlatten[A <: Tuple]:
-  type  Out <: Tuple
-  def flatten( a:A ):Out
-
-object TupleFlatten:
-  given [A,B]: TupleFlatten[(A,B)] with
-    type Out = (A,B)
-    def flatten(a: (A, B)): Out = a
-
-  given [A,B,C]: TupleFlatten[((A,B),C)] with
-    type Out = (A,B,C)
-    def flatten(a: ((A, B), C)): Out = (a._1._1, a._1._2, a._2)
-
-extension [A,B,C](tupl:((A,B),C))(using fl:TupleFlatten[((A,B),C)])
-  def flat:fl.Out = fl.flatten(tupl)

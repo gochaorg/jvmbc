@@ -39,25 +39,15 @@ class SParseTest extends AnyFunSuite:
     val idPtrn2 = matchz("one")(Id.apply _)
       .alt(matchz("two")(Id.apply _))
       .alt(matchz("three")(Id.apply _))
-
-    val seq2HL = idPtrn1 + idPtrn2
-    val seq2Tpl = seq2HL.tupled
-    println( seq2Tpl.test(SPtr("trueone",0)) )
-    println( seq2Tpl.test(SPtr("truetwo",0)) )
-
-    val seq3HL = idPtrn1 + idPtrn2 + idPtrn1
-    seq3HL.tupled2.test(SPtr("truetwonull",0)).foreach{ x => 
-    }
-
-    val seq4HL = idPtrn1 + idPtrn2 + idPtrn1 + idPtrn2
   }
 
   case class BOOL(str:String)
   case class DIGIT(str:String)
-  case class NUM(str:String)
+  case class LETTER(str:String)
+  case class NULL(str:String)
 
   test("seq 2") {
-    val src = SPtr("true1twoid-b",0)
+    val src = SPtr("true1anull",0)
 
     val boolPtrn = matchz("true")(BOOL.apply _)
       .alt(matchz("false")(BOOL.apply _))
@@ -65,35 +55,28 @@ class SParseTest extends AnyFunSuite:
     val digitPtrn = matchz("1")(DIGIT.apply _)
       .alt(matchz("2")(DIGIT.apply _))
 
-    println( (boolPtrn + digitPtrn).tupled2.test(src) )
+    val letterPtrn = 
+      matchz("a")(LETTER.apply _) | matchz("b")(LETTER.apply _)
 
-    val numPtrn = matchz("one")(NUM.apply _)
-      .alt(matchz("two")(NUM.apply _))
+    val nullPtrn =
+      matchz("null")(NULL.apply _)
 
-    val ptrn3a = boolPtrn + digitPtrn + numPtrn
-    val ptrn3 = ptrn3a.tupled2
-    println( ptrn3.test(src) )
+    val p2 = boolPtrn + digitPtrn
+    val p3 = p2 + letterPtrn
+    val p4 = p3 + nullPtrn
 
-    println("!!!")
-    val res3 = ptrn3.test(src)
-    res3.foreach{ case (res,_) =>
-      val ((a,b),c) = res
-      println(s"$a $b $c")
-    }
-
-    // ptrn3.test(src).foreach { case (res,_) => 
-    //   val ((a:BOOL, b:DIGIT), c:NUM) = res
-    //   println( (a,b,c) )
-    // }
-
-    // val idPtrn1 = matchz("id-a")(Id)
-    //   .alt(matchz("id-b")(Id))
-    // val ptrnHL = boolPtrn + digitPtrn + numPtrn + idPtrn1
+    (boolPtrn,digitPtrn,letterPtrn,nullPtrn)
   }
 
-  test("flatten") {
-    val tup = (((10,"str"),false),'a')
-    val x = tup.last
-    val y = tup.flat
-    //val z = y.flat
-  }
+  trait Pars[A]:
+    def pars(p:SPtr):Either[String,(A,SPtr)]
+
+  given Pars[EmptyTuple] with
+    def pars(p:SPtr):Either[String,(EmptyTuple,SPtr)] =
+      Left("!!EmptyTuple")
+
+  given [H:Pars, T <: Tuple : Pars]:Pars[H *: T] with
+    def pars(p:SPtr):Either[String,(H *: T,SPtr)] =
+      ???
+
+  
