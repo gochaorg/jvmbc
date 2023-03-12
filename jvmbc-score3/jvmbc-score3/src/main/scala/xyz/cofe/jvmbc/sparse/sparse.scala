@@ -80,7 +80,7 @@ object TupledPattern:
       }
 
   given x[A,B](using tp:TupledPattern[B]):TupledPattern[Head[Pattern[A],B]] with
-    type C = (tp.C,A)
+    type C = (TupledPattern[B]#C,A)
     override def tupled(from: Head[Pattern[A], B]): Pattern[C] = 
       new Pattern[C] {
         def test(ptr: SPtr): Either[String, (C, SPtr)] = 

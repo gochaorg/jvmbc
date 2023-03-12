@@ -1,7 +1,7 @@
 
 // The simplest possible sbt build file is just one line:
 
-scalaVersion := "3.2.0"
+scalaVersion := "3.2.2"
 // That is, to create a valid sbt build, all you've got to do is define the
 // version of Scala you'd like your project to use.
 
@@ -30,7 +30,9 @@ libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.12" % "test"
 libraryDependencies += "org.ow2.asm" % "asm" % "9.2" withSources() withJavadoc()
 
-libraryDependencies += "xyz.cofe" %% "json4s3" % "0.0.2" from "file:/Users/g.kamnev/code/my-b/json4s3/target/scala-3.2.0/json4s3_3-0.0.2.jar"
+//libraryDependencies += "xyz.cofe" %% "json4s3" % "0.0.2" from "file:/Users/g.kamnev/code/my-b/json4s3/target/scala-3.2.0/json4s3_3-0.0.2.jar"
+libraryDependencies += "xyz.cofe" %% "json4s3" % "0.0.2"
+resolvers += "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository"
 
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,
 // we're adding the scala-parser-combinators dependency to the set of dependencies
