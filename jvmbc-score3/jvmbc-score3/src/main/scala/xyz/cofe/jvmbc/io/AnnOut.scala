@@ -2,6 +2,7 @@ package xyz.cofe.jvmbc.io
 
 import org.objectweb.asm.AnnotationVisitor
 
+/** Генерация байт-кода аннотаций */
 trait AnnOut[V]:
   def write(out:AnnotationVisitor, v:V):Unit
 

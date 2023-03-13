@@ -12,6 +12,7 @@ import org.objectweb.asm.TypePath
 import org.objectweb.asm.Attribute
 
 /**
+ * Парсинг байт-кода - файла `.class`
 
 _(by author - Eric Bruneton)_
 

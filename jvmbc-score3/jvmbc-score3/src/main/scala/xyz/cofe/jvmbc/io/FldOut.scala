@@ -4,6 +4,9 @@ import org.objectweb.asm.FieldVisitor
 import xyz.cofe.jvmbc.fld._
 import xyz.cofe.jvmbc.ann.AnnCode
 
+/**
+  * Генерация байт-кода поля класса
+  */
 trait FldOut[V]:
   def write(out:FieldVisitor, v:V):Unit
 

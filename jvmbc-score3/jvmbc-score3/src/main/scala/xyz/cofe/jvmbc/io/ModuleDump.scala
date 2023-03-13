@@ -5,20 +5,22 @@ import org.objectweb.asm.ModuleVisitor
 import mdl._
 
 /**
-order
-
-- ( visitMainClass | 
-  - ( 
-    - visitPackage | 
-    - visitRequire | 
-    - visitExport | 
-    - visitOpen | 
-    - visitUse | 
-    - visitProvide 
-  - )* 
-- ) 
-- visitEnd
-*/
+ * Парсинг модуля
+ * 
+  * order
+  * 
+  * - ( visitMainClass | 
+  *   - ( 
+  *     - visitPackage | 
+  *     - visitRequire | 
+  *     - visitExport | 
+  *     - visitOpen | 
+  *     - visitUse | 
+  *     - visitProvide 
+  *   - )* 
+  * - ) 
+  * - visitEnd
+  */
 class ModuleDump(
   private val _api:Int,
   atEnd: Option[Either[String,Modulo]=>Unit] = None

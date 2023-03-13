@@ -5,6 +5,7 @@ import xyz.cofe.jvmbc.mth._
 import xyz.cofe.jvmbc.ann.AnnCode
 import org.objectweb.asm.Label
 
+/** Контекст генерации метода класса, используется для генерации/получения метки [[xyz.cofe.jvmbc.mth.MLabel]] */
 trait MthOutCtx:
   def label(name:String):org.objectweb.asm.Label
 
@@ -21,6 +22,7 @@ object MthOutCtx:
         lb0.get
   }
 
+/** Генерация байт-кода метода класса */
 trait MthOut[V]:
   def write(out: MethodVisitor, code:V)(using ctx:MthOutCtx):Unit
 

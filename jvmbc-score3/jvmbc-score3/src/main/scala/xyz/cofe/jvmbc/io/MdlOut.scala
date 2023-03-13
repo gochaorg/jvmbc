@@ -3,6 +3,9 @@ package xyz.cofe.jvmbc.io
 import org.objectweb.asm.ModuleVisitor
 import xyz.cofe.jvmbc.mdl._
 
+/**
+  * Генерация байт-кода модуля
+  */
 trait MdlOut[V]:
   def write(out:ModuleVisitor, v:V):Unit
 

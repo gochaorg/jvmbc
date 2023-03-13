@@ -1,5 +1,6 @@
 package xyz.cofe.jvmbc.mth
 
+/** Код(номер) инструкции байт-кода */
 sealed abstract class OpCode(val code:Int)
 
 object OpCode:

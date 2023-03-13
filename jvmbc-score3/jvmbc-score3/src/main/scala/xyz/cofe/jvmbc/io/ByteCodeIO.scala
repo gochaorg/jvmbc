@@ -8,13 +8,28 @@ import scala.util.Failure
 import scala.util.Success
 import java.net.URL
 
+/**
+  * Парсинг байт-кода
+  */
 object ByteCodeIO {
+  /**
+    * Парсинг байт-кода
+    *
+    * @param bytes байт-код
+    * @return результат парсинга
+    */
   def parse(bytes:Array[Byte]):Either[String,CBegin] =
     val inst = ClassDump(org.objectweb.asm.Opcodes.ASM9)
     val cr = new ClassReader(bytes)
     cr.accept(inst,0)
     inst.build
 
+  /**
+    * Парсинг класса, предполагается что байт-код есть в ресурсах программы
+    *
+    * @param clazz класс, его байт-код должен быть доступен в ресурсах программы
+    * @return результат парсинга
+    */
   def parse(clazz:Class[_]):Either[String,CBegin] =
     val resName = clazz.getName().replace(".","/")+".class"
     val url = clazz.getResource(resName)
@@ -27,6 +42,12 @@ object ByteCodeIO {
         case Failure(exception) => Left(exception.getMessage())
         case Success(value) => value
 
+  /**
+    * Парсинг байт-кода
+    *
+    * @param url байт-код
+    * @return результат парсинга
+    */
   def parse(url:URL):Either[String,CBegin] =
     if url==null then
       Left(s"resource null not found")
@@ -44,6 +65,13 @@ object ByteCodeIO {
         if stream!=null then
           stream.close()
 
+  /**
+    * Парсинг класса, предполагается что байт-код есть в ресурсах программы
+    *
+    * @param cl загрузчик класса
+    * @param className имя класса
+    * @return результат парсинга
+    */
   def parse(cl:ClassLoader, className:JavaName):Either[String,CBegin] =
     val resName = className.raw + ".class"
     val url = cl.getResource( resName )

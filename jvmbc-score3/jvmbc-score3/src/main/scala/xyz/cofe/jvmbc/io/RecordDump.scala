@@ -13,15 +13,17 @@ import org.objectweb.asm.Attribute
 import rec._
 
 /**
-order
-
-- ( 
-  - visitAnnotation | 
-  - visitTypeAnnotation | 
-  - visitAttribute 
-- )* 
-- visitEnd
-*/
+ * Парсинг record класса
+ * 
+ * order
+ * 
+ * - ( 
+ *   - visitAnnotation | 
+ *   - visitTypeAnnotation | 
+ *   - visitAttribute 
+ * - )* 
+ * - visitEnd
+ */
 class RecordDump(
   private val _api:Int,
   atEnd:Option[Either[String,Seq[RecordCode]]=>Unit]=None

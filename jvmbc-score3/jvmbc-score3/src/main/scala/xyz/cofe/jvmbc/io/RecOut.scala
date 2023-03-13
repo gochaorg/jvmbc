@@ -4,6 +4,7 @@ import org.objectweb.asm.RecordComponentVisitor
 import xyz.cofe.jvmbc.rec._
 import xyz.cofe.jvmbc.ann.AnnCode
 
+/** Генерация байт-кода record класса */
 trait RecOut[V]:
   def write(out:RecordComponentVisitor, v:V):Unit
 

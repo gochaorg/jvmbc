@@ -11,6 +11,9 @@ import xyz.cofe.jvmbc.rec
 import xyz.cofe.jvmbc.mth.MethCode
 import xyz.cofe.jvmbc.io.MthOutCtx
 
+/**
+  * Генерация байт-кода класса
+  */
 trait COut[V]:
   def write(out:ClassVisitor, v:V):Unit
 

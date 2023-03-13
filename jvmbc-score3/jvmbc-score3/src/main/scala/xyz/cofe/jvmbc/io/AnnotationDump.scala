@@ -11,6 +11,7 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.TypePath
 import org.objectweb.asm.Attribute
 
+/** Парсинг байт-кода аннотаций [[xyz.cofe.jvmvc.ann]] */
 class AnnotationDump(private val _api:Int, atEnd:Option[Either[String,Seq[AnnCode]]=>Unit]=None)
 extends AnnotationVisitor(_api)
 {
