@@ -22,8 +22,8 @@ class ParserTest extends AnyFunSuite {
       case Left(err) => println(err)
       case Right(cbegin) =>
         println(cbegin.name)
-        cbegin.fields.foreach { fld => println(s"  field ${fld.name} ${fld.desc.raw}") }
-        cbegin.methods.foreach { mth => println(s"  meth ${mth.name}") }
+        cbegin.fields.foreach { fld => println(s"  field ${fld.name} desc=${fld.desc.raw} sign=${fld.sign}") }
+        cbegin.methods.foreach { mth => println(s"  meth ${mth.name} desc=${mth.desc} sign=${mth.sign}") }
         cbegin.methods(1).body.foreach {println}
   }
 }
