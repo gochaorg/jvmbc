@@ -1,5 +1,8 @@
 package xyz.cofe.jvmbc
 
+/**
+ * Функция обхода вложенных узлов
+ **/
 trait Nested extends Product:
   self =>
 

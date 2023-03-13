@@ -1,6 +1,9 @@
 package xyz.cofe.jvmbc
 package bm
 
+/**
+  * Байт-код аргументов INVOKE Dynamic
+  */
 sealed trait BootstrapArg:
   def toAsm:Object
 

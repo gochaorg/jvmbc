@@ -1,6 +1,9 @@
 package xyz.cofe.jvmbc
 package ann
 
+/**
+  * Байт-код аннотаций
+  */
 sealed trait AnnCode extends ByteCode
 
 sealed abstract class APair[V](val name:Option[String],val value:V) extends AnnCode

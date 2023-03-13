@@ -3,6 +3,7 @@ package fld
 
 import ann.AnnCode
 
+/** Описывает байт-код поля класса */
 sealed trait FieldCode extends ByteCode
 
 case class FAnnotation(desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) 

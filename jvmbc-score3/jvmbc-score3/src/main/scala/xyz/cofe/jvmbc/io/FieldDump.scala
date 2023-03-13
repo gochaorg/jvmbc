@@ -7,6 +7,7 @@ import org.objectweb.asm.FieldVisitor
 import org.objectweb.asm.TypePath
 import org.objectweb.asm.Attribute
 
+/** Парсинг байт-кода поля [[xyz.cofe.jvmbc.fld]] */
 class FieldDump(
   private val _api:Int,
   atEnd:Option[Either[String,Seq[FieldCode]]=>Unit]=None

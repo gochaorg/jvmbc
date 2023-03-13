@@ -1,6 +1,7 @@
 package xyz.cofe.jvmbc
 package mdl
 
+/** Описывает байт-код модуля */
 sealed trait ModuleCode extends ByteCode
 
 case class Modulo(

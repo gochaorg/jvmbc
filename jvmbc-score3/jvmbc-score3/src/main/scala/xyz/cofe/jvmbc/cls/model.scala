@@ -8,6 +8,7 @@ import mdl.Modulo
 import rec.RecordCode
 import xyz.cofe.jvmbc.fld.FieldCode
 
+/** Байт-код `.class` файла */
 sealed trait ClassCode extends ByteCode
 
 /** аннотации прикрепленные к классу */

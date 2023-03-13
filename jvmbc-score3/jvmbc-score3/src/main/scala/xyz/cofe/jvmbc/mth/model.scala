@@ -10,6 +10,7 @@ import xyz.cofe.jvmbc.io.MthOut
 import org.objectweb.asm.MethodVisitor
 import xyz.cofe.jvmbc.io.MthOutCtx
 
+/** Байт-код метода класса */
 sealed trait MethCode extends ByteCode
 
 /** Начала байт-кода метода */
