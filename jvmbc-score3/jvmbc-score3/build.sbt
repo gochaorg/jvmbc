@@ -31,7 +31,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.12" % "test"
 libraryDependencies += "org.ow2.asm" % "asm" % "9.2" withSources() withJavadoc()
 
 //libraryDependencies += "xyz.cofe" %% "json4s3" % "0.0.2" from "file:/Users/g.kamnev/code/my-b/json4s3/target/scala-3.2.0/json4s3_3-0.0.2.jar"
-libraryDependencies += "xyz.cofe" %% "json4s3" % "0.0.2"
+libraryDependencies += "xyz.cofe" %% "json4s3" % "2.1.0"
 resolvers += "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository"
 
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,
