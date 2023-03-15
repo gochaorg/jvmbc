@@ -1,4 +1,4 @@
-package xyz.cofe.jvmbc.desc
+package xyz.cofe.jvmbc.parse.sign
 
 /**
  * Сигнатура типа с Generic 
