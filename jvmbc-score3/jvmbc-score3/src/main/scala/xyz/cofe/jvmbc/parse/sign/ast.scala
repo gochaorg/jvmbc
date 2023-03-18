@@ -86,6 +86,91 @@ sealed trait SuperclassSignature
 
 sealed trait SuperinterfaceSignature
 
+/**
+  * Описывает тип/сигнатуру метода
+  * 
+  * Пример
+  * 
+  * `public &lt;A extends Number &amp; Runnable, B extends A> void some(A param, B param2){}`
+  * 
+  * В результате будет примерно такая структура если парсинг через `SignParser.methodSign:Pattern[MethodSignature`
+  * 
+  * <pre>
+  *  {
+  *  "typeParams":{
+  *    "head":{
+  *      "name":"A",
+  *      "classBound":{
+  *        "refTypeSign":{
+  *          "pkg":[
+  *            {
+  *              "name":"java"
+  *            },
+  *            {
+  *              "name":"lang"
+  *            }
+  *          ],
+  *          "cls":{
+  *            "name":"Number"
+  *          },
+  *          "suff":[]
+  *        }
+  *      },
+  *      "itfBound":[
+  *        {
+  *          "ReferenceTypeSignature":{
+  *            "pkg":[
+  *              {
+  *                "name":"java"
+  *              },
+  *              {
+  *                "name":"lang"
+  *              }
+  *            ],
+  *            "cls":{
+  *              "name":"Runnable"
+  *            },
+  *            "suff":[]
+  *          }
+  *        }
+  *      ]
+  *    },
+  *    "tail":[
+  *      {
+  *        "name":"B",
+  *        "classBound":{
+  *          "refTypeSign":{
+  *            "name":"A"
+  *          }
+  *        },
+  *        "itfBound":[]
+  *      }
+  *    ]
+  *  },
+  *  "args":[
+  *    {
+  *      "ReferenceTypeSignature":{
+  *        "name":"A"
+  *      }
+  *    },
+  *    {
+  *      "ReferenceTypeSignature":{
+  *        "name":"B"
+  *      }
+  *    }
+  *  ],
+  *  "res":{
+  *    "VoidDescriptor":{}
+  *  },
+  *  "throws":[]
+  *}
+  *</pre>
+  *
+  * @param typeParams Generic параметры метода
+  * @param args Аргументы метода
+  * @param res результат
+  * @param throws генерируемые исключения
+  */
 case class MethodSignature( 
   typeParams:Option[TypeParameters],
   args:List[JavaTypeSignature],

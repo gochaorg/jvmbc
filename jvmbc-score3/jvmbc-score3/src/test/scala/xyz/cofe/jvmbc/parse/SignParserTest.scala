@@ -35,14 +35,24 @@ class SignParserTest extends AnyFunSuite:
   test("sample1") {
     println("sample1")
     println("="*40)
-    sign.SignParser.fieldSign(SPtr(sample1,0)).foreach( (f,_) => {
+    val res = sign.SignParser.fieldSign(SPtr(sample1,0))
+    res.foreach( (f,_) => {
       implicit val fmt = FormattingJson.pretty(true)
       println(f.json)
-    })
+    })    
   }
 
   // public final Map<Integer,List<Integer>> mapIntListOfInt
   val sample2 = "Ljava/util/Map<Ljava/lang/Integer;Ljava/util/List<Ljava/lang/Integer;>;>;"
+  test("sample2"){
+    println("sample2")
+    println("="*40)
+    val res = sign.SignParser.fieldSign(SPtr(sample2,0))
+    res.foreach( (f,_) => {
+      implicit val fmt = FormattingJson.pretty(true)
+      println(f.json)
+    })    
+  }
 
   // public SampleClass<AtomicInteger> intSelf
   val sample3 = "Lxyz/cofe/jvmbc/SampleClass<Ljava/util/concurrent/atomic/AtomicInteger;>;"
@@ -55,6 +65,15 @@ class SignParserTest extends AnyFunSuite:
 
   // public <A extends Number & Runnable, B extends A> void some(A param, B param2){}
   val sample6 = "<A:Ljava/lang/Number;:Ljava/lang/Runnable;B:TA;>(TA;TB;)V"
+  test("sample6"){
+    println("sample6")
+    println("="*40)
+    val res = sign.SignParser.methodSign(SPtr(sample6,0))
+    res.foreach( (f,_) => {
+      implicit val fmt = FormattingJson.pretty(true)
+      println(f.json)
+    })    
+  }
 
   val sample7 = "(Ljava/lang/Number;Ljava/lang/Number;)V"
   test("mdesc") {

@@ -262,7 +262,14 @@ object SignParser:
   lazy val superItfSign:Pattern[SuperinterfaceSignature] = clsTypeSign.map(r=>r:SuperinterfaceSignature)
 
   // MethodSignature ::= [TypeParameters] '(' {JavaTypeSignature} ')' Result {ThrowsSignature}
-  lazy val methodSign:Pattern[MethodSignature] = ???
+  lazy val methodSign:Pattern[MethodSignature] = 
+    ( typeParams.repeat(0,1)(r=>r)
+    + textMatch("(")(_ => ())
+    + javaTypeSign.repeat(0,1000)(r=>r)
+    + textMatch(")")(_ => ())
+    + result
+    + throwsSign.repeat(0,1000)(r=>r)
+    ).tmap((tp,_,args,_,res,ts) => MethodSignature(tp.headOption, args, res, ts))
 
   // Result ::= JavaTypeSignature |  VoidDescriptor
   lazy val result:Pattern[Result]

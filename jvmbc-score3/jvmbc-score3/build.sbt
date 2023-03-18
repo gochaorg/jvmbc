@@ -17,6 +17,11 @@ name := "jvmbc-score3"
 organization := "xyz.cofe"
 version := "1.0"
 
+scalacOptions ++= Seq(
+  "-Xmax-inlines:128"
+)
+
+
 // Note, it's not required for you to define these three settings. These are
 // mostly only necessary if you intend to publish your library's binaries on a
 // place like Sonatype.
