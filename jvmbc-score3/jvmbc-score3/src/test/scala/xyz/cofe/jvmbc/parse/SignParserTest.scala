@@ -1,8 +1,9 @@
 package xyz.cofe.jvmbc.parse
 
 import org.scalatest.funsuite.AnyFunSuite
-import xyz.cofe.jvmbc.sparse.SPtr
 import org.scalatest.flatspec.AnyFlatSpec
+import xyz.cofe.jvmbc.sparse.SPtr
+import xyz.cofe.json4s3.derv.*
 
 class SignParserTest extends AnyFunSuite:
   /*
@@ -30,6 +31,13 @@ class SignParserTest extends AnyFunSuite:
 
   // public final List<String> listOfString = List.of("str");
   val sample1 = "Ljava/util/List<Ljava/lang/String;>;"
+  test("sample1") {
+    println("sample1")
+    println("="*40)
+    sign.SignParser.fieldSign(SPtr(sample1,0)).foreach( (f,_) => {
+      println(f.json)
+    })
+  }
 
   // public final Map<Integer,List<Integer>> mapIntListOfInt
   val sample2 = "Ljava/util/Map<Ljava/lang/Integer;Ljava/util/List<Ljava/lang/Integer;>;>;"
@@ -47,9 +55,23 @@ class SignParserTest extends AnyFunSuite:
   val sample6 = "<A:Ljava/lang/Number;:Ljava/lang/Runnable;B:TA;>(TA;TB;)V"
 
   val sample7 = "(Ljava/lang/Number;Ljava/lang/Number;)V"
-
   test("mdesc") {
+    println("mdesc")
+    println("="*40)
     println(
       desc.DescParser.method.apply(SPtr(sample7,0))
+    )
+  }
+
+  test("id list") {
+    println("id list")
+    println("="*40)
+    assert(
+      sign.SignParser.idNameSepSlash(SPtr("name1/name2/name3",0)).map(_._1)
+      == Right(List(
+          sign.SignParser.Id("name1")
+        , sign.SignParser.Id("name2")
+        , sign.SignParser.Id("name3")
+      ))
     )
   }

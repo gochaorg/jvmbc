@@ -3,6 +3,7 @@ package xyz.cofe.jvmbc.sparse
 import scala.runtime.Tuples
 import scala.deriving._
 import scala.reflect.ClassTag
+import xyz.cofe.jvmbc.sparse.Pattern.LogWriter
 
 /** Указатель на позицию в строке */
 case class SPtr(string:String, value:Int):
@@ -40,6 +41,7 @@ trait Pattern[A]:
     }
 
   def alt(altPattern:Pattern[A]):Pattern[A] = 
+    require(altPattern!=null, "alt arg is null")
     val self = this
     new Pattern[A] {
       override def apply(ptr: SPtr): Either[String, (A, SPtr)] = 
@@ -48,6 +50,7 @@ trait Pattern[A]:
   def |(altPattern:Pattern[A]):Pattern[A] = alt(altPattern)
 
   def seq[B](p:Pattern[B]):Pattern[(A,B)] = 
+    require(p!=null, "seq arg is null")
     val base = this
     new Pattern[(A,B)] {
       override def apply(ptr: SPtr): Either[String, ((A, B), SPtr)] = 
@@ -82,6 +85,9 @@ trait Pattern[A]:
           Left("not matched")
     }
 
+  def name(name:String)(using log:LogWriter):Pattern[A] =
+    new Pattern.TracePattern[A](name,this)
+
 object Pattern:
   class ProxyPattern[A] extends Pattern[A]:
     private var target:Option[Pattern[A]] = None
@@ -102,6 +108,53 @@ object Pattern:
         else
           Left(s"not match $str")
     }
+
+  trait LogWriter:
+    def begin( name:String, ptr:SPtr):Unit
+    def end( name:String, result:Either[String, (?, SPtr)]):Unit
+    def error( name:String, err:Throwable ):Unit
+
+  class NopLogWriter extends LogWriter:
+    override def begin(name: String, ptr: SPtr): Unit = ()
+    override def end(name: String, result: Either[String, (?, SPtr)]): Unit = ()
+    override def error(name: String, err: Throwable): Unit = ()
+
+  class IndentLogWriter( out:Appendable ) extends LogWriter:
+    var level = 0
+    override def begin(name: String, ptr: SPtr): Unit = 
+      out.append("  "*level)
+      out.append(name)
+      if ptr != null
+      then out.append(s" off=${ptr.value} ${ptr.string.substring(ptr.value).take(40)}")
+      else out.append("  ptr null")
+      out.append("\n")
+      level += 1
+    override def end(name: String, result: Either[String, (?, SPtr)]): Unit = 
+      level -= 1
+      out.append("  "*level)
+      out.append(name)
+      out.append(s" result=$result\n")
+    override def error(name: String, err: Throwable): Unit = 
+      level -= 1
+      out.append("  "*level)
+      out.append(name)
+      out.append(s" error=$err\n")
+
+  class TracePattern[A]( name:String, target:Pattern[A] )(using log:LogWriter)
+  extends Pattern[A]:
+    override def apply(ptr: SPtr): Either[String, (A, SPtr)] = 
+      try
+        log.begin(name,ptr)
+        val res = target.apply(ptr)
+        log.end(name,res)
+        res
+      catch
+        case err:Throwable =>
+          log.error(name,err)
+          throw err
+
+extension [A,B]( ptrn:Pattern[(A,B)] )
+  def tmap[Z]( f:(A,B)=>Z ):Pattern[Z] = ptrn.map { case(a,b) => f(a,b) }
 
 extension [A,B,C]( ptrn:Pattern[((A,B),C)] )
   def map[Z]( f:(A,B,C)=>Z ):Pattern[Z] = ptrn.map { case((a,b),c) => f(a,b,c) }
