@@ -1,5 +1,8 @@
 package xyz.cofe.jvmbc.parse.sign
 
+import xyz.cofe.json4s3.derv.*
+import xyz.cofe.json4s3.stream.ast.AST
+
 /** AST дерево описания типа */
 //sealed trait Asts
 
@@ -19,6 +22,14 @@ sealed trait ReferenceTypeSignature
   extends JavaTypeSignature 
   with FieldSignature 
   with InterfaceBound
+
+object ReferenceTypeSignature:
+  given ToJson[ReferenceTypeSignature] with
+    override def toJson(t: ReferenceTypeSignature): Option[AST] = 
+      t match
+        case v:ArrayTypeSignature => summon[ToJson[ArrayTypeSignature]].toJson(v)
+        case v:ClassTypeSignature => summon[ToJson[ClassTypeSignature]].toJson(v)
+        case v:TypeVariableSignature => summon[ToJson[TypeVariableSignature]].toJson(v)
 
 case class ClassTypeSignature(
   pkg:List[PackageSpecifier],

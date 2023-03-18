@@ -4,6 +4,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.flatspec.AnyFlatSpec
 import xyz.cofe.jvmbc.sparse.SPtr
 import xyz.cofe.json4s3.derv.*
+import xyz.cofe.json4s3.stream.ast.FormattingJson
 
 class SignParserTest extends AnyFunSuite:
   /*
@@ -35,6 +36,7 @@ class SignParserTest extends AnyFunSuite:
     println("sample1")
     println("="*40)
     sign.SignParser.fieldSign(SPtr(sample1,0)).foreach( (f,_) => {
+      implicit val fmt = FormattingJson.pretty(true)
       println(f.json)
     })
   }
