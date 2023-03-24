@@ -7,11 +7,40 @@ import scala.util.Using
 import scala.util.Failure
 import scala.util.Success
 import java.net.URL
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.ClassWriter
+import java.lang.invoke.SerializedLambda
+import xyz.cofe.jvmbc.cls.CMethod
+
+/** Генерация байт кода */
+extension (cbegin:CBegin)
+  def toBytes:Array[Byte] =
+    val cwriter = ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS)
+    summon[COut[CBegin]].write(cwriter, cbegin)
+    cwriter.toByteArray()
 
 /**
   * Парсинг байт-кода
   */
 object ByteCodeIO {
+  /** Парсинг лямбды, предполагается что лямбда реализует Serializable */
+  object lambda {
+    def parse[A,B]( some:A=>B ):Either[String,(CBegin, CMethod)] =
+      val meth = some.getClass().getDeclaredMethod("writeReplace")
+      meth.setAccessible(true)
+      var sl = meth.invoke(some).asInstanceOf[SerializedLambda]
+      parse(some.getClass().getClassLoader(), sl)
+
+    def parse( cl:ClassLoader, sl:SerializedLambda ):Either[String,(CBegin, CMethod)] =
+      ByteCodeIO.parse(cl, JavaName(sl.getImplClass())) match
+        case Left(v) => Left(v)
+        case Right(cbegin) => 
+          cbegin.methods
+            .find( m => m.name == sl.getImplMethodName && m.desc.raw == sl.getImplMethodSignature )
+            .toRight(s"method ${sl.getImplMethodName()} with ${sl.getImplMethodSignature} not found in ${cbegin.name}")
+            .map( m => (cbegin,m) )
+  }
+
   /**
     * Парсинг байт-кода
     *

@@ -93,7 +93,7 @@ sealed trait SuperinterfaceSignature
   * 
   * `public &lt;A extends Number &amp; Runnable, B extends A> void some(A param, B param2){}`
   * 
-  * В результате будет примерно такая структура если парсинг через `SignParser.methodSign:Pattern[MethodSignature`
+  * В результате будет примерно такая структура если парсинг через `SignParser.methodSign:Pattern[MethodSignature]`
   * 
   * <pre>
   *  {
