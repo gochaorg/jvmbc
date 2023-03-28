@@ -1,10 +1,45 @@
 package xyz.cofe.jvmbc
 
-/** Имя класса */
+/** 
+ * Имя класса 
+ * 
+ * @param raw Имя класса представленное в байт-коде, например: java/lang/String
+ */
 case class JavaName(raw:String) {
   require( raw!=null )
+
+  /** имя класса включая пакет, имена разделены точкой (`java.lang.String`) */
   lazy val name:String = raw.replace("/",".")
+
+  /** имя класса */
+  lazy val nameList:List[String] = raw.split("\\.").toList
+
+  /** имя класса без названия пакета */
+  lazy val simpleName:String = nameList.last
+
+  /** название пакета */
+  lazy val packaje:List[String] = nameList.dropRight(1)
+
+  object rename {
+    def simpleName(newSimpleName:String):JavaName =
+      JavaName( (JavaName.this.packaje ++ List(newSimpleName)).mkString("/") )
+
+    def packaje( pkg:List[String] ):JavaName =
+      JavaName( (pkg ++ List(JavaName.this.simpleName)).mkString("/"))
+
+    def apply( javaNameString:String ):JavaName = 
+      JavaName( javaNameString.replace(".","/") )
+  }
+
+  def unapply( jn:JavaName ):Option[String] =
+    Some(jn.raw)
+
   override def toString():String = name
+}
+
+object JavaName {
+  def raw(rawName:String):JavaName = new JavaName(rawName)
+  def java(name:String):JavaName = new JavaName(name.replace(".","/"))
 }
 
 /** 
@@ -285,3 +320,8 @@ enum TypeRefKind(raw:Int):
   case CONSTRUCTOR_REFERENCE_TYPE_ARGUMENT extends TypeRefKind(0x4A)
   case METHOD_REFERENCE_TYPE_ARGUMENT extends TypeRefKind(0x4B)
 
+trait BitMask:
+  def bitMask:Int
+  def isSet( flags:Int ):Boolean = (flags & bitMask) == bitMask
+  def set( flags:Int ):Int = flags | bitMask
+  def reset( flags:Int ):Int = flags ^ bitMask

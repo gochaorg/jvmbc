@@ -1223,7 +1223,6 @@ MyClass
  */
 case class MMethodInsn(op:OpCode,owner:String,name:String,desc:MDesc,iface:Boolean) 
   extends MethCode
-
 /**
  * multianewarray
  * <h2 style="font-weight: bold">Operation</h2>

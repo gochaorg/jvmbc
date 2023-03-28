@@ -11,6 +11,11 @@ import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
 import java.lang.invoke.SerializedLambda
 import xyz.cofe.jvmbc.cls.CMethod
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
+import java.nio.file.Path
+import java.nio.file.Files
 
 /** Генерация байт кода */
 extension (cbegin:CBegin)
@@ -29,9 +34,63 @@ object ByteCodeIO {
       val meth = some.getClass().getDeclaredMethod("writeReplace")
       meth.setAccessible(true)
       var sl = meth.invoke(some).asInstanceOf[SerializedLambda]
-      parse(some.getClass().getClassLoader(), sl)
+      parseSLambda(some.getClass().getClassLoader(), sl)
 
-    def parse( cl:ClassLoader, sl:SerializedLambda ):Either[String,(CBegin, CMethod)] =
+    def parse[A,B,Z]( some:(A,B)=>Z ):Either[String,(CBegin, CMethod)] =
+      val meth = some.getClass().getDeclaredMethod("writeReplace")
+      meth.setAccessible(true)
+      var sl = meth.invoke(some).asInstanceOf[SerializedLambda]
+      parseSLambda(some.getClass().getClassLoader(), sl)
+
+    def parse[A,B,C,Z]( some:(A,B,C)=>Z ):Either[String,(CBegin, CMethod)] =
+      val meth = some.getClass().getDeclaredMethod("writeReplace")
+      meth.setAccessible(true)
+      var sl = meth.invoke(some).asInstanceOf[SerializedLambda]
+      parseSLambda(some.getClass().getClassLoader(), sl)
+
+    def parse[A,B,C,D,Z]( some:(A,B,C,D)=>Z ):Either[String,(CBegin, CMethod)] =
+      val meth = some.getClass().getDeclaredMethod("writeReplace")
+      meth.setAccessible(true)
+      var sl = meth.invoke(some).asInstanceOf[SerializedLambda]
+      parseSLambda(some.getClass().getClassLoader(), sl)
+
+    def parse[A,B,C,D,E,Z]( some:(A,B,C,D,E)=>Z ):Either[String,(CBegin, CMethod)] =
+      val meth = some.getClass().getDeclaredMethod("writeReplace")
+      meth.setAccessible(true)
+      var sl = meth.invoke(some).asInstanceOf[SerializedLambda]
+      parseSLambda(some.getClass().getClassLoader(), sl)
+
+    def parse[A,B,C,D,E,F,Z]( some:(A,B,C,D,E,F)=>Z ):Either[String,(CBegin, CMethod)] =
+      val meth = some.getClass().getDeclaredMethod("writeReplace")
+      meth.setAccessible(true)
+      var sl = meth.invoke(some).asInstanceOf[SerializedLambda]
+      parseSLambda(some.getClass().getClassLoader(), sl)
+
+    def parse[A,B,C,D,E,F,G,Z]( some:(A,B,C,D,E,F,G)=>Z ):Either[String,(CBegin, CMethod)] =
+      val meth = some.getClass().getDeclaredMethod("writeReplace")
+      meth.setAccessible(true)
+      var sl = meth.invoke(some).asInstanceOf[SerializedLambda]
+      parseSLambda(some.getClass().getClassLoader(), sl)
+
+    def parse[A,B,C,D,E,F,G,H,Z]( some:(A,B,C,D,E,F,G,H)=>Z ):Either[String,(CBegin, CMethod)] =
+      val meth = some.getClass().getDeclaredMethod("writeReplace")
+      meth.setAccessible(true)
+      var sl = meth.invoke(some).asInstanceOf[SerializedLambda]
+      parseSLambda(some.getClass().getClassLoader(), sl)
+
+    def parse[A,B,C,D,E,F,G,H,I,Z]( some:(A,B,C,D,E,F,G,H,I)=>Z ):Either[String,(CBegin, CMethod)] =
+      val meth = some.getClass().getDeclaredMethod("writeReplace")
+      meth.setAccessible(true)
+      var sl = meth.invoke(some).asInstanceOf[SerializedLambda]
+      parseSLambda(some.getClass().getClassLoader(), sl)
+
+    def parse[A,B,C,D,E,F,G,H,I,J,Z]( some:(A,B,C,D,E,F,G,H,I,J)=>Z ):Either[String,(CBegin, CMethod)] =
+      val meth = some.getClass().getDeclaredMethod("writeReplace")
+      meth.setAccessible(true)
+      var sl = meth.invoke(some).asInstanceOf[SerializedLambda]
+      parseSLambda(some.getClass().getClassLoader(), sl)
+
+    def parseSLambda( cl:ClassLoader, sl:SerializedLambda ):Either[String,(CBegin, CMethod)] =
       ByteCodeIO.parse(cl, JavaName(sl.getImplClass())) match
         case Left(v) => Left(v)
         case Right(cbegin) => 
@@ -52,6 +111,33 @@ object ByteCodeIO {
     val cr = new ClassReader(bytes)
     cr.accept(inst,0)
     inst.build
+
+  def parse(stream:java.io.InputStream):Either[String,CBegin] =
+    try
+      val bytes = stream.readAllBytes()
+      parse(bytes)
+    catch
+      case err:java.io.IOException =>
+        Left(err.getMessage())
+
+  def parse(file:File):Either[String,CBegin] =
+    try
+      var stream : InputStream = null
+      try
+        stream = new FileInputStream(file)
+        parse(stream)
+      finally
+        if stream!=null then stream.close()
+    catch
+      case err:java.io.IOException =>
+        Left(err.getMessage())
+
+  def parse(path:Path):Either[String,CBegin] =
+    try
+      parse(Files.readAllBytes(path))
+    catch
+      case err:java.io.IOException =>
+        Left(err.getMessage())
 
   /**
     * Парсинг класса, предполагается что байт-код есть в ресурсах программы
