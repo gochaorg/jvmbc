@@ -22,12 +22,9 @@ object GenerateByteCodeTest:
       else
         super.findClass(name)
 
-  given [A:ToJson]:ToJson[Seq[A]] with
-    override def toJson(v: Seq[A]): Option[AST] = 
-      summon[ToJson[List[A]]].toJson(v.toList)
-
 class GenerateByteCodeTest extends AnyFunSuite:  
-  import GenerateByteCodeTest.given
+  import xyz.cofe.jvmbc.io.json.given
+  
   test("generate") {
     val sampleRes = this.getClass().getResource("/GenerateByteCodeSamble$.class")
     println(sampleRes)
@@ -36,15 +33,13 @@ class GenerateByteCodeTest extends AnyFunSuite:
       case Left(err) => throw new Error(s"not parsed $err")
       case Right(value) => value
     
-    val targetName = "autoGen.Sample"
+    implicit val fmt = FormattingJson.pretty(true)
+    println( srcCode.json )
 
+    val targetName = "autoGen.Sample"
     val targetCode = srcCode.copy(
       name = srcCode.name.rename(targetName)
     )
-
-    implicit val fmt = FormattingJson.pretty(true)
-    // val cmodule : CModule = ???
-    // cmodule.json
 
     // targetCode.methods.foreach { meth =>
     //   println(s"meth ${meth.access} ${meth.name} ${meth.desc}")

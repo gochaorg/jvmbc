@@ -200,7 +200,7 @@ case class CBegin(
   recordComponents:Seq[CRecordComponent]=List(),
   fields:Seq[CField]=List(),
   methods:Seq[CMethod]=List(),
-  order:Map[ClassCode,Int]=Map()
+  //order:Map[ClassCode,Int]=Map()
 ) 
   extends ClassCode 
   with NestedExcl("version","access","name","sign","superName","interfaces","order")

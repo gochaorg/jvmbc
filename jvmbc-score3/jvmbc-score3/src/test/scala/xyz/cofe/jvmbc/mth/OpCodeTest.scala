@@ -8,7 +8,7 @@ class OpCodeTest extends AnyFunSuite:
 
   test("aaa") {
     val c = OpCode.NOP
-    c.test
+    //c.test
 
     println
   }

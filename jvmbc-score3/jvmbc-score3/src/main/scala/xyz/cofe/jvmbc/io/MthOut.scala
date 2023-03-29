@@ -65,7 +65,7 @@ object MthOut:
   given MthOut[MFrame] with
     def write(out: MethodVisitor, code: MFrame)(using ctx: MthOutCtx): Unit = 
       out.visitFrame(
-        code.kind.value,
+        code.kind.raw,
         code.numLocal,
         code.local.map(el => el.map(_.value).orNull).toArray,
         code.numStack,

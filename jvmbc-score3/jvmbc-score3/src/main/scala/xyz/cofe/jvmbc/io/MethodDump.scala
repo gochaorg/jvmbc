@@ -260,14 +260,18 @@ class MethodDump(
       numLocal,
       local.map { e => 
         if e!=null then
-          Some(MFrameElem(e))
+          Some(MFrameElem(e).getOrElse(
+            throw new Error("can't Dump method, please make issue https://github.com/gochaorg/jvmbc")
+          ))
         else
           None
       },
       numStack,
       stack.map { e => 
         if e!=null then
-          Some(MFrameElem(e))
+          Some(MFrameElem(e).getOrElse(
+            throw new Error("can't Dump method, please make issue https://github.com/gochaorg/jvmbc")
+          ))
         else
           None
       }

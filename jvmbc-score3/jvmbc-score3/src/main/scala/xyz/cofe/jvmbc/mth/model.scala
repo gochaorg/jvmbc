@@ -490,9 +490,9 @@ case class MFrame(
   numLocal:Int,local:Seq[Option[MFrameElem]],
   numStack:Int,stack:Seq[Option[MFrameElem]]
   ) extends MethCode
-case class MFrameType(value:Int) extends AnyVal:
+case class MFrameType(raw:Int) extends AnyVal:
   def kind:Option[MFrameKind] =
-    value match
+    raw match
       case MFrameKind.F_NEW.kind    => Some(MFrameKind.F_NEW)
       case MFrameKind.F_FULL.kind   => Some(MFrameKind.F_FULL)
       case MFrameKind.F_APPEND.kind => Some(MFrameKind.F_APPEND)
@@ -531,35 +531,48 @@ enum MFrameKind(val kind:Int):
   case F_SAME   extends MFrameKind(3)
   case F_SAME1  extends MFrameKind(4)
 
-case class MFrameElem(value:AnyRef) extends AnyVal:
-  def kind:Option[MFrameElemKind] =
-    value match
+enum MFrameElem:
+  case TOP
+  case INTEGER
+  case FLOAT
+  case DOUBLE
+  case LONG
+  case NULL
+  case UNINITIALIZED_THIS
+  case OBJECT
+  case UNINITIALIZED
+  case JVM_TYPE(name:JavaName)
+  case SOME_SERIALIZABLE(serializable:Serializable)
+  def value:AnyRef = this match
+    case TOP =>                new java.lang.Integer(0)
+    case INTEGER =>            new java.lang.Integer(1)
+    case FLOAT =>              new java.lang.Integer(2)
+    case DOUBLE =>             new java.lang.Integer(3)
+    case LONG =>               new java.lang.Integer(4)
+    case NULL =>               new java.lang.Integer(5)
+    case UNINITIALIZED_THIS => new java.lang.Integer(6)
+    case OBJECT =>             new java.lang.Integer(7)
+    case UNINITIALIZED =>      new java.lang.Integer(8)
+    case JVM_TYPE(name) =>     name.raw
+    case SOME_SERIALIZABLE(serializable) => serializable.asInstanceOf[AnyRef]
+  
+object MFrameElem:
+  def apply(anyRef:AnyRef):Either[String,MFrameElem] =
+    anyRef match
       case num:java.lang.Integer => num match
-        case 0 => Some(MFrameElemKind.TOP)
-        case 1 => Some(MFrameElemKind.INTEGER)
-        case 2 => Some(MFrameElemKind.FLOAT)
-        case 3 => Some(MFrameElemKind.DOUBLE)
-        case 4 => Some(MFrameElemKind.LONG)
-        case 5 => Some(MFrameElemKind.NULL)
-        case 6 => Some(MFrameElemKind.UNINITIALIZED_THIS)
-        case 7 => Some(MFrameElemKind.OBJECT)
-        case 8 => Some(MFrameElemKind.UNINITIALIZED)
-        case _ => None
-      case str:String =>
-        Some(MFrameElemKind.JVM_TYPE(str))
-      case _ => None
-
-enum MFrameElemKind:
-  case TOP extends MFrameElemKind
-  case INTEGER extends MFrameElemKind
-  case FLOAT extends MFrameElemKind
-  case DOUBLE extends MFrameElemKind
-  case LONG extends MFrameElemKind
-  case NULL extends MFrameElemKind
-  case UNINITIALIZED_THIS extends MFrameElemKind
-  case OBJECT extends MFrameElemKind
-  case UNINITIALIZED extends MFrameElemKind
-  case JVM_TYPE(rawName:String)
+        case 0 => Right(MFrameElem.TOP)
+        case 1 => Right(MFrameElem.INTEGER)
+        case 2 => Right(MFrameElem.FLOAT)
+        case 3 => Right(MFrameElem.DOUBLE)
+        case 4 => Right(MFrameElem.LONG)
+        case 5 => Right(MFrameElem.NULL)
+        case 6 => Right(MFrameElem.UNINITIALIZED_THIS)
+        case 7 => Right(MFrameElem.OBJECT)
+        case 8 => Right(MFrameElem.UNINITIALIZED)
+        case _ => Left(s"undefined MFrameElem($anyRef)")
+      case str:String => Right(MFrameElem.JVM_TYPE(JavaName.raw(str)))
+      case ser:java.io.Serializable => Right(MFrameElem.SOME_SERIALIZABLE(ser))
+      case _ => Left(s"undefined MFrameElem($anyRef)")
 
 /**
  * Increment local variable by constant (<a href="https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html">jvm spec</a>).
