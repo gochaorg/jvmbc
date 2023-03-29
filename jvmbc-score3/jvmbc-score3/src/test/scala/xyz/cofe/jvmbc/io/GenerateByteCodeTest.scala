@@ -6,26 +6,30 @@ import xyz.cofe.jvmbc.io.toBytes
 import xyz.cofe.json4s3.stream.ast.FormattingJson
 import xyz.cofe.json4s3.derv.*
 import xyz.cofe.json4s3.stream.ast.AST
-import xyz.cofe.jvmbc.cls.CModule
+import xyz.cofe.jvmbc.*
+import xyz.cofe.jvmbc.cls.*
+import xyz.cofe.jvmbc.mth.*
 
-object GenerateByteCodeSamble:
-  def sum( a:String, b:String ):String = a + b + a
+// object GenerateByteCodeSamble:
+//   def sum( a:String, b:String ):String = a + b + a
 
-import GenerateByteCodeTest.*
-
-object GenerateByteCodeTest:
-  class MyClassLoader( byteCodeOf:JavaName=>Option[Array[Byte]] ) extends ClassLoader("myClassloader",classOf[GenerateByteCodeTest].getClassLoader()):
-    override def findClass(name: String):Class[?] =
-      if name!=null then byteCodeOf(JavaName.java(name)) match
-        case None => super.findClass(name)
-        case Some(bytes) => defineClass(bytes,0,bytes.length)
-      else
-        super.findClass(name)
-
-class GenerateByteCodeTest extends AnyFunSuite:  
-  import xyz.cofe.jvmbc.io.json.given
-  
+class GenerateByteCodeTest extends AnyFunSuite:
   test("generate") {
+    val cb = CBegin(
+      version = CVersion.v8,
+      access = CBeginAccess.builder.klass.publico.build,
+      name = JavaName.java("autoGen.Sample"),
+      superName = Some(JavaName.java("java.lang.Object")),
+      methods = List(
+        // default
+      )
+    )
+  }
+
+
+  test("sample json") {
+    import xyz.cofe.jvmbc.io.json.given
+
     val sampleRes = this.getClass().getResource("/GenerateByteCodeSamble$.class")
     println(sampleRes)
 

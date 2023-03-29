@@ -240,6 +240,36 @@ case class CVersion(raw:Int):
   lazy val major:Int = raw         & 0xFFFFFFFF
   lazy val minor:Int = (raw >> 16) & 0xFFFFFFFF
 
+object CVersion:
+  case class MajorV(v:Int) extends AnyVal:
+    def build:CVersion = CVersion(v & 0xFFFFFFFF)
+    def minor(minor:Int):MinorV = MinorV(this, minor)
+
+  case class MinorV(major:MajorV, minor:Int):
+    def build:CVersion = CVersion((major.v & 0xFFFFFFFF) | (minor << 16))
+
+  def major(v:Int):MajorV = MajorV(v)
+
+  lazy val v1_1:CVersion = major(JSEVersion.v1_1.major.raw).build
+  lazy val v1_2:CVersion = major(JSEVersion.v1_2.major.raw).build
+  lazy val v1_3:CVersion = major(JSEVersion.v1_3.major.raw).build
+  lazy val v1_4:CVersion = major(JSEVersion.v1_4.major.raw).build
+  lazy val v5:CVersion   = major(JSEVersion.v5.major.raw).build
+  lazy val v6:CVersion   = major(JSEVersion.v6.major.raw).build
+  lazy val v7:CVersion   = major(JSEVersion.v7.major.raw).build
+  lazy val v8:CVersion   = major(JSEVersion.v8.major.raw).build
+  lazy val v9:CVersion   = major(JSEVersion.v9.major.raw).build
+  lazy val v10:CVersion  = major(JSEVersion.v10.major.raw).build
+  lazy val v11:CVersion  = major(JSEVersion.v11.major.raw).build
+  lazy val v12:CVersion  = major(JSEVersion.v12.major.raw).build
+  lazy val v13:CVersion  = major(JSEVersion.v13.major.raw).build
+  lazy val v14:CVersion  = major(JSEVersion.v14.major.raw).build
+  lazy val v15:CVersion  = major(JSEVersion.v15.major.raw).build
+  lazy val v16:CVersion  = major(JSEVersion.v16.major.raw).build
+  lazy val v17:CVersion  = major(JSEVersion.v17.major.raw).build
+  lazy val v18:CVersion  = major(JSEVersion.v18.major.raw).build
+  lazy val v19:CVersion  = major(JSEVersion.v19.major.raw).build
+
 opaque type MajorVersion = Int
 object MajorVersion:
   def apply(ver:Int):MajorVersion = ver
@@ -296,6 +326,31 @@ case class CBeginAccess(raw:Int):
   def `annotation`:Boolean = ClassAccessFlag.ACC_ANNOTATION.isSet(raw)
   def `enum`:Boolean       = ClassAccessFlag.ACC_ENUM.isSet(raw)
   def `module`:Boolean     = ClassAccessFlag.ACC_MODULE.isSet(raw)
+
+object CBeginAccess:
+  import ClassAccessFlag.*
+
+  def builder:Builder = Builder()
+
+  case class Builder():
+    def klass:ClassBuilder = ClassBuilder()
+
+  case class ClassBuilder():
+    def publico:ClassFlags = ClassFlags(Set(ACC_PUBLIC,ACC_SUPER))
+    def packaje:ClassFlags = ClassFlags(Set(ACC_SUPER))
+
+  case class ClassFlags(flags:Set[ClassAccessFlag]):
+    def finale = FinalClassFlags(flags + ClassAccessFlag.ACC_FINAL)
+    def abstracto = AbstractoClassFlags(flags + ClassAccessFlag.ACC_ABSTRACT)
+    def synthetic = ClassFlags(flags + ClassAccessFlag.ACC_SYNTHETIC)
+    def build:CBeginAccess =
+      CBeginAccess( flags.foldLeft(0){ case (f, cf) => f | cf.bitMask } )
+      
+  case class FinalClassFlags(flags:Set[ClassAccessFlag]):
+    def synthetic = FinalClassFlags(flags + ClassAccessFlag.ACC_SYNTHETIC)
+
+  case class AbstractoClassFlags(flags:Set[ClassAccessFlag]):
+    def synthetic = AbstractoClassFlags(flags + ClassAccessFlag.ACC_SYNTHETIC)
 
 /**
   * The ACC_MODULE flag indicates that this class file defines a module, not a class or interface. 
@@ -393,6 +448,8 @@ object ClassAccessFlag:
       else 
         ACC_INTERFACE.isSet(flags)
     )
+
+  object Rule:
     def validate( flags:Int, clazz:CBegin ):Either[Rule,Unit] =
       Rule.values.find( r => ! r.validator(flags, clazz) ).toLeft( () )
 
