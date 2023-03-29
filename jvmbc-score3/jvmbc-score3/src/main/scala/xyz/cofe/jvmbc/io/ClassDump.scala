@@ -318,12 +318,22 @@ extends ClassVisitor(_api, null)
     FieldDump(_api,Some(fieldEt => {
       val cf = fieldEt.map { body => 
         trackOrder(CField(
-          access,
+          CFieldAccess(access),
           name,
           TDesc(descriptor),
           if signature!=null then Some(Sign(signature)) else None,
-          if value!=null then Some(value) else None,
-          body
+          if value==null 
+          then FieldInitValue.NULL 
+          else 
+            value match
+              case v:java.lang.Integer => FieldInitValue.IntV(v)
+              case v:java.lang.Float => FieldInitValue.FloatV(v)
+              case v:java.lang.Long => FieldInitValue.LongV(v)
+              case v:java.lang.Double => FieldInitValue.DoubleV(v)
+              case v:String => FieldInitValue.StringV(v)
+              case v:Serializable => FieldInitValue.SerializableV(v)
+              case _ => FieldInitValue.Undef
+          ,body
         ))
       }
       fields = cf +: fields

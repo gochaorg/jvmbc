@@ -43,8 +43,8 @@ class GenerateByteCodeTest extends AnyFunSuite:
     )
 
     implicit val fmt = FormattingJson.pretty(true)
-    val cmodule : CModule = ???
-    cmodule.json
+    // val cmodule : CModule = ???
+    // cmodule.json
 
     // targetCode.methods.foreach { meth =>
     //   println(s"meth ${meth.access} ${meth.name} ${meth.desc}")

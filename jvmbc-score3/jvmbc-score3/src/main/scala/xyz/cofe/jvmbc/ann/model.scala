@@ -6,35 +6,76 @@ package ann
   */
 sealed trait AnnCode extends ByteCode
 
-sealed abstract class APair[V](val name:Option[String],val value:V) extends AnnCode
-case class Undef(n:Option[String],v:Serializable) extends APair(n,v)
-case class Str(n:Option[String],v:String) extends APair(n,v)
-case class BoolV(n:Option[String],v:Boolean) extends APair(n,v)
-case class ByteV(n:Option[String],v:Byte) extends APair(n,v)
-case class CharV(n:Option[String],v:Char) extends APair(n,v)
-case class ShortV(n:Option[String],v:Short) extends APair(n,v)
-case class IntV(n:Option[String],v:Int) extends APair(n,v)
-case class LongV(n:Option[String],v:Long) extends APair(n,v)
-case class FloatV(n:Option[String],v:Float) extends APair(n,v)
-case class DoubleV(n:Option[String],v:Double) extends APair(n,v)
-
-case class StrArr(n:Option[String],v:Array[String]) extends APair(n,v)
-case class BoolArr(n:Option[String],v:Array[Boolean]) extends APair(n,v)
-case class ByteArr(n:Option[String],v:Array[Byte]) extends APair(n,v)
-case class CharArr(n:Option[String],v:Array[Char]) extends APair(n,v)
-case class ShortArr(n:Option[String],v:Array[Short]) extends APair(n,v)
-case class IntArr(n:Option[String],v:Array[Int]) extends APair(n,v)
-case class LongArr(n:Option[String],v:Array[Long]) extends APair(n,v)
-case class FloatArr(n:Option[String],v:Array[Float]) extends APair(n,v)
-case class DoubleArr(n:Option[String],v:Array[Double]) extends APair(n,v)
+enum APair extends AnnCode:
+  case Undef(n:Option[String],v:Serializable) extends APair
+  case Str(n:Option[String],v:String) extends APair
+  case BoolV(n:Option[String],v:Boolean) extends APair
+  case ByteV(n:Option[String],v:Byte) extends APair
+  case CharV(n:Option[String],v:Char) extends APair
+  case ShortV(n:Option[String],v:Short) extends APair
+  case IntV(n:Option[String],v:Int) extends APair
+  case LongV(n:Option[String],v:Long) extends APair
+  case FloatV(n:Option[String],v:Float) extends APair
+  case DoubleV(n:Option[String],v:Double) extends APair
+  case StrArr(n:Option[String],v:Array[String]) extends APair
+  case BoolArr(n:Option[String],v:Array[Boolean]) extends APair
+  case ByteArr(n:Option[String],v:Array[Byte]) extends APair
+  case CharArr(n:Option[String],v:Array[Char]) extends APair
+  case ShortArr(n:Option[String],v:Array[Short]) extends APair
+  case IntArr(n:Option[String],v:Array[Int]) extends APair
+  case LongArr(n:Option[String],v:Array[Long]) extends APair
+  case FloatArr(n:Option[String],v:Array[Float]) extends APair
+  case DoubleArr(n:Option[String],v:Array[Double]) extends APair
+  def name:Option[String] = this match
+    case Undef(n, v) => n
+    case Str(n, v) =>  n
+    case BoolV(n, v) => n
+    case ByteV(n, v) => n
+    case CharV(n, v) => n
+    case ShortV(n, v) => n
+    case IntV(n, v) => n
+    case LongV(n, v) => n
+    case FloatV(n, v) => n
+    case DoubleV(n, v) => n
+    case StrArr(n, v) => n
+    case BoolArr(n, v) => n
+    case ByteArr(n, v) => n
+    case CharArr(n, v) => n
+    case ShortArr(n, v) => n
+    case IntArr(n, v) => n
+    case LongArr(n, v) => n
+    case FloatArr(n, v) => n
+    case DoubleArr(n, v) => n
+  
+  def value:Any = this match
+    case Undef(n, v) =>  v
+    case Str(n, v) => v
+    case BoolV(n, v) => v
+    case ByteV(n, v) => v
+    case CharV(n, v) => v
+    case ShortV(n, v) => v
+    case IntV(n, v) => v
+    case LongV(n, v) => v
+    case FloatV(n, v) => v
+    case DoubleV(n, v) => v
+    case StrArr(n, v) => v
+    case BoolArr(n, v) => v
+    case ByteArr(n, v) => v
+    case CharArr(n, v) => v
+    case ShortArr(n, v) => v
+    case IntArr(n, v) => v
+    case LongArr(n, v) => v
+    case FloatArr(n, v) => v
+    case DoubleArr(n, v) => v
+  
 
 object APair:
-  def apply(value:AnyRef): Either[String, APair[_]] =apply0(null,value)
-  def apply(name:String,value:AnyRef): Either[String, APair[_]] =
+  def apply(value:AnyRef): Either[String, APair] =apply0(null,value)
+  def apply(name:String,value:AnyRef): Either[String, APair] =
     require(name!=null)
     apply0(name,value)
 
-  private def apply0(name:String,value:AnyRef):Either[String,APair[_]]=
+  private def apply0(name:String,value:AnyRef):Either[String,APair]=
     require(value!=null)
     val name0 = Option(name)
     value match

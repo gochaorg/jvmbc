@@ -102,14 +102,25 @@ case class CNestHost(nestHost:String) extends ClassCode
  *       descriptor="Ljava/lang/String;"
  */
 case class CField(
-  access:Int,
+  access:CFieldAccess,
   name:String,
   desc:TDesc,
   sign:Option[Sign],
-  value:Option[AnyRef],
+  value:FieldInitValue,
   body:Seq[FieldCode]
 ) extends ClassCode 
   with NestedThey("body")
+
+case class CFieldAccess(raw:Int) extends AnyVal
+enum FieldInitValue:
+  case NULL
+  case IntV(value:Int)
+  case FloatV(value:Float)
+  case LongV(value:Long)
+  case DoubleV(value:Double)
+  case StringV(value:String)
+  case SerializableV(value:Serializable)
+  case Undef
 
 /** Описывает метод класса */
 case class CMethod(

@@ -7,10 +7,11 @@ trait AnnOut[V]:
   def write(out:AnnotationVisitor, v:V):Unit
 
 object AnnOut:
-  import xyz.cofe.jvmbc.ann._
+  import xyz.cofe.jvmbc.ann.*
+  import xyz.cofe.jvmbc.ann.APair.*
 
   given AnnOut[Undef] with { def write(out:AnnotationVisitor, v:Undef):Unit = out.visit(v.n.orNull, v.v) }
-  given pair[T,P <: APair[T]]:AnnOut[P] with { 
+  given pair[T,P <: APair]:AnnOut[P] with { 
     def write(out: AnnotationVisitor, v: P): Unit = 
       out.visit(v.name.orNull, v.value)
   }

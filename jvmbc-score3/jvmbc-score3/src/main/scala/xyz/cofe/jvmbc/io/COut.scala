@@ -64,9 +64,18 @@ object COut:
 
   given COut[CField] with
     def write(out: ClassVisitor, v: CField): Unit = 
-      val fldOut = out.visitField(v.access, v.name, v.desc.raw, 
+      val fldOut = out.visitField(v.access.raw, v.name, v.desc.raw, 
         v.sign.map(_.raw).orNull, 
-        v.value.orNull)
+        v.value match
+          case FieldInitValue.NULL => null
+          case FieldInitValue.IntV(v) => v
+          case FieldInitValue.FloatV(v) => v
+          case FieldInitValue.LongV(v) => v
+          case FieldInitValue.DoubleV(v) => v
+          case FieldInitValue.StringV(v) => v
+          case FieldInitValue.SerializableV(v) => v
+          case FieldInitValue.Undef => null
+      )
       summon[FldOut[Seq[fld.FieldCode]]].write(fldOut, v.body)
 
   given COut[CMethod] with
