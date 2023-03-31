@@ -127,8 +127,10 @@ case class CMethod(
   access:CMethodAccess,
   name:String,
   desc:MDesc,
-  sign:Option[MSign],exceptions:Seq[String],body:Seq[MethCode])
-  extends ClassCode 
+  sign:Option[MSign],
+  exceptions:Seq[String],
+  body:Seq[MethCode]
+) extends ClassCode 
   with NestedThey("body")
 
 case class CMethodAccess(raw:Int) extends AnyVal:
@@ -143,6 +145,54 @@ case class CMethodAccess(raw:Int) extends AnyVal:
   def native:Boolean         = MethodAccessFlag.ACC_NATIVE.isSet(raw)
   def strict:Boolean         = MethodAccessFlag.ACC_STRICT.isSet(raw)
   def synthetic:Boolean      = MethodAccessFlag.ACC_SYNTHETIC.isSet(raw)
+  def `abstract`:Boolean     = MethodAccessFlag.ACC_ABSTRACT.isSet(raw)
+
+object CMethodAccess:
+  def build:Builder = Builder()
+  case class Builder():
+    def statico = StaticBuilder(Set(MethodAccessFlag.ACC_STATIC))
+    def virtual = VirtualBuilder(Set())
+
+  trait AccessBld[T]( set:Set[MethodAccessFlag]=>T ):
+    def publico = set(Set(MethodAccessFlag.ACC_PUBLIC))
+    def privato = set(Set(MethodAccessFlag.ACC_PRIVATE))
+    def protecto = set(Set(MethodAccessFlag.ACC_PROTECTED))
+    def packaje = set(Set.empty)
+
+  trait AbstractBld[T]( set:Set[MethodAccessFlag]=>T ):
+    def abstracto = set(Set(MethodAccessFlag.ACC_ABSTRACT))
+
+  trait NativeBld[T]( set:Set[MethodAccessFlag]=>T ):
+    def native = set(Set(MethodAccessFlag.ACC_NATIVE))
+
+  trait FinalBld[T]( set:Set[MethodAccessFlag]=>T ):
+    def finalo = set(Set(MethodAccessFlag.ACC_FINAL))
+
+  trait OptBld[T]( set:Set[MethodAccessFlag]=>T ):
+    def synchro = set(Set(MethodAccessFlag.ACC_SYNCHRONIZED))
+    def bridge = set(Set(MethodAccessFlag.ACC_BRIDGE))
+    def varargs = set(Set(MethodAccessFlag.ACC_VARARGS))
+    def strict = set(Set(MethodAccessFlag.ACC_STRICT))
+    def synthetic = set(Set(MethodAccessFlag.ACC_SYNTHETIC))
+
+  trait BuildIt:
+    def flags:Set[MethodAccessFlag]
+    def build:CMethodAccess =
+      CMethodAccess( flags.foldLeft(0){ case (f,ff) => f | ff.bitMask } )
+
+  case class StaticBuilder(flags:Set[MethodAccessFlag]) 
+    extends AccessBld[StaticAccBuilder]( addFlags => StaticAccBuilder(flags ++ addFlags) )
+
+  case class StaticAccBuilder(flags:Set[MethodAccessFlag])
+    extends OptBld[StaticAccBuilder]( addFlags => StaticAccBuilder(flags ++ addFlags) )
+    with BuildIt
+
+  case class VirtualBuilder(flags:Set[MethodAccessFlag])
+    extends AccessBld[VirtualAccBuilder]( af => VirtualAccBuilder(flags ++ af) )
+
+  case class VirtualAccBuilder(flags:Set[MethodAccessFlag])
+    extends OptBld[VirtualAccBuilder]( af => VirtualAccBuilder(af ++ flags) )
+    with BuildIt
 
 case class MSign(raw:String) extends AnyVal
 
