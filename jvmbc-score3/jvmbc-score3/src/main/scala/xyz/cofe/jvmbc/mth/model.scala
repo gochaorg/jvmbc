@@ -1299,7 +1299,27 @@ case class MMultiANewArrayInsn(desc:TDesc,numDimensions:Int)
 case class MParameter(name:Option[String],access:MParameterAccess) 
   extends MethCode
 
-case class MParameterAccess(raw:Int) extends AnyVal
+/** 
+ * 4.7.24. The MethodParameters Attribute
+ * 
+ * 0x0010 (ACC_FINAL) Indicates that the formal parameter was declared final.
+ * 0x1000 (ACC_SYNTHETIC) Indicates that the formal parameter was not explicitly or implicitly declared in source code, according to the specification of the language in which the source code was written (JLS §13.1). (The formal parameter is an implementation artifact of the compiler which produced this class file.)
+ * 0x8000 (ACC_MANDATED) Indicates that the formal parameter was implicitly declared in source code, according to the specification of the language in which the source code was written (JLS §13.1). (The formal parameter is mandated by a language specification, so all compilers for the language must emit it.)
+ */
+case class MParameterAccess(raw:Int) extends AnyVal:
+  def `final`:Boolean = MParamAccessFlag.ACC_FINAL.isSet(raw)
+  def synthetic:Boolean = MParamAccessFlag.ACC_SYNTHETIC.isSet(raw)
+  def mandated:Boolean = MParamAccessFlag.ACC_MANDATED.isSet(raw)
+
+object MParameterAccess:
+  case class Builder(flags:Set[MParamAccessFlag]):
+    def build:MParameterAccess =
+      MParameterAccess(flags.foldLeft(0){ case (f,ff) => f | ff.bitMask })
+
+enum MParamAccessFlag( val bitMask:Int ) extends BitMask:
+  case ACC_FINAL extends MParamAccessFlag(0x10)
+  case ACC_SYNTHETIC extends MParamAccessFlag(0x1000)
+  case ACC_MANDATED extends MParamAccessFlag(0x8000)
 
 /** 
  * @param param
