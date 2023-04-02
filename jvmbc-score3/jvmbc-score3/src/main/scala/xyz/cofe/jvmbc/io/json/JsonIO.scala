@@ -9,50 +9,96 @@ import xyz.cofe.jvmbc.mdl.*
 import xyz.cofe.jvmbc.ann.*
 import xyz.cofe.jvmbc.mth.*
 import xyz.cofe.jvmbc.bm.*
+import xyz.cofe.json4s3.derv.errors.DervError
 
 given [A:ToJson]:ToJson[Seq[A]] with
   override def toJson(v: Seq[A]): Option[AST] = 
     summon[ToJson[List[A]]].toJson(v.toList)
 
+given [A:FromJson]:FromJson[Seq[A]] with
+  override def fromJson(json: AST): Either[DervError, Seq[A]] = 
+    summon[FromJson[List[A]]].fromJson(json)
+
 given [A:ToJson]:ToJson[Array[A]] with
-  override def toJson(t: Array[A]): Option[AST] = ???
+  override def toJson(t: Array[A]): Option[AST] = 
+    summon[ToJson[List[A]]].toJson(t.toList)
+
+given [A:FromJson]:FromJson[Array[A]] with
+  override def fromJson(j: AST): Either[DervError, Array[A]] = ???
 
 given ToJson[CModuleAccess] with
   override def toJson(v: CModuleAccess): Option[AST] = summon[ToJson[Int]].toJson(v.raw)
 
+given FromJson[CModuleAccess] with
+  override def fromJson(j: AST): Either[DervError, CModuleAccess] = ???
+
 given ToJson[ModRequireAccess] with
   override def toJson(v: ModRequireAccess): Option[AST] = summon[ToJson[Int]].toJson(v.raw)
+
+given FromJson[ModRequireAccess] with
+  override def fromJson(j: AST): Either[DervError, ModRequireAccess] = ???
 
 given ToJson[ModExportAccess] with
   override def toJson(v: ModExportAccess): Option[AST] = summon[ToJson[Int]].toJson(v.raw)
 
+given FromJson[ModExportAccess] with
+  override def fromJson(j: AST): Either[DervError, ModExportAccess] = ???
+
 given ToJson[ModOpenAccess] with
   override def toJson(v: ModOpenAccess): Option[AST] = summon[ToJson[Int]].toJson(v.raw)
+
+given FromJson[ModOpenAccess] with
+  override def fromJson(j: AST): Either[DervError, ModOpenAccess] = ???
 
 given ToJson[CInnerClassAccess] with
   override def toJson(v: CInnerClassAccess): Option[AST] = summon[ToJson[Int]].toJson(v.raw)
 
+given FromJson[CInnerClassAccess] with
+  override def fromJson(j: AST): Either[DervError, CInnerClassAccess] = ???
+
 given ToJson[CFieldAccess] with
   override def toJson(v: CFieldAccess): Option[AST] = summon[ToJson[Int]].toJson(v.raw)
+
+given FromJson[CFieldAccess] with
+  override def fromJson(j: AST): Either[DervError, CFieldAccess] = ???
 
 given ToJson[CMethodAccess] with
   override def toJson(v: CMethodAccess): Option[AST] = summon[ToJson[Int]].toJson(v.raw)
 
+given FromJson[CMethodAccess] with
+  override def fromJson(j: AST): Either[DervError, CMethodAccess] = ???
+  
 given ToJson[MFrameType] with
   override def toJson(v: MFrameType): Option[AST] = summon[ToJson[Int]].toJson(v.raw)
 
+given FromJson[MFrameType] with
+  override def fromJson(j: AST): Either[DervError, MFrameType] = ???
+  
 given ToJson[MParameterAccess] with
   override def toJson(v: MParameterAccess): Option[AST] = summon[ToJson[Int]].toJson(v.raw)
 
+given FromJson[MParameterAccess] with
+  override def fromJson(j: AST): Either[DervError, MParameterAccess] = ???
+  
 given ToJson[Sign] with
   override def toJson(v: Sign): Option[AST] = summon[ToJson[String]].toJson(v.raw)
 
+given FromJson[Sign] with
+  override def fromJson(j: AST): Either[DervError, Sign] = ???
+  
 given ToJson[MSign] with
   override def toJson(v: MSign): Option[AST] = summon[ToJson[String]].toJson(v.raw)
 
+given FromJson[MSign] with
+  override def fromJson(j: AST): Either[DervError, MSign] = ???
+  
 given ToJson[Serializable] with
   override def toJson(ser: Serializable): Option[AST] = 
     Some( AST.JsStr(ser.toHexString()) )
+
+given FromJson[Serializable] with
+  override def fromJson(j: AST): Either[DervError, Serializable] = ???
+  
 
 given ToJson[Char] with
   override def toJson(c: Char): Option[AST] = 
@@ -134,3 +180,6 @@ given constDyn:ToJson[ConstDynamic] with
 
 // def toJson(c:CModule):String = 
 //   c.json
+
+// def fromJson(str:String) =
+//   str.jsonAs[AnnPair]
