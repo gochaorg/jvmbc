@@ -4,6 +4,7 @@ import org.objectweb.asm.MethodVisitor
 import xyz.cofe.jvmbc.mth._
 import xyz.cofe.jvmbc.ann.AnnCode
 import org.objectweb.asm.Label
+import xyz.cofe.jvmbc.raw
 
 /** Контекст генерации метода класса, используется для генерации/получения метки [[xyz.cofe.jvmbc.mth.MLabel]] */
 trait MthOutCtx:

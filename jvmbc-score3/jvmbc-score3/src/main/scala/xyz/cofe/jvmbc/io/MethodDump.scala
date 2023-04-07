@@ -106,7 +106,7 @@ class MethodDump(
   override def visitAnnotation(descriptor:String, visible:Boolean):AnnotationVisitor = 
     AnnotationDump(_api,Some(abodyEt => {
       body = abodyEt.map { body => 
-        MAnnotation(TDesc(descriptor),visible,body)
+        MAnnotation(TDesc.unsafe(descriptor),visible,body)
       } +: body
     }))
 
@@ -133,7 +133,7 @@ class MethodDump(
           MTypeAnnotation(
             MTypeRef(typeRef),
             if typePath!=null then Some(typePath.toString) else None,
-            TDesc(descriptor),
+            TDesc.unsafe(descriptor),
             visible,
             body
           )
@@ -179,7 +179,7 @@ class MethodDump(
         abodyEt.map { body => 
           MParameterAnnotation(
             parameter,
-            TDesc(descriptor),
+            TDesc.unsafe(descriptor),
             visible,
             body
           )
@@ -350,7 +350,7 @@ class MethodDump(
       OpCode.find(opcode).get,
       owner,
       name,
-      TDesc(descriptor)
+      TDesc.unsafe(descriptor)
     )) +: body
 
   /**
@@ -517,7 +517,7 @@ class MethodDump(
   override def visitMultiANewArrayInsn(descriptor:String, numDimensions:Int):Unit =
     body =
       Right(MMultiANewArrayInsn(
-        TDesc(descriptor),
+        TDesc.unsafe(descriptor),
         numDimensions
       )) +: body
 
@@ -547,7 +547,7 @@ class MethodDump(
           MInsnAnnotation(
             MTypeInsnRef(typeRef),
             if typePath!=null then Some(typePath.toString) else None,
-            TDesc(descriptor),
+            TDesc.unsafe(descriptor),
             visible,
             body
           )
@@ -600,7 +600,7 @@ class MethodDump(
           MTryCatchAnnotation(
             MTypeTryCatchRef(typeRef),
             if typePath!=null then Some(typePath.toString) else None,
-            TDesc(descriptor),
+            TDesc.unsafe(descriptor),
             visible,
             body
           )
@@ -625,7 +625,7 @@ class MethodDump(
     body = 
       Right(MLocalVariable(
         name,
-        TDesc(descriptor),
+        TDesc.unsafe(descriptor),
         if signature!=null then Some(Sign(signature)) else None,
         start.toString,
         end.toString,
@@ -670,7 +670,7 @@ class MethodDump(
             start.map(_.toString),
             end.map(_.toString),
             index,
-            TDesc(descriptor),
+            TDesc.unsafe(descriptor),
             visible,
             body
           )

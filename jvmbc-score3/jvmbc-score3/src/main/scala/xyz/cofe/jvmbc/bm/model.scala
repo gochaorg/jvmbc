@@ -12,7 +12,7 @@ case class Handle(tag:Int,desc:TDesc,name:String,owner:String,iface:Boolean) ext
 
 object Handle:
   def apply( h:org.objectweb.asm.Handle ):Handle =
-    Handle(h.getTag, TDesc(h.getDesc), h.getName, h.getOwner, h.isInterface)
+    Handle(h.getTag, TDesc.unsafe(h.getDesc), h.getName, h.getOwner, h.isInterface)
 
 case class TypeArg(value:String) extends BootstrapArg:
   override def toAsm: Object = org.objectweb.asm.Type.getType(value)

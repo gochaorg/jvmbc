@@ -41,6 +41,10 @@ sealed trait Return
 
 /** Тип поля/параметра */
 sealed trait FieldType extends Return with Ast
+object FieldType {
+  def parse( raw:String ):Either[String,FieldType] =
+    DescParser.fieldType.apply(SPtr(raw,0)).map((a,b)=>a)
+}
 
 /** Нет возвращаемого значения */
 case class Void() extends Return with Ast

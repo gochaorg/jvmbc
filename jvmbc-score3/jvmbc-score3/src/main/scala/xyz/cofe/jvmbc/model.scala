@@ -1,5 +1,7 @@
 package xyz.cofe.jvmbc
 
+import xyz.cofe.jvmbc.parse.desc.*
+
 /** 
  * Имя класса 
  * 
@@ -135,68 +137,89 @@ package xyz.cofe.jvmbc
  */
 case class Sign(raw:String) extends AnyVal
 
-/** Сигнатура типа */
-case class TDesc(raw:String) {
-  import TDesc._
-  private lazy val decoded = if raw!=null then parse(raw).map(_._1) else None
-  lazy val name:Option[String]     = decoded.map(_.name)  
-  lazy val dimension:Option[Int]   = decoded.map(_.dimension)
-  lazy val isArray:Option[Boolean] = decoded.map(_.isArray)
-  override def toString():String =
-    decoded match
-      case None => s"desc:$raw"
-      case Some(d) =>
-        val sb = new java.lang.StringBuilder()
-        sb.append(d.name)
-        (1 to d.dimension).foreach { _ => sb.append("[]") }
-        sb.toString
+opaque type TDesc = xyz.cofe.jvmbc.parse.desc.FieldType
+object TDesc {
+  def unsafe( raw:String ):TDesc =
+    xyz.cofe.jvmbc.parse.desc.FieldType.parse(raw).getOrElse(throw new Error(s"can't parse \"${raw}\" as FieldType"))
+}
+extension (tdesc:TDesc) {
+  def raw:String =
+    def arrayTypeRaw(at:ArrayType) =
+      ( "[" * at.dimension ) + (
+        at.component match
+          case b:BaseType => b.letter.toString()
+          case v:ObjectType => s"L${v.rawClassName};"
+      )
+
+    val ft: xyz.cofe.jvmbc.parse.desc.FieldType = tdesc
+    ft match
+      case b:BaseType => b.letter.toString()
+      case o:ObjectType => s"L${o.rawClassName};"
+      case a:ArrayType => arrayTypeRaw(a)
 }
 
-object TDesc {
-  case class Parsed(name:String,dimension:Int=0) {
-    require(dimension>=0)
-    require(name!=null)
-    lazy val isArray = dimension>0
-  }
-  /**
-   * Парсинг
-   * @return результат парсинга и следующий символ (индекс) для парсинга
-   */
-  def parse(raw:String,from:Int=0):Option[(Parsed,Int)] =
-    require(raw!=null)
-    require(from>=0)
-    var ptr=from-1
-    var stop=false
-    var state=0
-    var dim=0
-    var typeName:String = null
-    var typeNameBuff = new java.lang.StringBuilder()
-    while( !stop && ptr<raw.length )
-      ptr+=1
-      val c = raw(ptr)
-      state match
-        case 0 => c match
-          case '[' => dim += 1
-          case 'Z' => typeName = "boolean" ; stop = true
-          case 'C' => typeName = "char" ;    stop = true
-          case 'B' => typeName = "byte" ;    stop = true
-          case 'S' => typeName = "short" ;   stop = true
-          case 'I' => typeName = "int" ;     stop = true
-          case 'F' => typeName = "float" ;   stop = true
-          case 'J' => typeName = "long" ;    stop = true
-          case 'D' => typeName = "double" ;  stop = true
-          case 'V' => typeName = "void" ;    stop = true
-          case 'L' => state = 1
-          case _ => stop
-        case 1 => c match
-          case '/' => typeNameBuff.append('.')
-          case ';' => typeName = typeNameBuff.toString ; stop = true
-          case   _ => typeNameBuff.append(c)
-    if typeName!=null then
-      Some( (Parsed(typeName,dim), ptr+1) )
-    else
-      None
-}
+/** Сигнатура типа */
+// case class TDesc(raw:String) {
+//   import TDesc._
+//   private lazy val decoded = if raw!=null then parse(raw).map(_._1) else None
+//   lazy val name:Option[String]     = decoded.map(_.name)  
+//   lazy val dimension:Option[Int]   = decoded.map(_.dimension)
+//   lazy val isArray:Option[Boolean] = decoded.map(_.isArray)
+//   override def toString():String =
+//     decoded match
+//       case None => s"desc:$raw"
+//       case Some(d) =>
+//         val sb = new java.lang.StringBuilder()
+//         sb.append(d.name)
+//         (1 to d.dimension).foreach { _ => sb.append("[]") }
+//         sb.toString
+// }
+
+// object TDesc {
+//   case class Parsed(name:String,dimension:Int=0) {
+//     require(dimension>=0)
+//     require(name!=null)
+//     lazy val isArray = dimension>0
+//   }
+//   /**
+//    * Парсинг
+//    * @return результат парсинга и следующий символ (индекс) для парсинга
+//    */
+//   def parse(raw:String,from:Int=0):Option[(Parsed,Int)] =
+//     require(raw!=null)
+//     require(from>=0)
+//     var ptr=from-1
+//     var stop=false
+//     var state=0
+//     var dim=0
+//     var typeName:String = null
+//     var typeNameBuff = new java.lang.StringBuilder()
+//     while( !stop && ptr<raw.length )
+//       ptr+=1
+//       val c = raw(ptr)
+//       state match
+//         case 0 => c match
+//           case '[' => dim += 1
+//           case 'Z' => typeName = "boolean" ; stop = true
+//           case 'C' => typeName = "char" ;    stop = true
+//           case 'B' => typeName = "byte" ;    stop = true
+//           case 'S' => typeName = "short" ;   stop = true
+//           case 'I' => typeName = "int" ;     stop = true
+//           case 'F' => typeName = "float" ;   stop = true
+//           case 'J' => typeName = "long" ;    stop = true
+//           case 'D' => typeName = "double" ;  stop = true
+//           case 'V' => typeName = "void" ;    stop = true
+//           case 'L' => state = 1
+//           case _ => stop
+//         case 1 => c match
+//           case '/' => typeNameBuff.append('.')
+//           case ';' => typeName = typeNameBuff.toString ; stop = true
+//           case   _ => typeNameBuff.append(c)
+//     if typeName!=null then
+//       Some( (Parsed(typeName,dim), ptr+1) )
+//     else
+//       None
+// }
 
 /** Сигнатура метода типа */
 case class MDesc(raw:String)

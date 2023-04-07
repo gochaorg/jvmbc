@@ -43,7 +43,7 @@ extends AnnotationVisitor(_api)
    * @param value the actual enumeration value.
    */
   override def visitEnum(name:String, descriptor:String, value:String):Unit = 
-    codes = (()=>AEnum(name,TDesc(descriptor),value)) +: codes
+    codes = (()=>AEnum(name,TDesc.unsafe(descriptor),value)) +: codes
 
   /**
    * Visits a nested annotation value of the annotation.
@@ -61,7 +61,7 @@ extends AnnotationVisitor(_api)
         case Left(err) =>
           err
         case Right(ok) =>
-          EmANameDesc(name,TDesc(descriptor),ok)
+          EmANameDesc(name,TDesc.unsafe(descriptor),ok)
       }
     }) +: codes
     adump

@@ -172,7 +172,7 @@ extends ClassVisitor(_api, null)
     this.outerClass = Some(trackOrder(COuterClass(
       owner,
       if name!=null then Some(name) else None,
-      if descriptor!=null then Some(TDesc(descriptor)) else None
+      if descriptor!=null then Some(TDesc.unsafe(descriptor)) else None
     )))
 
   /**
@@ -186,7 +186,7 @@ extends ClassVisitor(_api, null)
   override def visitAnnotation(descriptor:String, visible:Boolean):AnnotationVisitor =
     AnnotationDump(_api,Some(bodyEthier=>{
       annotations = bodyEthier.map { body => 
-        trackOrder(CAnnotation(TDesc(descriptor),visible,body))
+        trackOrder(CAnnotation(TDesc.unsafe(descriptor),visible,body))
       } +: annotations
     }))
 
@@ -211,7 +211,7 @@ extends ClassVisitor(_api, null)
         trackOrder(CTypeAnnotation(
           CTypeRef(typeRef),
           if typePath!=null then Some(typePath.toString) else None,
-          TDesc(descriptor),
+          TDesc.unsafe(descriptor),
           visible,
           body
         ))
@@ -289,7 +289,7 @@ extends ClassVisitor(_api, null)
       val e = bodyEt.map { body => 
         trackOrder(CRecordComponent(
           name,
-          TDesc(descriptor),
+          TDesc.unsafe(descriptor),
           if signature!=null then Some(Sign(signature)) else None,
           body
         ))
@@ -321,7 +321,7 @@ extends ClassVisitor(_api, null)
         trackOrder(CField(
           CFieldAccess(access),
           name,
-          TDesc(descriptor),
+          TDesc.unsafe(descriptor),
           if signature!=null then Some(Sign(signature)) else None,
           if value==null 
           then FieldInitValue.NULL 

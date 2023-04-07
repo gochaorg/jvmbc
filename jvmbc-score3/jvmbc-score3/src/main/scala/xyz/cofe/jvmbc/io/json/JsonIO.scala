@@ -4,6 +4,7 @@ import xyz.cofe.json4s3.derv.*
 import xyz.cofe.json4s3.stream.ast.AST
 
 import xyz.cofe.jvmbc.*
+import xyz.cofe.jvmbc.raw
 import xyz.cofe.jvmbc.cls.*
 import xyz.cofe.jvmbc.mdl.*
 import xyz.cofe.jvmbc.ann.*
@@ -109,7 +110,15 @@ given ToJson[MSign] with
 given FromJson[MSign] with
   override def fromJson(j: AST): Either[DervError, MSign] = 
     summon[FromJson[String]].fromJson(j).map(MSign(_))
+
+given ToJson[TDesc] with
+  override def toJson(v: TDesc): Option[AST] = summon[ToJson[String]].toJson(v.raw)
+
+given FromJson[TDesc] with
+  override def fromJson(j: AST): Either[DervError, TDesc] = 
+    summon[FromJson[String]].fromJson(j).map(TDesc.unsafe(_))
   
+
 given ToJson[Serializable] with
   override def toJson(ser: Serializable): Option[AST] = 
     Some( AST.JsStr(ser.toHexString()) )

@@ -10,6 +10,7 @@ import xyz.cofe.jvmbc.mth
 import xyz.cofe.jvmbc.rec
 import xyz.cofe.jvmbc.mth.MethCode
 import xyz.cofe.jvmbc.io.MthOutCtx
+import xyz.cofe.jvmbc.raw
 
 /**
   * Генерация байт-кода класса

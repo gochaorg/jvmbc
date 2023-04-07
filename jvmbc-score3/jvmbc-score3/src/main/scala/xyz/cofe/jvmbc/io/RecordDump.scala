@@ -43,7 +43,7 @@ extends RecordComponentVisitor(_api) {
     AnnotationDump(_api,Some(bodyEthier=>{
       body = bodyEthier.map { body => 
         RecAnnotation(
-          TDesc(descriptor),
+          TDesc.unsafe(descriptor),
           visible,
           body
         )
@@ -71,7 +71,7 @@ extends RecordComponentVisitor(_api) {
         RecTypeAnnotation(
           RTypeRef(typeRef),
           if typePath!=null then Some(typePath.toString) else None,
-          TDesc(descriptor),
+          TDesc.unsafe(descriptor),
           visible,
           body
         )

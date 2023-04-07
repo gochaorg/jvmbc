@@ -1,6 +1,7 @@
 package xyz.cofe.jvmbc.io
 
 import org.objectweb.asm.AnnotationVisitor
+import xyz.cofe.jvmbc.raw
 
 /** Генерация байт-кода аннотаций */
 trait AnnOut[V]:
