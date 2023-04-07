@@ -120,9 +120,9 @@ object COut:
       out.visit(
         v.version.raw,
         v.access.raw,
-        v.name.raw,
+        v.name.rawClassName,
         v.sign.map(_.raw).orNull,
-        v.superName.map(_.raw).orNull,
+        v.superName.map(_.rawClassName).orNull,
         v.interfaces.toArray
       )
       v.source.write(out)

@@ -1,6 +1,6 @@
 package xyz.cofe.jvmbc.io
 
-import xyz.cofe.jvmbc.JavaName
+import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
 
 class MyClassLoader( byteCodeOf:JavaName=>Option[Array[Byte]] ) extends ClassLoader("myClassloader",classOf[MyClassLoader].getClassLoader()):
   override def findClass(name: String):Class[?] =

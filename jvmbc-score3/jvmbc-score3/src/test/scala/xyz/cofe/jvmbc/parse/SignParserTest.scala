@@ -77,11 +77,18 @@ class SignParserTest extends AnyFunSuite:
 
   val sample7 = "(Ljava/lang/Number;Ljava/lang/Number;)V"
   test("mdesc") {
+    import desc.*
+
     println("mdesc")
     println("="*40)
     println(
       desc.DescParser.method.apply(SPtr(sample7,0))
     )
+
+    val parsed = desc.DescParser.method.apply(SPtr(sample7,0)).map(_._1)
+    assert(parsed == Right(
+      Method(List(ObjectType("java/lang/Number"), ObjectType("java/lang/Number")),Void())
+    ))
   }
 
   test("id list") {

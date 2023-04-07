@@ -16,6 +16,7 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.Files
+import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
 
 /** Генерация байт кода */
 extension (cbegin:CBegin)
@@ -188,7 +189,7 @@ object ByteCodeIO {
     * @return результат парсинга
     */
   def parse(cl:ClassLoader, className:JavaName):Either[String,CBegin] =
-    val resName = className.raw + ".class"
+    val resName = className.rawClassName + ".class"
     val url = cl.getResource( resName )
     if url==null then
       Left(s"resource $resName not found")

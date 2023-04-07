@@ -5,42 +5,42 @@ package xyz.cofe.jvmbc
  * 
  * @param raw Имя класса представленное в байт-коде, например: java/lang/String
  */
-case class JavaName(raw:String) {
-  require( raw!=null )
+// case class JavaName(raw:String) {
+//   require( raw!=null )
 
-  /** имя класса включая пакет, имена разделены точкой (`java.lang.String`) */
-  lazy val name:String = raw.replace("/",".")
+//   /** имя класса включая пакет, имена разделены точкой (`java.lang.String`) */
+//   lazy val name:String = raw.replace("/",".")
 
-  /** имя класса */
-  lazy val nameList:List[String] = raw.split("\\.").toList
+//   /** имя класса */
+//   lazy val nameList:List[String] = raw.split("\\.").toList
 
-  /** имя класса без названия пакета */
-  lazy val simpleName:String = nameList.last
+//   /** имя класса без названия пакета */
+//   lazy val simpleName:String = nameList.last
 
-  /** название пакета */
-  lazy val packaje:List[String] = nameList.dropRight(1)
+//   /** название пакета */
+//   lazy val packaje:List[String] = nameList.dropRight(1)
 
-  object rename {
-    def simpleName(newSimpleName:String):JavaName =
-      JavaName( (JavaName.this.packaje ++ List(newSimpleName)).mkString("/") )
+//   object rename {
+//     def simpleName(newSimpleName:String):JavaName =
+//       JavaName( (JavaName.this.packaje ++ List(newSimpleName)).mkString("/") )
 
-    def packaje( pkg:List[String] ):JavaName =
-      JavaName( (pkg ++ List(JavaName.this.simpleName)).mkString("/"))
+//     def packaje( pkg:List[String] ):JavaName =
+//       JavaName( (pkg ++ List(JavaName.this.simpleName)).mkString("/"))
 
-    def apply( javaNameString:String ):JavaName = 
-      JavaName( javaNameString.replace(".","/") )
-  }
+//     def apply( javaNameString:String ):JavaName = 
+//       JavaName( javaNameString.replace(".","/") )
+//   }
 
-  def unapply( jn:JavaName ):Option[String] =
-    Some(jn.raw)
+//   def unapply( jn:JavaName ):Option[String] =
+//     Some(jn.raw)
 
-  override def toString():String = name
-}
+//   override def toString():String = name
+// }
 
-object JavaName {
-  def raw(rawName:String):JavaName = new JavaName(rawName)
-  def java(name:String):JavaName = new JavaName(name.replace(".","/"))
-}
+// object JavaName {
+//   def raw(rawName:String):JavaName = new JavaName(rawName)
+//   def java(name:String):JavaName = new JavaName(name.replace(".","/"))
+// }
 
 /** 
  * Сигнатура типа с Generic 

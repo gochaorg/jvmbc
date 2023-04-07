@@ -10,6 +10,7 @@ import org.objectweb.asm.FieldVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.TypePath
 import org.objectweb.asm.Attribute
+import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
 
 /**
  * Парсинг байт-кода - файла `.class`

@@ -2,7 +2,7 @@ package xyz.cofe.jvmbc.io
 
 import org.scalatest.funsuite.AnyFunSuite
 import java.lang.invoke.SerializedLambda
-import xyz.cofe.jvmbc.JavaName
+import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
 import xyz.cofe.jvmbc.mth.MMethodInsn
 import xyz.cofe.jvmbc.mth.OpCode
 

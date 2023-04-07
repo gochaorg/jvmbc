@@ -9,6 +9,7 @@ import bm.TypeArg
 import xyz.cofe.jvmbc.io.MthOut
 import org.objectweb.asm.MethodVisitor
 import xyz.cofe.jvmbc.io.MthOutCtx
+import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
 
 /** Байт-код метода класса */
 sealed trait MethCode extends ByteCode
@@ -553,7 +554,7 @@ enum MFrameElem:
     case UNINITIALIZED_THIS => new java.lang.Integer(6)
     case OBJECT =>             new java.lang.Integer(7)
     case UNINITIALIZED =>      new java.lang.Integer(8)
-    case JVM_TYPE(name) =>     name.raw
+    case JVM_TYPE(name) =>     name.rawClassName
     case SOME_SERIALIZABLE(serializable) => serializable.asInstanceOf[AnyRef]
   
 object MFrameElem:

@@ -7,6 +7,7 @@ import mdl.ModuleCode
 import mdl.Modulo
 import rec.RecordCode
 import xyz.cofe.jvmbc.fld.FieldCode
+import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
 
 /** Байт-код `.class` файла */
 sealed trait ClassCode extends ByteCode

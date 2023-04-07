@@ -9,6 +9,7 @@ import xyz.cofe.json4s3.stream.ast.AST
 import xyz.cofe.jvmbc.*
 import xyz.cofe.jvmbc.cls.*
 import xyz.cofe.jvmbc.mth.*
+import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
 
 // object GenerateByteCodeSamble:
 //   def sum( a:String, b:String ):String = a + b + a
@@ -16,7 +17,7 @@ import xyz.cofe.jvmbc.mth.*
 class GenerateByteCodeTest extends munit.FunSuite:
   test("generate") {
     val stringType = JavaName.java("java.lang.String")
-    val stringMType = s"L${stringType.raw};"
+    val stringMType = s"L${stringType.rawClassName};"
     val targetName = "autoGen.Sample"
     val clsName = JavaName.java(targetName)
     val cb = CBegin(
@@ -39,7 +40,7 @@ class GenerateByteCodeTest extends munit.FunSuite:
             MMethodInsn(OpCode.INVOKESPECIAL, "java/lang/Object", "<init>", MDesc("()V"), false),
             MInst(OpCode.RETURN),
             MLabel("end"),
-            MLocalVariable("this", TDesc(s"L${clsName.raw};"),None,"begin","end",0),
+            MLocalVariable("this", TDesc(s"L${clsName.rawClassName};"),None,"begin","end",0),
             MMaxs(1,1),
             MEnd()
           )
