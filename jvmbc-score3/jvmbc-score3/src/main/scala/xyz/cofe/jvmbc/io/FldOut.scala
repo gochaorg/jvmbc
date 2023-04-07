@@ -3,7 +3,6 @@ package xyz.cofe.jvmbc.io
 import org.objectweb.asm.FieldVisitor
 import xyz.cofe.jvmbc.fld._
 import xyz.cofe.jvmbc.ann.AnnCode
-import xyz.cofe.jvmbc.raw
 
 /**
   * Генерация байт-кода поля класса

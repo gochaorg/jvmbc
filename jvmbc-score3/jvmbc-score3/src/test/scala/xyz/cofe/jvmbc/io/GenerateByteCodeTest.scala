@@ -20,6 +20,8 @@ class GenerateByteCodeTest extends munit.FunSuite:
     val stringMType = s"L${stringType.rawClassName};"
     val targetName = "autoGen.Sample"
     val clsName = JavaName.java(targetName)
+    val strClsName = JavaName.java("java.lang.String")
+
     val cb = CBegin(
       version = CVersion.v8,
       access = CBeginAccess.builder.klass.publico.build,
@@ -40,7 +42,7 @@ class GenerateByteCodeTest extends munit.FunSuite:
             MMethodInsn(OpCode.INVOKESPECIAL, "java/lang/Object", "<init>", MDesc("()V"), false),
             MInst(OpCode.RETURN),
             MLabel("end"),
-            MLocalVariable("this", TDesc(s"L${clsName.rawClassName};"),None,"begin","end",0),
+            MLocalVariable("this", TDesc(clsName),None,"begin","end",0),
             MMaxs(1,1),
             MEnd()
           )
@@ -77,8 +79,8 @@ class GenerateByteCodeTest extends munit.FunSuite:
 
             MLabel("end"),
 
-            MLocalVariable("a",TDesc("Ljava/lang/String;"),None,"begin","end",0),
-            MLocalVariable("b",TDesc("Ljava/lang/String;"),None,"begin","end",1),
+            MLocalVariable("a",TDesc(strClsName),None,"begin","end",0),
+            MLocalVariable("b",TDesc(strClsName),None,"begin","end",1),
 
             MMaxs(1,1),
             MEnd()

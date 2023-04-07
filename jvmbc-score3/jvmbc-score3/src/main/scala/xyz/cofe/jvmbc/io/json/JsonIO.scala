@@ -4,7 +4,6 @@ import xyz.cofe.json4s3.derv.*
 import xyz.cofe.json4s3.stream.ast.AST
 
 import xyz.cofe.jvmbc.*
-import xyz.cofe.jvmbc.raw
 import xyz.cofe.jvmbc.cls.*
 import xyz.cofe.jvmbc.mdl.*
 import xyz.cofe.jvmbc.ann.*
@@ -129,6 +128,22 @@ given FromJson[Serializable] with
       str.deSerialize().left.map(TypeCastFail(_))
     }
   
+given ToJson[TDesc | MDesc] with
+  override def toJson(tOrM: TDesc | MDesc): Option[AST] = 
+    tOrM match
+      case td:TDesc => summon[ToJson[TDesc]].toJson(td).map( a => AST.JsObj(List("TDesc" -> a)) )
+      case md:MDesc => summon[ToJson[MDesc]].toJson(md).map( a => AST.JsObj(List("MDesc" -> a)) )
+
+given FromJson[TDesc | MDesc] with
+  override def fromJson(json: AST): Either[DervError, TDesc | MDesc] = 
+    json match
+      case ob @ AST.JsObj(value) => 
+        ob.get("TDesc").toRight(FieldNotFound("TDesc not found")).flatMap(ast => summon[FromJson[TDesc]].fromJson(ast))
+          .orElse(
+            ob.get("MDesc").toRight(FieldNotFound("MDesc not found")).flatMap(ast => summon[FromJson[MDesc]].fromJson(ast))
+          )
+      case _ =>
+        Left(TypeCastFail("expect JsObj"))
 
 given ToJson[Char] with
   override def toJson(c: Char): Option[AST] = 

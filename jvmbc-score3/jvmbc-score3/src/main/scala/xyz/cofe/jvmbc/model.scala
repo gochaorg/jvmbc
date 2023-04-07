@@ -137,13 +137,8 @@ import xyz.cofe.jvmbc.parse.desc.*
  */
 case class Sign(raw:String) extends AnyVal
 
-opaque type TDesc = xyz.cofe.jvmbc.parse.desc.FieldType
-object TDesc {
-  def unsafe( raw:String ):TDesc =
-    xyz.cofe.jvmbc.parse.desc.FieldType.parse(raw).getOrElse(throw new Error(s"can't parse \"${raw}\" as FieldType"))
-}
-extension (tdesc:TDesc) {
-  def raw:String =
+case class TDesc( fieldType: xyz.cofe.jvmbc.parse.desc.FieldType ):
+  lazy val raw:String =
     def arrayTypeRaw(at:ArrayType) =
       ( "[" * at.dimension ) + (
         at.component match
@@ -151,11 +146,14 @@ extension (tdesc:TDesc) {
           case v:ObjectType => s"L${v.rawClassName};"
       )
 
-    val ft: xyz.cofe.jvmbc.parse.desc.FieldType = tdesc
-    ft match
+    fieldType match
       case b:BaseType => b.letter.toString()
       case o:ObjectType => s"L${o.rawClassName};"
       case a:ArrayType => arrayTypeRaw(a)
+
+object TDesc {
+  def unsafe( raw:String ):TDesc =
+    xyz.cofe.jvmbc.parse.desc.FieldType.parse(raw).map(TDesc(_)).getOrElse(throw new Error(s"can't parse \"${raw}\" as FieldType"))
 }
 
 /** Сигнатура типа */

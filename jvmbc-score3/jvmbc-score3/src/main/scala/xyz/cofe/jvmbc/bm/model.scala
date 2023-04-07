@@ -7,8 +7,19 @@ package bm
 sealed trait BootstrapArg:
   def toAsm:Object
 
-case class Handle(tag:Int,desc:TDesc,name:String,owner:String,iface:Boolean) extends BootstrapArg:
-  override def toAsm: org.objectweb.asm.Handle = org.objectweb.asm.Handle(tag, owner, name, desc.raw, iface)
+case class Handle(tag:Int,desc:TDesc|MDesc,name:String,owner:String,iface:Boolean) extends BootstrapArg:
+  override def toAsm: org.objectweb.asm.Handle = org.objectweb.asm.Handle(
+    tag, 
+    owner, 
+    name, 
+    //desc.raw, 
+    {
+      desc match
+        case m:MDesc => m.raw
+        case t:TDesc => t.raw
+    },
+    iface
+  )
 
 object Handle:
   def apply( h:org.objectweb.asm.Handle ):Handle =
