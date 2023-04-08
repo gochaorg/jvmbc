@@ -16,6 +16,7 @@ import xyz.cofe.json4s3.derv.errors.FieldNotFound
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
+import xyz.cofe.jvmbc.parse.desc.{Method => MDesc}
 
 given [A:ToJson]:ToJson[Seq[A]] with
   override def toJson(v: Seq[A]): Option[AST] = 

@@ -220,7 +220,7 @@ object TDesc {
 // }
 
 /** Сигнатура метода типа */
-case class MDesc(raw:String) // TODO decode
+// case class MDesc(raw:String) // TODO decode
 
 /** 
 Маркер модели байт-кода 

@@ -10,6 +10,7 @@ import xyz.cofe.jvmbc.io.MthOut
 import org.objectweb.asm.MethodVisitor
 import xyz.cofe.jvmbc.io.MthOutCtx
 import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
+import xyz.cofe.jvmbc.parse.desc.{Method => MDesc}
 
 /** Байт-код метода класса */
 sealed trait MethCode extends ByteCode

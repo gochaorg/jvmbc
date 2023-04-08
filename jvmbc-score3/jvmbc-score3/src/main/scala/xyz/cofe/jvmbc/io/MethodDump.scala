@@ -12,6 +12,7 @@ import org.objectweb.asm.TypePath
 import org.objectweb.asm.Attribute
 import org.objectweb.asm.Handle
 import org.objectweb.asm.Label
+import xyz.cofe.jvmbc.parse.desc.{Method => MDesc}
 
 /**
  * Парсинг метода класса
@@ -369,7 +370,7 @@ class MethodDump(
       OpCode.find(opcode).get,
       owner,
       name,
-      MDesc(descriptor),
+      MDesc.unsafe(descriptor),
       isInterface
     )) +: body
 
@@ -394,7 +395,7 @@ class MethodDump(
     
     val e = for {
       args <- firstErr(bmArgs)      
-    } yield MInvokeDynamicInsn(name,MDesc(descriptor),bmHdl,args)
+    } yield MInvokeDynamicInsn(name,MDesc.unsafe(descriptor),bmHdl,args)
 
     body = e +: body
 

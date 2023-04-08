@@ -1,6 +1,8 @@
 package xyz.cofe.jvmbc
 package bm
 
+import xyz.cofe.jvmbc.parse.desc.{Method => MDesc}
+
 /**
   * Байт-код аргументов INVOKE Dynamic
   */

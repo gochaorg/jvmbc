@@ -34,6 +34,12 @@ object Method {
   /** Парсинг сигнатуры */
   def parse(str:String):Either[String,Method] =
     DescParser.method.apply(SPtr(str,0)).map((a,b)=>a)
+
+  /** Не безопасная попытка парсинга, если не успешно, то выкидывается Exception */
+  def unsafe(str:String):Method = parse(str) match
+    case Left(error)  => throw new Error(s"can't parse method descriptor ${error}")
+    case Right(value) => value
+  
 }
 
 /** Тип возвращаемого значения */

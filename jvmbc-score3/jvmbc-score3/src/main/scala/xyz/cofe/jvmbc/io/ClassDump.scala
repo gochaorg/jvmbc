@@ -11,6 +11,7 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.TypePath
 import org.objectweb.asm.Attribute
 import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
+import xyz.cofe.jvmbc.parse.desc.{Method => MDesc}
 
 /**
  * Парсинг байт-кода - файла `.class`
@@ -362,7 +363,7 @@ extends ClassVisitor(_api, null)
         trackOrder(CMethod(
           CMethodAccess(access),
           name,
-          MDesc(descriptor),
+          MDesc.unsafe(descriptor),
           if signature!=null then Some(MSign(signature)) else None,
           if exceptions!=null then exceptions else List(),
           body
