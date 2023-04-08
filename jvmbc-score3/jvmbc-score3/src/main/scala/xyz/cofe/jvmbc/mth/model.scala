@@ -59,9 +59,9 @@ case class MEnd() extends MethCode
  * | BASTORE      | 54  |   | arrayref, index, value → | store a byte or Boolean value into an array |
  * | CASTORE      | 55  |   | arrayref, index, value → | store a char into an array |
  * | SASTORE      | 56  |   | arrayref, index, value → | store short to array |
- * | POP          | 57  |   | value → | discard the top value on the stack |
- * | POP2         | 58  |   | {value2, value1} → | discard the top two values on the stack (or one value, if it is a double or long) |
- * | DUP          | 59  |   | value → value, value | duplicate the value on top of the stack |
+ * | POP          | 57  |   | value →                  | discard the top value on the stack |
+ * | POP2         | 58  |   | {value2, value1} →       | discard the top two values on the stack (or one value, if it is a double or long) |
+ * | DUP          | 59  |   | value → value, value     | duplicate the value on top of the stack |
  * | DUP_X1       | 5a  |   | value2, value1 → value1, value2, value1 | insert a copy of the top value into the stack two values from the top. value1 and value2 must not be of the type double or long. |
  * | DUP_X2       | 5b  |   | value3, value2, value1 → value1, value3, value2, value1 | insert a copy of the top value into the stack two (if value2 is double or long it takes up the entry of value3, too) or three values (if value2 is neither double nor long) from the top |
  * | DUP2         | 5c  |   | {value2, value1} → {value2, value1}, {value2, value1} | duplicate top two stack words (two values, if value1 is not double nor long; a single value, if value1 is double or long) |
@@ -136,7 +136,10 @@ case class MEnd() extends MethCode
  * | MONITOREXIT  | c3  |   | objectref →             | exit monitor for object ("release the lock" – end of synchronized() section) |
  * @param op
  */
-case class MInst(op:OpCode) extends MethCode
+case class MInst(
+  op:OpCode // TODO Enum
+) 
+extends MethCode
 
 //case class MInsnAnnotation(typeRef:Int,typePath:Option[String],desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) extends MethCode
 
@@ -366,7 +369,12 @@ case class MAnnotationDefault(annotations:Seq[AnnCode]) extends MethCode with Ne
  * @param name
  * @param desc
  */
-case class MFieldInsn(op:OpCode,owner:String,name:String,desc:TDesc) extends MethCode
+case class MFieldInsn(
+  op:OpCode,
+  owner:String, // TODO ObjectType
+  name:String, // TODO NewType
+  desc:TDesc
+) extends MethCode
 
 /**
  * <a href="https://coderoad.ru/25109942/%D0%A7%D1%82%D0%BE-%D1%82%D0%B0%D0%BA%D0%BE%D0%B5-%D1%84%D1%80%D0%B5%D0%B9%D0%BC-%D0%BA%D0%B0%D1%80%D1%82%D1%8B-%D1%81%D1%82%D0%B5%D0%BA%D0%B0">Java требует проверки всех загруженных классов, чтобы обеспечить безопасность песочницы и обеспечить безопасность кода для оптимизации. Обратите внимание, что это делается на уровне байт-кода , поэтому проверка не проверяет инварианты языка Java, она просто проверяет, что байт-код имеет смысл в соответствии с правилами байт-кода.</a>
@@ -607,7 +615,10 @@ object MFrameElem:
  * @param variable
  * @param inc
  */
-case class MIincInsn(variable:Int,inc:Int) extends MethCode
+case class MIincInsn(
+  variable:Int, // TODO new type
+  inc:Int
+) extends MethCode
 
 /** 
  * @param typeRef
@@ -687,7 +698,10 @@ case class MInsnAnnotation(
  * @param op
  * @param operand
  */
-case class MIntInsn(op:OpCode,operand:Int) extends MethCode
+case class MIntInsn(
+  op:OpCode, // TODO new type
+  operand:Int
+) extends MethCode
 
 /**
  * <a href="https://habr.com/ru/post/328240/">Хорошая статья о Что там с JEP-303 или изобретаем invokedynamic</a>
@@ -852,7 +866,7 @@ indexbyte2
  * @param args
  */
 case class MInvokeDynamicInsn(
-  name:String,
+  name:String, // TODO new type
   desc:MDesc,
   bootstrapMethod:bm.Handle,
   args:Seq[BootstrapArg]
@@ -888,7 +902,10 @@ case class MInvokeDynamicInsn(
  * @param op
  * @param label
  */
-case class MJumpInsn(op:OpCode,label:String) extends MethCode
+case class MJumpInsn(
+  op:OpCode,
+  label:String // new type
+) extends MethCode
 
 /** 
  * Метка в исходном коде/точка перехода
@@ -992,7 +1009,10 @@ object MLdcInsn:
  * @param line a line number. This number refers to the source file from which the class was compiled.
  * @param label the first instruction corresponding to this line number.
  */
-case class MLineNumber(line:Int,label:String) extends MethCode
+case class MLineNumber(
+  line:Int,
+  label:String // new type
+) extends MethCode
 
 /** 
  * Определение локальной переменной
@@ -1025,8 +1045,8 @@ case class MLocalVariable(
 case class MLocalVariableAnnotation(
   typeRef:MTypeLocalVarRef,
   typePath:Option[String],
-  startLabels:Seq[String],
-  endLabels:Seq[String],
+  startLabels:Seq[String], // TODO new type
+  endLabels:Seq[String], // TODO new type
   index:Seq[Int],
   desc:TDesc,
   visible:Boolean,
@@ -1138,9 +1158,9 @@ case class MLocalVariableAnnotation(
  * @param labels
  */
 case class MLookupSwitchInsn(
-  defaultHandle:String,
+  defaultHandle:String, // TODO new type
   keys:Seq[Int],
-  labels:Seq[String]
+  labels:Seq[String] // TODO new type
 ) extends MethCode
 
 /** 
@@ -1235,7 +1255,13 @@ MyClass
  * @param desc
  * @param iface
  */
-case class MMethodInsn(op:OpCode,owner:String,name:String,desc:MDesc,iface:Boolean) 
+case class MMethodInsn(
+  op:OpCode, // TODO concrete (enum) op: INVOKEVIRTUAL, INVOKESPECIAL, INVOKESTATIC or INVOKEINTERFACE.
+  owner:String, // TODO ObjectType
+  name:String, // TODO enum special name / regular name
+  desc:MDesc,
+  iface:Boolean
+) 
   extends MethCode
 /**
  * multianewarray
@@ -1297,7 +1323,10 @@ case class MMultiANewArrayInsn(desc:TDesc,numDimensions:Int)
  * @param name parameter name or {@literal null} if none is provided.
  * @param access the parameter's access flags, only {@code ACC_FINAL}, {@code ACC_SYNTHETIC} or/and {@code ACC_MANDATED} are allowed (see {@link Opcodes}).
  */
-case class MParameter(name:Option[String],access:MParameterAccess) 
+case class MParameter(
+  name:Option[String], // TODO new type
+  access:MParameterAccess
+) 
   extends MethCode
 
 /** 
@@ -1328,7 +1357,12 @@ enum MParamAccessFlag( val bitMask:Int ) extends BitMask:
  * @param visible
  * @param annotations
  */
-case class MParameterAnnotation(param:Int,desc:TDesc,visible:Boolean,annotations:Seq[AnnCode]) 
+case class MParameterAnnotation(
+  param:Int,
+  desc:TDesc,
+  visible:Boolean,
+  annotations:Seq[AnnCode]
+) 
   extends MethCode 
 
 /**
@@ -1407,7 +1441,12 @@ case class MParameterAnnotation(param:Int,desc:TDesc,visible:Boolean,annotations
  * @param defaultLabel
  * @param labels
  */
-case class MTableSwitchInsn(min:Int,max:Int,defaultLabel:String,labels:Seq[String]) 
+case class MTableSwitchInsn(
+  min:Int,
+  max:Int,
+  defaultLabel:String, // TODO new type
+  labels:Seq[String] // TODO new type
+) 
   extends MethCode
 
 /** 
@@ -1433,10 +1472,10 @@ case class MTryCatchAnnotation(
  * @param type
  */
 case class MTryCatchBlock(
-  startLabel:String,
-  endLabel:String,
-  handlerLabel:String,
-  typeName:Option[String]
+  startLabel:String, // TODO new type
+  endLabel:String, // TODO new type
+  handlerLabel:String, // TODO new type
+  typeName:Option[String] // TODO ObjectType
 ) extends MethCode
 
 /** 
@@ -1464,7 +1503,10 @@ case class MTypeAnnotation(
  * @param op
  * @param type
  */
-case class MTypeInsn(op:OpCode,typeName:String) 
+case class MTypeInsn(
+  op:OpCode, // enum Op
+  typeName:String // TODO ObjectType
+) 
   extends MethCode
 
 /**
@@ -2154,5 +2196,8 @@ case class MTypeInsn(op:OpCode,typeName:String)
  * @param op
  * @param variable
  */
-case class MVarInsn(op:OpCode,variable:Int) 
+case class MVarInsn(
+  op:OpCode, // TODO enum
+  variable:Int // TODO new type
+) 
   extends MethCode
