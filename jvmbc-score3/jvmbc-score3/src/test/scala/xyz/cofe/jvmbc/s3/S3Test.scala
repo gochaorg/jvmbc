@@ -32,6 +32,6 @@ class S3Test extends AnyFunSuite {
   }
 
   test("derive 1") {
-    val lnum = MLineNumber(10,"L10")
+    val lnum = MLineNumber(10,Label("L10"))
   }
 }

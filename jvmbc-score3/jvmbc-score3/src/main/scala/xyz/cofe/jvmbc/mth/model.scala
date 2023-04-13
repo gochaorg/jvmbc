@@ -1492,21 +1492,17 @@ case class MTypeAnnotation(
 ) extends MethCode 
   with NestedThey("annotations")
 
-/**
- * the opcode of the type instruction to be visited. This opcode is either NEW,
- * <a href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.anewarray">ANEWARRAY</a>,
- * <a href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.checkcast">CHECKCAST</a> or
- * <a href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.instanceof">INSTANCEOF</a>.
- * 
- * см {@link OpCode#ANEWARRAY}, {@link OpCode#CHECKCAST}, {@link OpCode#INSTANCEOF}
- * @param op
- * @param type
- */
-case class MTypeInsn(
-  op:OpCode, // enum Op
-  typeName:JavaName
-) 
-  extends MethCode
+/** <a href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.anewarray">ANEWARRAY</a> */
+case class MArrayNew( typeName:JavaName ) extends MethCode
+
+/** <a href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.checkcast">CHECKCAST</a> */
+case class MCheckCast( typeName:JavaName ) extends MethCode
+
+/** <a href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.instanceof">INSTANCEOF</a> */
+case class MInstanceOf( typeName:JavaName ) extends MethCode
+
+/** <a href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.instanceof">NEW</a> */
+case class MNew( typeName:JavaName ) extends MethCode
 
 /**
  * the opcode of the local variable instruction to be visited. This opcode is either

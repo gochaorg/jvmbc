@@ -247,9 +247,25 @@ object MthOut:
       )
       summon[AnnOut[Seq[AnnCode]]].write(annOut, code.annotations)
 
-  given MthOut[MTypeInsn] with
-    def write(out: MethodVisitor, code: MTypeInsn)(using ctx: MthOutCtx): Unit = 
-      out.visitTypeInsn(code.op.code, code.typeName.rawClassName)
+  // given MthOut[MTypeInsn] with
+  //   def write(out: MethodVisitor, code: MTypeInsn)(using ctx: MthOutCtx): Unit = 
+  //     out.visitTypeInsn(code.op.code, code.typeName.rawClassName)
+
+  given MthOut[MNew] with
+    def write(out: MethodVisitor, code: MNew)(using ctx: MthOutCtx): Unit = 
+      out.visitTypeInsn( OpCode.NEW.code, code.typeName.rawClassName )
+
+  given MthOut[MArrayNew] with
+    def write(out: MethodVisitor, code: MArrayNew)(using ctx: MthOutCtx): Unit = 
+      out.visitTypeInsn( OpCode.ANEWARRAY.code, code.typeName.rawClassName )
+
+  given MthOut[MCheckCast] with
+    def write(out: MethodVisitor, code: MCheckCast)(using ctx: MthOutCtx): Unit = 
+      out.visitTypeInsn( OpCode.CHECKCAST.code, code.typeName.rawClassName )
+
+  given MthOut[MInstanceOf] with
+    def write(out: MethodVisitor, code: MInstanceOf)(using ctx: MthOutCtx): Unit = 
+      out.visitTypeInsn( OpCode.INSTANCEOF.code, code.typeName.rawClassName )
 
   given MthOut[MVarInsn] with
     def write(out: MethodVisitor, code: MVarInsn)(using ctx: MthOutCtx): Unit = 
@@ -289,7 +305,10 @@ object MthOut:
         case c:MTryCatchAnnotation =>  summon[MthOut[MTryCatchAnnotation]].write(out,c)
         case c:MTryCatchBlock =>  summon[MthOut[MTryCatchBlock]].write(out,c)
         case c:MTypeAnnotation =>  summon[MthOut[MTypeAnnotation]].write(out,c)
-        case c:MTypeInsn =>  summon[MthOut[MTypeInsn]].write(out,c)
+        case c:MNew => summon[MthOut[MNew]].write(out,c)
+        case c:MArrayNew => summon[MthOut[MArrayNew]].write(out,c)
+        case c:MCheckCast => summon[MthOut[MCheckCast]].write(out,c)
+        case c:MInstanceOf => summon[MthOut[MInstanceOf]].write(out,c)
         case c:MVarInsn =>  summon[MthOut[MVarInsn]].write(out,c)
 
   given [V:MthOut]:MthOut[Seq[V]] with

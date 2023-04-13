@@ -336,7 +336,19 @@ class MethodDump(
    *     name of an object or array class (see {@link Type#getInternalName()}).
    */
   override def visitTypeInsn(opcode:Int, typeName:String):Unit = 
-    body = Right(MTypeInsn(OpCode.find(opcode).get, JavaName.raw(typeName))) +: body
+    val code = OpCode.find(opcode).flatMap {
+      case OpCode.NEW        => Some(MNew(JavaName.raw(typeName)))
+      case OpCode.ANEWARRAY  => Some(MArrayNew(JavaName.raw(typeName)))
+      case OpCode.CHECKCAST  => Some(MCheckCast(JavaName.raw(typeName)))
+      case OpCode.INSTANCEOF => Some(MInstanceOf(JavaName.raw(typeName)))
+      case _ => None
+    }
+
+    body = code.toRight( s"visitTypeInsn: opcode $opcode not matched, expected "+List(
+      OpCode.NEW.code, OpCode.ANEWARRAY.code, OpCode.CHECKCAST.code, OpCode.INSTANCEOF.code
+    ))  +: body
+
+    //body = Right(MTypeInsn(OpCode.find(opcode).get, JavaName.raw(typeName))) +: body
 
   /**
    * Visits a field instruction. A field instruction is an instruction that loads or stores the

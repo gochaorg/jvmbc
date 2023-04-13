@@ -59,8 +59,7 @@ class GenerateByteCodeTest extends munit.FunSuite:
             MLabel("begin"),
 
             // new StringBuilder(0)
-            MTypeInsn(OpCode.NEW, 
-              JavaName.raw("java/lang/StringBuilder")),
+            MNew(JavaName.raw("java/lang/StringBuilder")),
 
             MInst(OpCode.DUP),
             MLdcInsn(LdcValue.INT(0)),
