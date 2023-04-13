@@ -1256,14 +1256,12 @@ MyClass
  * @param desc
  * @param iface
  */
-case class MMethodInsn(
-  op:OpCode, // TODO concrete (enum) op: INVOKEVIRTUAL, INVOKESPECIAL, INVOKESTATIC or INVOKEINTERFACE.
-  owner:JavaName,
-  name:String, // TODO enum special name / regular name
-  desc:MDesc,
-  iface:Boolean
-) 
-  extends MethCode
+enum MMethodInsn extends MethCode:
+  case InvokeVirtual( owner:JavaName, name:String, desc:MDesc, iface:Boolean )
+  case InvokeStatic( owner:JavaName, name:String, desc:MDesc, iface:Boolean )
+  case InvokeSpecial( owner:JavaName, name:String, desc:MDesc, iface:Boolean )
+  case InvokeIterface( owner:JavaName, name:String, desc:MDesc, iface:Boolean )
+
 /**
  * multianewarray
  * <h2 style="font-weight: bold">Operation</h2>

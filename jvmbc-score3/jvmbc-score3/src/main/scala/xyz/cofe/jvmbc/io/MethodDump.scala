@@ -368,13 +368,28 @@ class MethodDump(
    * @param isInterface if the method's owner class is an interface.
    */
   override def visitMethodInsn(opcode:Int, owner:String, name:String, descriptor:String, isInterface:Boolean):Unit =
-    body = Right(MMethodInsn(
-      OpCode.find(opcode).get,
-      JavaName.raw(owner),
-      name,
-      MDesc.unsafe(descriptor),
-      isInterface
-    )) +: body
+    val inv:Option[MMethodInsn] = OpCode.find(opcode).flatMap {
+      case OpCode.INVOKEVIRTUAL => 
+        Some(MMethodInsn.InvokeVirtual(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+      case OpCode.INVOKESPECIAL => 
+        Some(MMethodInsn.InvokeSpecial(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+      case OpCode.INVOKESTATIC => 
+        Some(MMethodInsn.InvokeStatic(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+      case OpCode.INVOKEINTERFACE => 
+        Some(MMethodInsn.InvokeIterface(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+      case _ => None
+    }
+
+    body =
+      inv.toRight(
+        s"opcode (${opcode}) not matched, expect one of: "+
+        List( 
+          OpCode.INVOKEVIRTUAL.code, 
+          OpCode.INVOKESPECIAL.code, 
+          OpCode.INVOKESTATIC.code, 
+          OpCode.INVOKEINTERFACE.code, 
+        )
+      ) +: body
 
   /**
    * Visits an invokedynamic instruction.

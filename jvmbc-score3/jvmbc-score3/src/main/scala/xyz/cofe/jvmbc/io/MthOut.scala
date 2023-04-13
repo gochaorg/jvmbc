@@ -176,12 +176,17 @@ object MthOut:
 
   given MthOut[MMethodInsn] with
     def write(out: MethodVisitor, code: MMethodInsn)(using ctx: MthOutCtx): Unit = 
+      val (op, owner, name, desc, iface) = code match
+        case MMethodInsn.InvokeVirtual(owner, name, desc, iface)  => (OpCode.INVOKEVIRTUAL,   owner, name, desc, iface)
+        case MMethodInsn.InvokeStatic(owner, name, desc, iface)   => (OpCode.INVOKESTATIC,    owner, name, desc, iface)
+        case MMethodInsn.InvokeSpecial(owner, name, desc, iface)  => (OpCode.INVOKESPECIAL,   owner, name, desc, iface)
+        case MMethodInsn.InvokeIterface(owner, name, desc, iface) => (OpCode.INVOKEINTERFACE, owner, name, desc, iface)      
       out.visitMethodInsn(
-        code.op.code,
-        code.owner.rawClassName,
-        code.name,
-        code.desc.raw,
-        code.iface
+        op.code,
+        owner.rawClassName,
+        name,
+        desc.raw,
+        iface
       )
 
   given MthOut[MMultiANewArrayInsn] with

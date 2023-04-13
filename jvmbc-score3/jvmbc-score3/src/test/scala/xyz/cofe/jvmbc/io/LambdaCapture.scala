@@ -41,7 +41,7 @@ class LambdaCapture extends AnyFunSuite {
 
       /////////////
       cm.body.flatMap {
-        case ins @ MMethodInsn(OpCode.INVOKESTATIC, 
+        case ins @ MMethodInsn.InvokeStatic(
           JavaName("xyz/cofe/jvmbc/io/LambdaCapture"), name, desc, iface) => 
           List(ins)
         case _ => List.empty
