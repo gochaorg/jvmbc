@@ -122,27 +122,35 @@ distBinDir := {
   bin
 }
 
-val mainClass = "xyz.cofe.jtfm.Main"
+val mainClass = "xyz.cofe.jvmbc.io.json.bin.JsonIOMain"
 
 val jvmOpts = List[JvmOpt](
-  JvmOpt.Custom("-Dxyz.cofe.term.default=auto")
+  //JvmOpt.Custom("-Dxyz.cofe.term.default=auto")
 )
-val winJvmOpts = JvmOpt.Custom("-Djtfm.console=win") :: jvmOpts
-val nixJvmOpts = JvmOpt.Custom("-Djtfm.console=nix") :: jvmOpts
+val winJvmOpts = 
+  //JvmOpt.Custom("-Djtfm.console=win") :: 
+  jvmOpts
+val nixJvmOpts = 
+  //JvmOpt.Custom("-Djtfm.console=nix") :: 
+  jvmOpts
 
 val binBashScriptSrc  = BashScript (mainClass,jvmOpts=nixJvmOpts).fullScript
-val binBatchScriptSrc = BatchScript(mainClass,jvmOpts=winJvmOpts, javaExe=JavaExe.window).fullScript
+val binBatchScriptSrc = BatchScript(mainClass,jvmOpts=winJvmOpts, 
+  //javaExe=JavaExe.window
+).fullScript
+
+val scriptName = "jclass-json"
 
 val bashScript = taskKey[Unit]("Generate bash launch script")
 bashScript := {
-  val file = new File(distBinDir.value, "jtfm.sh")
+  val file = new File(distBinDir.value, s"${scriptName}.sh")
   IO.write(file, binBashScriptSrc.getBytes("UTF-8") )
   file.setExecutable(true)
 }
 
 val batScript = taskKey[Unit]("Generate batch launch script")
 batScript := {
-  val file = new File(distBinDir.value, "jtfm.bat")
+  val file = new File(distBinDir.value, s"${scriptName}.bat")
   IO.write(file, binBatchScriptSrc.getBytes(StandardCharsets.ISO_8859_1) )
   file.setExecutable(true)
 }
