@@ -130,7 +130,7 @@ object MthOut:
 
   given MthOut[MLineNumber] with
     def write(out: MethodVisitor, code: MLineNumber)(using ctx: MthOutCtx): Unit = 
-      out.visitLineNumber(code.line, ctx.label(code.label))
+      out.visitLineNumber(code.line, ctx.label(code.label.rawLabel))
 
   given MthOut[MLocalVariable] with
     def write(out: MethodVisitor, code: MLocalVariable)(using ctx: MthOutCtx): Unit = 

@@ -705,7 +705,7 @@ class MethodDump(
    *     (by the {@link #visitLabel} method).
    */
   override def visitLineNumber(line:Int, start:Label):Unit =
-    body = Right(MLineNumber(line,start.toString)) +: body
+    body = Right(MLineNumber(line,LBL(start.toString))) +: body
 
   /**
    * Visits the maximum stack size and the maximum number of local variables of the method.

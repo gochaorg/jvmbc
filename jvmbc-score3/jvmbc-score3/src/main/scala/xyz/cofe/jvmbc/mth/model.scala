@@ -1012,7 +1012,7 @@ object MLdcInsn:
  */
 case class MLineNumber(
   line:Int,
-  label:String // new type
+  label:Label
 ) extends MethCode
 
 /** 
