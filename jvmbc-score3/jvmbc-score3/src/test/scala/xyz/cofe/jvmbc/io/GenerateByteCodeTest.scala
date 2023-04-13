@@ -10,6 +10,7 @@ import xyz.cofe.jvmbc.*
 import xyz.cofe.jvmbc.cls.*
 import xyz.cofe.jvmbc.mth.*
 import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
+import xyz.cofe.jvmbc.parse.desc.{Method => MDesc}
 
 // object GenerateByteCodeSamble:
 //   def sum( a:String, b:String ):String = a + b + a
@@ -32,14 +33,14 @@ class GenerateByteCodeTest extends munit.FunSuite:
         CMethod(
           access = CMethodAccess.build.virtual.publico.build,
           name = "<init>",
-          desc = MDesc("()V"),
+          desc = MDesc.unsafe("()V"),
           sign = None,
           exceptions = List.empty,
           body = List(
             MCode(),
             MLabel("begin"),
             MVarInsn(OpCode.ALOAD,0),
-            MMethodInsn(OpCode.INVOKESPECIAL, "java/lang/Object", "<init>", MDesc("()V"), false),
+            MMethodInsn(OpCode.INVOKESPECIAL, "java/lang/Object", "<init>", MDesc.unsafe("()V"), false),
             MInst(OpCode.RETURN),
             MLabel("end"),
             MLocalVariable("this", TDesc(clsName),None,"begin","end",0),
@@ -50,7 +51,7 @@ class GenerateByteCodeTest extends munit.FunSuite:
         CMethod(
           access = CMethodAccess.build.statico.publico.build,
           name = "concat",
-          desc = MDesc(s"(${stringMType}${stringMType})$stringMType"),
+          desc = MDesc.unsafe(s"(${stringMType}${stringMType})$stringMType"),
           sign = None,
           exceptions = List.empty,
           body = List(
@@ -61,18 +62,18 @@ class GenerateByteCodeTest extends munit.FunSuite:
             MTypeInsn(OpCode.NEW, "java/lang/StringBuilder"),
             MInst(OpCode.DUP),
             MLdcInsn(LdcValue.INT(0)),
-            MMethodInsn(OpCode.INVOKESPECIAL,"java/lang/StringBuilder","<init>",MDesc("(I)V"),false),
+            MMethodInsn(OpCode.INVOKESPECIAL,"java/lang/StringBuilder","<init>",MDesc.unsafe("(I)V"),false),
 
             // stringBuilder.append(a)
             MVarInsn(OpCode.ALOAD,0),
-            MMethodInsn(OpCode.INVOKEVIRTUAL,"java/lang/StringBuilder","append",MDesc("(Ljava/lang/String;)Ljava/lang/StringBuilder;"),false),
+            MMethodInsn(OpCode.INVOKEVIRTUAL,"java/lang/StringBuilder","append",MDesc.unsafe("(Ljava/lang/String;)Ljava/lang/StringBuilder;"),false),
 
             // ....append(b)
             MVarInsn(OpCode.ALOAD,1),
-            MMethodInsn(OpCode.INVOKEVIRTUAL,"java/lang/StringBuilder","append",MDesc("(Ljava/lang/String;)Ljava/lang/StringBuilder;"),false),
+            MMethodInsn(OpCode.INVOKEVIRTUAL,"java/lang/StringBuilder","append",MDesc.unsafe("(Ljava/lang/String;)Ljava/lang/StringBuilder;"),false),
 
             // ....toString()
-            MMethodInsn(OpCode.INVOKEVIRTUAL,"java/lang/StringBuilder","toString",MDesc("()Ljava/lang/String;"),false),
+            MMethodInsn(OpCode.INVOKEVIRTUAL,"java/lang/StringBuilder","toString",MDesc.unsafe("()Ljava/lang/String;"),false),
 
             // return
             MInst(OpCode.ARETURN),
