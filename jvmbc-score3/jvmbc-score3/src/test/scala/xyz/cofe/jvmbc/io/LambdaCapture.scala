@@ -41,7 +41,8 @@ class LambdaCapture extends AnyFunSuite {
 
       /////////////
       cm.body.flatMap {
-        case ins @ MMethodInsn(OpCode.INVOKESTATIC, "xyz/cofe/jvmbc/io/LambdaCapture", name, desc, iface) => 
+        case ins @ MMethodInsn(OpCode.INVOKESTATIC, 
+          JavaName("xyz/cofe/jvmbc/io/LambdaCapture"), name, desc, iface) => 
           List(ins)
         case _ => List.empty
       }.flatMap( mi => cb.methods.find(m => m.name==mi.name && m.desc.raw == mi.desc.raw).fold(List.empty)(m=>List(m)) )

@@ -39,8 +39,8 @@ class GenerateByteCodeTest extends munit.FunSuite:
           body = List(
             MCode(),
             MLabel("begin"),
-            MVarInsn(OpCode.ALOAD,0),
-            MMethodInsn(OpCode.INVOKESPECIAL, "java/lang/Object", "<init>", MDesc.unsafe("()V"), false),
+            MVarInsn(OpCode.ALOAD,Variable(0)),
+            MMethodInsn(OpCode.INVOKESPECIAL, JavaName.raw("java/lang/Object"), "<init>", MDesc.unsafe("()V"), false),
             MInst(OpCode.RETURN),
             MLabel("end"),
             MLocalVariable("this", TDesc(clsName),None,"begin","end",0),
@@ -59,21 +59,27 @@ class GenerateByteCodeTest extends munit.FunSuite:
             MLabel("begin"),
 
             // new StringBuilder(0)
-            MTypeInsn(OpCode.NEW, "java/lang/StringBuilder"),
+            MTypeInsn(OpCode.NEW, 
+              JavaName.raw("java/lang/StringBuilder")),
+
             MInst(OpCode.DUP),
             MLdcInsn(LdcValue.INT(0)),
-            MMethodInsn(OpCode.INVOKESPECIAL,"java/lang/StringBuilder","<init>",MDesc.unsafe("(I)V"),false),
+            MMethodInsn(OpCode.INVOKESPECIAL,
+              JavaName.raw("java/lang/StringBuilder"),"<init>",MDesc.unsafe("(I)V"),false),
 
             // stringBuilder.append(a)
-            MVarInsn(OpCode.ALOAD,0),
-            MMethodInsn(OpCode.INVOKEVIRTUAL,"java/lang/StringBuilder","append",MDesc.unsafe("(Ljava/lang/String;)Ljava/lang/StringBuilder;"),false),
+            MVarInsn(OpCode.ALOAD,Variable(0)),
+            MMethodInsn(OpCode.INVOKEVIRTUAL,
+              JavaName.raw("java/lang/StringBuilder"),"append",MDesc.unsafe("(Ljava/lang/String;)Ljava/lang/StringBuilder;"),false),
 
             // ....append(b)
-            MVarInsn(OpCode.ALOAD,1),
-            MMethodInsn(OpCode.INVOKEVIRTUAL,"java/lang/StringBuilder","append",MDesc.unsafe("(Ljava/lang/String;)Ljava/lang/StringBuilder;"),false),
+            MVarInsn(OpCode.ALOAD,Variable(1)),
+            MMethodInsn(OpCode.INVOKEVIRTUAL,
+              JavaName.raw("java/lang/StringBuilder"),"append",MDesc.unsafe("(Ljava/lang/String;)Ljava/lang/StringBuilder;"),false),
 
             // ....toString()
-            MMethodInsn(OpCode.INVOKEVIRTUAL,"java/lang/StringBuilder","toString",MDesc.unsafe("()Ljava/lang/String;"),false),
+            MMethodInsn(OpCode.INVOKEVIRTUAL,
+              JavaName.raw("java/lang/StringBuilder"),"toString",MDesc.unsafe("()Ljava/lang/String;"),false),
 
             // return
             MInst(OpCode.ARETURN),

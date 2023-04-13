@@ -18,7 +18,7 @@ object Props:
 
 class S3Test extends AnyFunSuite {
   test("simple") {
-    val inc = MIincInsn(1,2)
+    val inc = MIincInsn(Variable(1),2)
     println(summon[Props[MIincInsn]].props(inc))
 
     println( inc._1 )

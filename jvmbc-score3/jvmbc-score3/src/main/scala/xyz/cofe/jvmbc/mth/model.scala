@@ -372,7 +372,7 @@ case class MAnnotationDefault(annotations:Seq[AnnCode]) extends MethCode with Ne
  */
 case class MFieldInsn(
   op:OpCode,
-  owner:String, // TODO ObjectType
+  owner:JavaName,
   name:String, // TODO NewType
   desc:TDesc
 ) extends MethCode
@@ -617,7 +617,7 @@ object MFrameElem:
  * @param inc
  */
 case class MIincInsn(
-  variable:Int, // TODO new type
+  variable:Variable,
   inc:Int
 ) extends MethCode
 
@@ -1046,8 +1046,8 @@ case class MLocalVariable(
 case class MLocalVariableAnnotation(
   typeRef:MTypeLocalVarRef,
   typePath:Option[String],
-  startLabels:Seq[String], // TODO new type
-  endLabels:Seq[String], // TODO new type
+  startLabels:Seq[Label],
+  endLabels:Seq[Label], 
   index:Seq[Int],
   desc:TDesc,
   visible:Boolean,
@@ -1159,9 +1159,9 @@ case class MLocalVariableAnnotation(
  * @param labels
  */
 case class MLookupSwitchInsn(
-  defaultHandle:String, // TODO new type
+  defaultHandle:Label,
   keys:Seq[Int],
-  labels:Seq[String] // TODO new type
+  labels:Seq[Option[Label]] 
 ) extends MethCode
 
 /** 
@@ -1258,7 +1258,7 @@ MyClass
  */
 case class MMethodInsn(
   op:OpCode, // TODO concrete (enum) op: INVOKEVIRTUAL, INVOKESPECIAL, INVOKESTATIC or INVOKEINTERFACE.
-  owner:String, // TODO ObjectType
+  owner:JavaName,
   name:String, // TODO enum special name / regular name
   desc:MDesc,
   iface:Boolean
@@ -1445,8 +1445,8 @@ case class MParameterAnnotation(
 case class MTableSwitchInsn(
   min:Int,
   max:Int,
-  defaultLabel:String, // TODO new type
-  labels:Seq[String] // TODO new type
+  defaultLabel:Label,
+  labels:Seq[Option[Label]]
 ) 
   extends MethCode
 
@@ -1473,10 +1473,10 @@ case class MTryCatchAnnotation(
  * @param type
  */
 case class MTryCatchBlock(
-  startLabel:String, // TODO new type
-  endLabel:String, // TODO new type
-  handlerLabel:String, // TODO new type
-  typeName:Option[String] // TODO ObjectType
+  startLabel:Label, 
+  endLabel:Label, 
+  handlerLabel:Label,
+  typeName:Option[JavaName]
 ) extends MethCode
 
 /** 
@@ -1506,7 +1506,7 @@ case class MTypeAnnotation(
  */
 case class MTypeInsn(
   op:OpCode, // enum Op
-  typeName:String // TODO ObjectType
+  typeName:JavaName
 ) 
   extends MethCode
 
@@ -2199,6 +2199,19 @@ case class MTypeInsn(
  */
 case class MVarInsn(
   op:OpCode, // TODO enum
-  variable:Int // TODO new type
+  variable:Variable
 ) 
   extends MethCode
+
+opaque type Variable = Int
+object Variable:
+  def apply(idx:Int):Variable = idx
+
+extension (varIdx:Variable)
+  def rawVariable:Int = varIdx
+
+opaque type Label = String
+object Label:
+  def apply(raw:String):Label = raw
+extension (l:Label)
+  def rawLabel:String = l

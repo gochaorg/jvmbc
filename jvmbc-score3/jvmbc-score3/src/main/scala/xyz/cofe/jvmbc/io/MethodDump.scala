@@ -2,6 +2,7 @@ package xyz.cofe.jvmbc
 package io
 
 import mth._
+import mth.{Label => LBL}
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ModuleVisitor
 import org.objectweb.asm.AnnotationVisitor
@@ -13,6 +14,7 @@ import org.objectweb.asm.Attribute
 import org.objectweb.asm.Handle
 import org.objectweb.asm.Label
 import xyz.cofe.jvmbc.parse.desc.{Method => MDesc}
+import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
 
 /**
  * Парсинг метода класса
@@ -322,7 +324,7 @@ class MethodDump(
    *     variable.
    */
   override def visitVarInsn(opcode:Int, variable:Int):Unit =
-    body = Right(MVarInsn(OpCode.find(opcode).get, variable)) +: body
+    body = Right(MVarInsn(OpCode.find(opcode).get, Variable(variable))) +: body
 
   /**
    * Visits a type instruction. A type instruction is an instruction that takes the internal name of
@@ -334,7 +336,7 @@ class MethodDump(
    *     name of an object or array class (see {@link Type#getInternalName()}).
    */
   override def visitTypeInsn(opcode:Int, typeName:String):Unit = 
-    body = Right(MTypeInsn(OpCode.find(opcode).get,typeName)) +: body
+    body = Right(MTypeInsn(OpCode.find(opcode).get, JavaName.raw(typeName))) +: body
 
   /**
    * Visits a field instruction. A field instruction is an instruction that loads or stores the
@@ -349,7 +351,7 @@ class MethodDump(
   override def visitFieldInsn(opcode:Int, owner:String, name:String, descriptor:String):Unit = 
     body = Right(MFieldInsn(
       OpCode.find(opcode).get,
-      owner,
+      JavaName.raw(owner),
       name,
       TDesc.unsafe(descriptor)
     )) +: body
@@ -368,7 +370,7 @@ class MethodDump(
   override def visitMethodInsn(opcode:Int, owner:String, name:String, descriptor:String, isInterface:Boolean):Unit =
     body = Right(MMethodInsn(
       OpCode.find(opcode).get,
-      owner,
+      JavaName.raw(owner),
       name,
       MDesc.unsafe(descriptor),
       isInterface
@@ -473,7 +475,7 @@ class MethodDump(
    * @param increment amount to increment the local variable by.
    */
   override def visitIincInsn(variable:Int, increment:Int):Unit = 
-    body = Right(MIincInsn(variable,increment)) +: body
+    body = Right(MIincInsn(Variable(variable),increment)) +: body
 
   /**
    * Visits a TABLESWITCH instruction.
@@ -489,8 +491,8 @@ class MethodDump(
       Right(MTableSwitchInsn(
         min,
         max,
-        dflt.toString,
-        labels.map( l => if l!=null then l.toString else null )
+        LBL(dflt.toString),
+        labels.map( l => if l!=null then Some(LBL(l.toString)) else None )
       )) +: body
 
   /**
@@ -504,9 +506,9 @@ class MethodDump(
   override def visitLookupSwitchInsn(dflt:Label, keys:Array[Int], labels:Array[Label]):Unit = 
     body =
       Right(MLookupSwitchInsn(
-        dflt.toString,
+        LBL(dflt.toString),
         keys,
-        labels.map(l => if l!=null then l.toString else null )
+        labels.map(l => if l!=null then Some(LBL(l.toString)) else None )
       )) +: body
 
   /**
@@ -573,10 +575,10 @@ class MethodDump(
   override def visitTryCatchBlock(start:Label, end:Label, handler:Label, typeName:String):Unit = 
     body =
       Right(MTryCatchBlock(
-        start.toString,
-        end.toString,
-        handler.toString,
-        if typeName!=null then Some(typeName) else None
+        LBL(start.toString),
+        LBL(end.toString),
+        LBL(handler.toString),
+        if typeName!=null then Some(JavaName.raw(typeName)) else None
       )) +: body
 
   /**
@@ -668,8 +670,8 @@ class MethodDump(
           MLocalVariableAnnotation(
             MTypeLocalVarRef(typeRef),
             if typePath!=null then Some(typePath.toString) else None,
-            start.map(_.toString),
-            end.map(_.toString),
+            start.map(l => LBL(l.toString)),
+            end.map(l => LBL(l.toString)),
             index,
             TDesc.unsafe(descriptor),
             visible,

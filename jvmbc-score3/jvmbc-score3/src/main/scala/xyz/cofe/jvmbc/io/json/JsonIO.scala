@@ -104,6 +104,20 @@ given FromJson[Sign] with
   override def fromJson(j: AST): Either[DervError, Sign] = 
     summon[FromJson[String]].fromJson(j).map(Sign(_))
   
+given ToJson[Variable] with
+  override def toJson(v: Variable): Option[AST] = summon[ToJson[Int]].toJson(v.rawVariable)
+
+given FromJson[Variable] with
+  override def fromJson(j: AST): Either[DervError, Variable] = 
+    summon[FromJson[Int]].fromJson(j).map(Variable(_))
+
+given ToJson[Label] with
+  override def toJson(v: Label): Option[AST] = summon[ToJson[String]].toJson(v.rawLabel)
+
+given FromJson[Label] with
+  override def fromJson(j: AST): Either[DervError, Label] = 
+    summon[FromJson[String]].fromJson(j).map(Label(_))
+
 given ToJson[MSign] with
   override def toJson(v: MSign): Option[AST] = summon[ToJson[String]].toJson(v.raw)
 

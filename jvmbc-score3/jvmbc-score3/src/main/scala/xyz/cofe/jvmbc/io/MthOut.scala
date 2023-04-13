@@ -57,7 +57,7 @@ object MthOut:
     def write(out: MethodVisitor, code: MFieldInsn)(using ctx: MthOutCtx): Unit = 
       out.visitFieldInsn(
         code.op.code,
-        code.owner,
+        code.owner.rawClassName,
         code.name,
         code.desc.raw
       )
@@ -74,7 +74,7 @@ object MthOut:
 
   given MthOut[MIincInsn] with
     def write(out: MethodVisitor, code: MIincInsn)(using ctx: MthOutCtx): Unit = 
-      out.visitIincInsn(code.variable, code.inc)
+      out.visitIincInsn(code.variable.rawVariable, code.inc)
 
   given MthOut[MInsnAnnotation] with
     def write(out: MethodVisitor, code: MInsnAnnotation)(using ctx: MthOutCtx): Unit = 
@@ -149,10 +149,10 @@ object MthOut:
         code.typeRef.raw,
         code.typePath.map(t=>org.objectweb.asm.TypePath.fromString(t)).orNull,
         code.startLabels.map(n =>
-          if n!=null then ctx.label(n) else null
+          ctx.label(n.rawLabel)
         ).toArray,
         code.endLabels.map(n =>
-          if n!=null then ctx.label(n) else null
+          ctx.label(n.rawLabel)
         ).toArray,
         code.index.toArray,
         code.desc.raw,
@@ -163,9 +163,11 @@ object MthOut:
   given MthOut[MLookupSwitchInsn] with
     def write(out: MethodVisitor, code: MLookupSwitchInsn)(using ctx: MthOutCtx): Unit = 
       out.visitLookupSwitchInsn(
-        ctx.label(code.defaultHandle),
+        ctx.label(code.defaultHandle.rawLabel),
         code.keys.toArray,
-        code.labels.map(n=>ctx.label(n)).toArray
+        code.labels.map( l =>
+          l.map( la => ctx.label(la.rawLabel) ).orNull
+        ).toArray
       )
 
   given MthOut[MMaxs] with
@@ -176,7 +178,7 @@ object MthOut:
     def write(out: MethodVisitor, code: MMethodInsn)(using ctx: MthOutCtx): Unit = 
       out.visitMethodInsn(
         code.op.code,
-        code.owner,
+        code.owner.rawClassName,
         code.name,
         code.desc.raw,
         code.iface
@@ -207,8 +209,8 @@ object MthOut:
       out.visitTableSwitchInsn(
         code.min,
         code.max,
-        ctx.label(code.defaultLabel),
-        code.labels.map{n=>ctx.label(n)}.toArray:_*
+        ctx.label(code.defaultLabel.rawLabel),
+        code.labels.map{n=>n.map(n=>ctx.label(n.rawLabel)).orNull}.toArray:_*
       )
 
   given MthOut[MTryCatchAnnotation] with
@@ -224,10 +226,10 @@ object MthOut:
   given MthOut[MTryCatchBlock] with
     def write(out: MethodVisitor, code: MTryCatchBlock)(using ctx: MthOutCtx): Unit = 
       out.visitTryCatchBlock(
-        ctx.label(code.startLabel),
-        ctx.label(code.endLabel),
-        ctx.label(code.handlerLabel),
-        code.typeName.orNull
+        ctx.label(code.startLabel.rawLabel),
+        ctx.label(code.endLabel.rawLabel),
+        ctx.label(code.handlerLabel.rawLabel),
+        code.typeName.map(_.rawClassName).orNull
       )
 
   given MthOut[MTypeAnnotation] with
@@ -242,13 +244,13 @@ object MthOut:
 
   given MthOut[MTypeInsn] with
     def write(out: MethodVisitor, code: MTypeInsn)(using ctx: MthOutCtx): Unit = 
-      out.visitTypeInsn(code.op.code, code.typeName)
+      out.visitTypeInsn(code.op.code, code.typeName.rawClassName)
 
   given MthOut[MVarInsn] with
     def write(out: MethodVisitor, code: MVarInsn)(using ctx: MthOutCtx): Unit = 
       out.visitVarInsn(
         code.op.code,
-        code.variable
+        code.variable.rawVariable
       )
 
   given MthOut[MethCode] with
