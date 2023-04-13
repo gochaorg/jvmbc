@@ -4,3 +4,4 @@
 .vscode
 target
 .bsp
+dist/
