@@ -1000,7 +1000,7 @@ object MLdcInsn:
           case _ => 
             Left(s"Not parsed MLdcInsn($value), sort=${tip.getSort()}")
       case hdl:org.objectweb.asm.Handle => 
-        Right(new MLdcInsn(LdcValue.HANDLE(bm.Handle(hdl))))
+        Right(new MLdcInsn(LdcValue.HANDLE(bm.Handle.unsafe(hdl))))
       case d:org.objectweb.asm.ConstantDynamic => 
         bm.ConstDynamic(d).flatMap( cd => MLdcInsn(cd) )
       case _ => Left(s"Not parsed MLdcInsn($value)")

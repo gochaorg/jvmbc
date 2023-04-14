@@ -420,7 +420,7 @@ class MethodDump(
     val bmArgs:Seq[Either[String,bm.BootstrapArg]] = bootstrapMethodArguments.map { bm0 => 
       bm.BootstrapArg(bm0)
     }
-    val bmHdl = bm.Handle(bootstrapMethodHandle)
+    val bmHdl = bm.Handle.unsafe(bootstrapMethodHandle)
     
     val e = for {
       args <- firstErr(bmArgs)      

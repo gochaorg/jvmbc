@@ -154,6 +154,9 @@ case class TDesc( fieldType: xyz.cofe.jvmbc.parse.desc.FieldType ):
 object TDesc {
   def unsafe( raw:String ):TDesc =
     xyz.cofe.jvmbc.parse.desc.FieldType.parse(raw).map(TDesc(_)).getOrElse(throw new Error(s"can't parse \"${raw}\" as FieldType"))
+  
+  def parse( raw:String ):Either[String,TDesc] =
+    xyz.cofe.jvmbc.parse.desc.FieldType.parse(raw).map(TDesc(_))
 }
 
 /** Сигнатура типа */

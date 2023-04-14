@@ -14,7 +14,6 @@ case class Handle(tag:Int,desc:TDesc|MDesc,name:String,owner:String,iface:Boolea
     tag, 
     owner, 
     name, 
-    //desc.raw, 
     {
       desc match
         case m:MDesc => m.raw
@@ -24,8 +23,13 @@ case class Handle(tag:Int,desc:TDesc|MDesc,name:String,owner:String,iface:Boolea
   )
 
 object Handle:
-  def apply( h:org.objectweb.asm.Handle ):Handle =
-    Handle(h.getTag, TDesc.unsafe(h.getDesc), h.getName, h.getOwner, h.isInterface)
+  def unsafe( h:org.objectweb.asm.Handle ):Handle =
+    val desc1 : Either[String,TDesc|MDesc] = MDesc.parse(h.getDesc());
+    val desc2 : Either[String,TDesc|MDesc] = TDesc.parse(h.getDesc());     
+    val descEt : Either[String,TDesc|MDesc] = desc1.orElse( desc2 )
+    val desc = descEt.getOrElse( throw new Error(s"can't parse Handle from ${h.getDesc()}") )
+
+    Handle(h.getTag, desc, h.getName, h.getOwner, h.isInterface)
 
 case class TypeArg(value:String) extends BootstrapArg:
   override def toAsm: Object = org.objectweb.asm.Type.getType(value)
@@ -59,7 +63,7 @@ object ConstDynamic:
         Right(List()): Either[String, List[BootstrapArg]]
       ) { case (lst_e, itm) =>
         lst_e.flatMap(lst => itm.map(arg => lst :+ arg))
-      }.map( lst => new ConstDynamic(a.getName, a.getDescriptor, Handle(a.getBootstrapMethod),lst)
+      }.map( lst => new ConstDynamic(a.getName, a.getDescriptor, Handle.unsafe(a.getBootstrapMethod),lst)
     )
 
 
@@ -71,6 +75,6 @@ object BootstrapArg:
     case a: java.lang.Double => Right(DoubleArg(a))
     case a: String => Right(StringArg(a))
     case a: org.objectweb.asm.Type => Right(TypeArg(a.toString))
-    case a: org.objectweb.asm.Handle => Right(bm.Handle(a))
+    case a: org.objectweb.asm.Handle => Right(bm.Handle.unsafe(a))
     case a: org.objectweb.asm.ConstantDynamic => bm.ConstDynamic(a)
     case a: AnyRef => Left(s"(visitInvokeDynamicInsn) unsupported bootstrap method arg ${a} : ${if a != null then a.getClass else null}")
