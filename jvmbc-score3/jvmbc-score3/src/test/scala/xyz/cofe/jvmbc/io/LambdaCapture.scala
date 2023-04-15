@@ -3,8 +3,7 @@ package xyz.cofe.jvmbc.io
 import org.scalatest.funsuite.AnyFunSuite
 import java.lang.invoke.SerializedLambda
 import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
-import xyz.cofe.jvmbc.mth.MMethodInsn
-import xyz.cofe.jvmbc.mth.OpCode
+import xyz.cofe.jvmbc.mth.*
 
 class LambdaCapture extends AnyFunSuite {
   test("lambda 1") {
@@ -41,7 +40,7 @@ class LambdaCapture extends AnyFunSuite {
 
       /////////////
       cm.body.flatMap {
-        case ins @ MMethodInsn.InvokeStatic(
+        case ins @ MInvoke.Static(
           JavaName("xyz/cofe/jvmbc/io/LambdaCapture"), name, desc, iface) => 
           List(ins)
         case _ => List.empty

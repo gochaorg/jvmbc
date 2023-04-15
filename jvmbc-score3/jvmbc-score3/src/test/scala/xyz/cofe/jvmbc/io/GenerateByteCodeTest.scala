@@ -40,10 +40,10 @@ class GenerateByteCodeTest extends munit.FunSuite:
             MCode(),
             MLabel("begin"),
             MVarInsn(OpCode.ALOAD,Variable(0)),
-            MMethodInsn.InvokeSpecial(JavaName.raw("java/lang/Object"), "<init>", MDesc.unsafe("()V"), false),
+            MInvoke.Special(JavaName.raw("java/lang/Object"), "<init>", MDesc.unsafe("()V"), false),
             MInst(OpCode.RETURN),
             MLabel("end"),
-            MLocalVariable("this", TDesc(clsName),None,"begin","end",0),
+            MLocalVariable("this",clsName,None,"begin","end",0),
             MMaxs(1,1),
             MEnd()
           )
@@ -63,21 +63,21 @@ class GenerateByteCodeTest extends munit.FunSuite:
 
             MInst(OpCode.DUP),
             MLdcInsn(LdcValue.INT(0)),
-            MMethodInsn.InvokeSpecial(
+            MInvoke.Special(
               JavaName.raw("java/lang/StringBuilder"),"<init>",MDesc.unsafe("(I)V"),false),
 
             // stringBuilder.append(a)
             MVarInsn(OpCode.ALOAD,Variable(0)),
-            MMethodInsn.InvokeVirtual(
+            MInvoke.Virtual(
               JavaName.raw("java/lang/StringBuilder"),"append",MDesc.unsafe("(Ljava/lang/String;)Ljava/lang/StringBuilder;"),false),
 
             // ....append(b)
             MVarInsn(OpCode.ALOAD,Variable(1)),
-            MMethodInsn.InvokeVirtual(
+            MInvoke.Virtual(
               JavaName.raw("java/lang/StringBuilder"),"append",MDesc.unsafe("(Ljava/lang/String;)Ljava/lang/StringBuilder;"),false),
 
             // ....toString()
-            MMethodInsn.InvokeVirtual(
+            MInvoke.Virtual(
               JavaName.raw("java/lang/StringBuilder"),"toString",MDesc.unsafe("()Ljava/lang/String;"),false),
 
             // return
@@ -85,8 +85,8 @@ class GenerateByteCodeTest extends munit.FunSuite:
 
             MLabel("end"),
 
-            MLocalVariable("a",TDesc(strClsName),None,"begin","end",0),
-            MLocalVariable("b",TDesc(strClsName),None,"begin","end",1),
+            MLocalVariable("a",strClsName,None,"begin","end",0),
+            MLocalVariable("b",strClsName,None,"begin","end",1),
 
             MMaxs(1,1),
             MEnd()

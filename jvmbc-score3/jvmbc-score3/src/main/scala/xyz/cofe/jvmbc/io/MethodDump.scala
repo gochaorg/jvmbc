@@ -389,13 +389,13 @@ class MethodDump(
     val inv = mdesc.flatMap( mdesc => 
       op.flatMap {
         case OpCode.INVOKEVIRTUAL => 
-          Right(MMethodInsn.InvokeVirtual(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+          Right(MInvoke.Virtual(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
         case OpCode.INVOKESPECIAL => 
-          Right(MMethodInsn.InvokeSpecial(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+          Right(MInvoke.Special(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
         case OpCode.INVOKESTATIC => 
-          Right(MMethodInsn.InvokeStatic(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+          Right(MInvoke.Static(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
         case OpCode.INVOKEINTERFACE => 
-          Right(MMethodInsn.InvokeIterface(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+          Right(MInvoke.Iterface(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
         case _ => 
           Left(s"opcode (${opcode}) not matched, expect one of: "+
             List( 
@@ -429,8 +429,8 @@ class MethodDump(
     val bmHdl = bm.Handle.unsafe(bootstrapMethodHandle)
     
     val e = for {
-      args <- firstErr(bmArgs)      
-    } yield MInvokeDynamicInsn(name,MDesc.unsafe(descriptor),bmHdl,args)
+      args <- firstErr(bmArgs)
+    } yield MInvoke.Dynamic(name,MDesc.unsafe(descriptor),bmHdl,args)
 
     body = e +: body
 

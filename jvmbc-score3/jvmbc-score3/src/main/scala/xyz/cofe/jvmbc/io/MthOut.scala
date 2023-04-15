@@ -4,6 +4,8 @@ import org.objectweb.asm.MethodVisitor
 import xyz.cofe.jvmbc.mth._
 import xyz.cofe.jvmbc.ann.AnnCode
 import org.objectweb.asm.Label
+import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
+import xyz.cofe.jvmbc.parse.desc.{Method => MDesc}
 
 /** Контекст генерации метода класса, используется для генерации/получения метки [[xyz.cofe.jvmbc.mth.MLabel]] */
 trait MthOutCtx:
@@ -93,8 +95,8 @@ object MthOut:
         code.operand
       )
 
-  given MthOut[MInvokeDynamicInsn] with
-    def write(out: MethodVisitor, code: MInvokeDynamicInsn)(using ctx: MthOutCtx): Unit = 
+  given MthOut[MInvoke.Dynamic] with
+    def write(out: MethodVisitor, code: MInvoke.Dynamic)(using ctx: MthOutCtx): Unit = 
       out.visitInvokeDynamicInsn(
         code.name,
         code.desc.raw,
@@ -174,20 +176,27 @@ object MthOut:
     def write(out: MethodVisitor, code: MMaxs)(using ctx: MthOutCtx): Unit = 
       out.visitMaxs(code.maxStack, code.maxLocal)
 
-  given MthOut[MMethodInsn] with
-    def write(out: MethodVisitor, code: MMethodInsn)(using ctx: MthOutCtx): Unit = 
-      val (op, owner, name, desc, iface) = code match
-        case MMethodInsn.InvokeVirtual(owner, name, desc, iface)  => (OpCode.INVOKEVIRTUAL,   owner, name, desc, iface)
-        case MMethodInsn.InvokeStatic(owner, name, desc, iface)   => (OpCode.INVOKESTATIC,    owner, name, desc, iface)
-        case MMethodInsn.InvokeSpecial(owner, name, desc, iface)  => (OpCode.INVOKESPECIAL,   owner, name, desc, iface)
-        case MMethodInsn.InvokeIterface(owner, name, desc, iface) => (OpCode.INVOKEINTERFACE, owner, name, desc, iface)      
-      out.visitMethodInsn(
-        op.code,
-        owner.rawClassName,
-        name,
-        desc.raw,
-        iface
-      )
+  given MthOut[MInvoke] with
+    def write(out: MethodVisitor, code: MInvoke)(using ctx: MthOutCtx): Unit = 
+      def writeSimple(op:OpCode, owner:JavaName, name:String, desc:MDesc, iface:Boolean):Unit =
+        out.visitMethodInsn(
+          op.code,
+          owner.rawClassName,
+          name,
+          desc.raw,
+          iface
+        )
+
+      code match
+        case MInvoke.Virtual(owner, name, desc, iface)  => 
+          writeSimple(OpCode.INVOKEVIRTUAL,   owner, name, desc, iface)
+        case MInvoke.Static(owner, name, desc, iface)   => 
+          writeSimple(OpCode.INVOKESTATIC,    owner, name, desc, iface)
+        case MInvoke.Special(owner, name, desc, iface)  => 
+          writeSimple(OpCode.INVOKESPECIAL,   owner, name, desc, iface)
+        case MInvoke.Iterface(owner, name, desc, iface) => 
+          writeSimple(OpCode.INVOKEINTERFACE, owner, name, desc, iface)
+        case invDyn : MInvoke.Dynamic => summon[MthOut[MInvoke.Dynamic]].write(out,invDyn)
 
   given MthOut[MMultiANewArrayInsn] with
     def write(out: MethodVisitor, code: MMultiANewArrayInsn)(using ctx: MthOutCtx): Unit = 
@@ -288,7 +297,6 @@ object MthOut:
         case c:MIincInsn =>  summon[MthOut[MIincInsn]].write(out,c)
         case c:MInsnAnnotation =>  summon[MthOut[MInsnAnnotation]].write(out,c)
         case c:MIntInsn =>  summon[MthOut[MIntInsn]].write(out,c)
-        case c:MInvokeDynamicInsn =>  summon[MthOut[MInvokeDynamicInsn]].write(out,c)
         case c:MJumpInsn =>  summon[MthOut[MJumpInsn]].write(out,c)
         case c:MLabel =>  summon[MthOut[MLabel]].write(out,c)
         case c:MLdcInsn =>  summon[MthOut[MLdcInsn]].write(out,c)
@@ -297,7 +305,7 @@ object MthOut:
         case c:MLocalVariableAnnotation =>  summon[MthOut[MLocalVariableAnnotation]].write(out,c)
         case c:MLookupSwitchInsn =>  summon[MthOut[MLookupSwitchInsn]].write(out,c)
         case c:MMaxs =>  summon[MthOut[MMaxs]].write(out,c)
-        case c:MMethodInsn =>  summon[MthOut[MMethodInsn]].write(out,c)
+        case c:MInvoke =>  summon[MthOut[MInvoke]].write(out,c)
         case c:MMultiANewArrayInsn =>  summon[MthOut[MMultiANewArrayInsn]].write(out,c)
         case c:MParameter =>  summon[MthOut[MParameter]].write(out,c)
         case c:MParameterAnnotation =>  summon[MthOut[MParameterAnnotation]].write(out,c)
