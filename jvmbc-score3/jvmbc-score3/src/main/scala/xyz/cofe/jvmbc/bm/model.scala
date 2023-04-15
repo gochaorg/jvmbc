@@ -10,19 +10,6 @@ import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
 sealed trait BootstrapArg:
   def toAsm:Object
 
-// case class Handle(tag:Int,desc:TDesc|MDesc,name:String,owner:String,iface:Boolean) extends BootstrapArg:
-//   override def toAsm: org.objectweb.asm.Handle = org.objectweb.asm.Handle(
-//     tag, 
-//     owner, 
-//     name, 
-//     {
-//       desc match
-//         case m:MDesc => m.raw
-//         case t:TDesc => t.raw
-//     },
-//     iface
-//   )
-
 enum Handle extends BootstrapArg:
   case GetField ( owner:JavaName, name:String, desc:TDesc )
   case GetStatic( owner:JavaName, name:String, desc:TDesc )
