@@ -565,11 +565,10 @@ class MethodDump(
    * @param numDimensions the number of dimensions of the array to allocate.
    */
   override def visitMultiANewArrayInsn(descriptor:String, numDimensions:Int):Unit =
-    body =
-      Right(MMultiANewArrayInsn(
-        TDesc.unsafe(descriptor),
-        numDimensions
-      )) +: body
+    val v = TDesc.parse(descriptor).map( tdesc => 
+      MMultiANewArrayInsn( tdesc, numDimensions )
+    )
+    body = v +: body
 
   /**
    * Visits an annotation on an instruction. This method must be called just <i>after</i> the
