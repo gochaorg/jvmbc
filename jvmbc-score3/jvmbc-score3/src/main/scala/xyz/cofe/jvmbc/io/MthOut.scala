@@ -55,14 +55,13 @@ object MthOut:
       val annOut = out.visitAnnotationDefault()
       summon[AnnOut[Seq[AnnCode]]].write(annOut, code.annotations)
 
-  given MthOut[MFieldInsn] with
-    def write(out: MethodVisitor, code: MFieldInsn)(using ctx: MthOutCtx): Unit = 
-      out.visitFieldInsn(
-        code.op.code,
-        code.owner.rawClassName,
-        code.name.rawFieldName,
-        code.desc.raw
-      )
+  given MthOut[MField] with
+    def write(out: MethodVisitor, code: MField)(using ctx: MthOutCtx): Unit = 
+      code match
+        case MField.GetStatic(owner, name, desc) => out.visitFieldInsn( OpCode.GETSTATIC.code, owner.rawClassName, name.rawFieldName, desc.raw )
+        case MField.SetStatic(owner, name, desc) => out.visitFieldInsn( OpCode.PUTSTATIC.code, owner.rawClassName, name.rawFieldName, desc.raw )
+        case MField.GetField (owner, name, desc) => out.visitFieldInsn( OpCode.GETFIELD.code , owner.rawClassName, name.rawFieldName, desc.raw )
+        case MField.SetField (owner, name, desc) => out.visitFieldInsn( OpCode.PUTFIELD.code , owner.rawClassName, name.rawFieldName, desc.raw )
 
   given MthOut[MFrame] with
     def write(out: MethodVisitor, code: MFrame)(using ctx: MthOutCtx): Unit = 
@@ -292,7 +291,7 @@ object MthOut:
         case c:MAnnotableParameterCount =>  summon[MthOut[MAnnotableParameterCount]].write(out,c)
         case c:MAnnotation =>  summon[MthOut[MAnnotation]].write(out,c)
         case c:MAnnotationDefault =>  summon[MthOut[MAnnotationDefault]].write(out,c)
-        case c:MFieldInsn =>  summon[MthOut[MFieldInsn]].write(out,c)
+        case c:MField =>  summon[MthOut[MField]].write(out,c)
         case c:MFrame =>  summon[MthOut[MFrame]].write(out,c)
         case c:MIincInsn =>  summon[MthOut[MIincInsn]].write(out,c)
         case c:MInsnAnnotation =>  summon[MthOut[MInsnAnnotation]].write(out,c)

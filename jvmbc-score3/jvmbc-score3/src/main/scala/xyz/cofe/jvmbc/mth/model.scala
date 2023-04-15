@@ -371,12 +371,11 @@ case class MAnnotationDefault(annotations:Seq[AnnCode]) extends MethCode with Ne
  * @param name
  * @param desc
  */
-case class MFieldInsn(
-  op:OpCode,
-  owner:JavaName,
-  name:FieldName,
-  desc:FieldType
-) extends MethCode
+enum MField extends MethCode:
+  case GetStatic(owner:JavaName, name:FieldName, desc:FieldType)
+  case SetStatic(owner:JavaName, name:FieldName, desc:FieldType)
+  case GetField (owner:JavaName, name:FieldName, desc:FieldType)
+  case SetField (owner:JavaName, name:FieldName, desc:FieldType)
 
 /**
  * <a href="https://coderoad.ru/25109942/%D0%A7%D1%82%D0%BE-%D1%82%D0%B0%D0%BA%D0%BE%D0%B5-%D1%84%D1%80%D0%B5%D0%B9%D0%BC-%D0%BA%D0%B0%D1%80%D1%82%D1%8B-%D1%81%D1%82%D0%B5%D0%BA%D0%B0">Java требует проверки всех загруженных классов, чтобы обеспечить безопасность песочницы и обеспечить безопасность кода для оптимизации. Обратите внимание, что это делается на уровне байт-кода , поэтому проверка не проверяет инварианты языка Java, она просто проверяет, что байт-код имеет смысл в соответствии с правилами байт-кода.</a>

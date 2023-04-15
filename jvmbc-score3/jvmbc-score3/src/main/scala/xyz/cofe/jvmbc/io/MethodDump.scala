@@ -375,14 +375,26 @@ class MethodDump(
    * @param descriptor the field's descriptor (see {@link Type}).
    */
   override def visitFieldInsn(opcode:Int, owner:String, name:String, descriptor:String):Unit = 
-    val v = FieldType.parse(descriptor).map { ft => 
-      MFieldInsn(
-        OpCode.find(opcode).get,
-        JavaName.raw(owner),
-        FieldName(name),
-        ft
-      )
-    }
+    // val v = FieldType.parse(descriptor).flatMap { ft => 
+    //   MFieldInsn(
+    //     OpCode.find(opcode).get,
+    //     JavaName.raw(owner),
+    //     FieldName(name),
+    //     ft
+    //   )
+    // }
+    val v = for {
+      ft <- FieldType.parse(descriptor)
+      op <- OpCode.find(opcode).toRight(s"can't parse OpCode.find($opcode)")
+      ins <- op match {
+        case OpCode.GETSTATIC => Right(MField.GetStatic(JavaName.raw(owner), FieldName(name), ft))
+        case OpCode.PUTSTATIC => Right(MField.SetStatic(JavaName.raw(owner), FieldName(name), ft))
+        case OpCode.GETFIELD =>  Right(MField.GetField (JavaName.raw(owner), FieldName(name), ft))
+        case OpCode.PUTFIELD =>  Right(MField.SetField (JavaName.raw(owner), FieldName(name), ft))
+        case _ => Left(s"opcode($op) not matched expect: GETSTATIC, SETSTATIC, GETFIELD, SETFIELD")
+      }
+    } yield ins
+
     body = v +: body
 
   /**
