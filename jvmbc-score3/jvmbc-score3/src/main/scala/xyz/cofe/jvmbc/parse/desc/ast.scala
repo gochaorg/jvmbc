@@ -1,6 +1,10 @@
 package xyz.cofe.jvmbc.parse.desc
 
 import xyz.cofe.jvmbc.sparse.SPtr
+import xyz.cofe.json4s3.derv.*
+import xyz.cofe.json4s3.stream.ast.AST
+import xyz.cofe.json4s3.derv.errors.DervError
+import xyz.cofe.json4s3.derv.errors.TypeCastFail
 
 /** AST дерево описания типа */
 sealed trait Ast
@@ -58,6 +62,33 @@ case class Void() extends Return with Ast
 /** Примитивные типы */
 sealed trait BaseType extends Ast with FieldType with ArrayComponent:
   def letter:Char
+
+object BaseType:
+  given FromJson[BaseType] with
+    override def fromJson(j: AST): Either[DervError, BaseType] = 
+      summon[FromJson[String]].fromJson(j).flatMap {
+        case "byte"   => Right(ByteType)
+        case "char"   => Right(CharType)
+        case "double" => Right(DoubleType)
+        case "float"  => Right(FloatType)
+        case "int"    => Right(IntType)
+        case "long"   => Right(LongType)
+        case "short"  => Right(ShortType)
+        case "bool"   => Right(BoolType)
+        case s => Left(TypeCastFail(s"can't cast from '$s' to BaseType"))
+      }
+      
+  given ToJson[BaseType] with
+    override def toJson(t: BaseType): Option[AST] = 
+      t match
+        case ByteType =>   Some(AST.JsStr("byte"))
+        case CharType =>   Some(AST.JsStr("char"))
+        case DoubleType => Some(AST.JsStr("double"))
+        case FloatType =>  Some(AST.JsStr("float"))
+        case IntType =>    Some(AST.JsStr("int"))
+        case LongType =>   Some(AST.JsStr("long"))
+        case ShortType =>  Some(AST.JsStr("short"))
+        case BoolType =>   Some(AST.JsStr("bool"))
 
 case object ByteType extends BaseType:
   def letter: Char = 'B'
