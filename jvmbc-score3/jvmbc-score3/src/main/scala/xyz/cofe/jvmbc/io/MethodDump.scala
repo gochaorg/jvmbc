@@ -15,6 +15,7 @@ import org.objectweb.asm.Handle
 import org.objectweb.asm.Label
 import xyz.cofe.jvmbc.parse.desc.{Method => MDesc}
 import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
+import xyz.cofe.jvmbc.parse.desc.FieldType
 
 /**
  * Парсинг метода класса
@@ -361,12 +362,15 @@ class MethodDump(
    * @param descriptor the field's descriptor (see {@link Type}).
    */
   override def visitFieldInsn(opcode:Int, owner:String, name:String, descriptor:String):Unit = 
-    body = Right(MFieldInsn(
-      OpCode.find(opcode).get,
-      JavaName.raw(owner),
-      name,
-      TDesc.unsafe(descriptor)
-    )) +: body
+    val v = FieldType.parse(descriptor).map { ft => 
+      MFieldInsn(
+        OpCode.find(opcode).get,
+        JavaName.raw(owner),
+        name,
+        ft
+      )
+    }
+    body = v +: body
 
   /**
    * Visits a method instruction. A method instruction is an instruction that invokes a method.
@@ -652,15 +656,17 @@ class MethodDump(
    *     visitor (by the {@link #visitLabel} method).
    */
   override def visitLocalVariable(name:String, descriptor:String, signature:String, start:Label, end:Label, index:Int):Unit = 
-    body = 
-      Right(MLocalVariable(
+    val v = FieldType.parse(descriptor).map { ft => 
+      MLocalVariable(
         name,
-        TDesc.unsafe(descriptor),
+        ft,
         if signature!=null then Some(Sign(signature)) else None,
         start.toString,
         end.toString,
         index
-      )) +: body
+      )
+    }
+    body = v +: body
 
   /**
    * Visits an annotation on a local variable type.

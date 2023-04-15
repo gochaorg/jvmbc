@@ -19,12 +19,6 @@ case class Method( parameters: List[FieldType], returns:Return ) extends Ast:
           case v:ObjectType => s"L${v.rawClassName};"
       )
 
-    def filedTypeRaw(ft:FieldType) =
-      ft match
-        case b:BaseType => b.letter.toString()
-        case v:ObjectType => s"L${v.rawClassName};"
-        case a:ArrayType => arrayTypeRaw(a)
-
     def retTypeRaw() =
       returns match
         case Void() => "V"
@@ -32,7 +26,7 @@ case class Method( parameters: List[FieldType], returns:Return ) extends Ast:
         case v:ObjectType => s"L${v.rawClassName};"
         case a:ArrayType => arrayTypeRaw(a)
 
-    "(" + parameters.map(filedTypeRaw).mkString + ")" + retTypeRaw()
+    "(" + parameters.map(_.raw).mkString + ")" + retTypeRaw()
 
 object Method {
   /** Парсинг сигнатуры */
@@ -42,18 +36,36 @@ object Method {
   /** Не безопасная попытка парсинга, если не успешно, то выкидывается Exception */
   def unsafe(str:String):Method = parse(str) match
     case Left(error)  => throw new Error(s"can't parse method descriptor ${error}")
-    case Right(value) => value
-  
+    case Right(value) => value  
 }
 
 /** Тип возвращаемого значения */
 sealed trait Return
 
 /** Тип поля/параметра */
-sealed trait FieldType extends Return with Ast
+sealed trait FieldType extends Return with Ast:
+  def raw:String =
+    def arrayTypeRaw(at:ArrayType) =
+      ( "[" * at.dimension ) + (
+        at.component match
+          case b:BaseType => b.letter.toString()
+          case v:ObjectType => s"L${v.rawClassName};"
+      )
+
+    def filedTypeRaw(ft:FieldType) =
+      ft match
+        case b:BaseType => b.letter.toString()
+        case v:ObjectType => s"L${v.rawClassName};"
+        case a:ArrayType => arrayTypeRaw(a)
+
+    filedTypeRaw(this)
+
 object FieldType {
   def parse( raw:String ):Either[String,FieldType] =
     DescParser.fieldType.apply(SPtr(raw,0)).map((a,b)=>a)
+
+  def unsafe( raw:String ):FieldType =
+    parse(raw).getOrElse(throw new Error(s"can't parse as FieldType from $raw"))
 }
 
 /** Нет возвращаемого значения */

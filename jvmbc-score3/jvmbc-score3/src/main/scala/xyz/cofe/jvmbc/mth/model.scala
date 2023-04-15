@@ -11,6 +11,7 @@ import org.objectweb.asm.MethodVisitor
 import xyz.cofe.jvmbc.io.MthOutCtx
 import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
 import xyz.cofe.jvmbc.parse.desc.{Method => MDesc}
+import xyz.cofe.jvmbc.parse.desc.FieldType
 
 /** Байт-код метода класса */
 sealed trait MethCode extends ByteCode
@@ -374,7 +375,7 @@ case class MFieldInsn(
   op:OpCode,
   owner:JavaName,
   name:String, // TODO NewType
-  desc:TDesc
+  desc:FieldType
 ) extends MethCode
 
 /**
@@ -1026,7 +1027,7 @@ case class MLineNumber(
  */
 case class MLocalVariable(
   name:String,
-  desc:TDesc,
+  desc:FieldType,
   sign:Option[Sign],
   labelStart:String,
   labelEnd:String,

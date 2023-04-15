@@ -159,69 +159,6 @@ object TDesc {
     xyz.cofe.jvmbc.parse.desc.FieldType.parse(raw).map(TDesc(_))
 }
 
-/** Сигнатура типа */
-// case class TDesc(raw:String) {
-//   import TDesc._
-//   private lazy val decoded = if raw!=null then parse(raw).map(_._1) else None
-//   lazy val name:Option[String]     = decoded.map(_.name)  
-//   lazy val dimension:Option[Int]   = decoded.map(_.dimension)
-//   lazy val isArray:Option[Boolean] = decoded.map(_.isArray)
-//   override def toString():String =
-//     decoded match
-//       case None => s"desc:$raw"
-//       case Some(d) =>
-//         val sb = new java.lang.StringBuilder()
-//         sb.append(d.name)
-//         (1 to d.dimension).foreach { _ => sb.append("[]") }
-//         sb.toString
-// }
-
-// object TDesc {
-//   case class Parsed(name:String,dimension:Int=0) {
-//     require(dimension>=0)
-//     require(name!=null)
-//     lazy val isArray = dimension>0
-//   }
-//   /**
-//    * Парсинг
-//    * @return результат парсинга и следующий символ (индекс) для парсинга
-//    */
-//   def parse(raw:String,from:Int=0):Option[(Parsed,Int)] =
-//     require(raw!=null)
-//     require(from>=0)
-//     var ptr=from-1
-//     var stop=false
-//     var state=0
-//     var dim=0
-//     var typeName:String = null
-//     var typeNameBuff = new java.lang.StringBuilder()
-//     while( !stop && ptr<raw.length )
-//       ptr+=1
-//       val c = raw(ptr)
-//       state match
-//         case 0 => c match
-//           case '[' => dim += 1
-//           case 'Z' => typeName = "boolean" ; stop = true
-//           case 'C' => typeName = "char" ;    stop = true
-//           case 'B' => typeName = "byte" ;    stop = true
-//           case 'S' => typeName = "short" ;   stop = true
-//           case 'I' => typeName = "int" ;     stop = true
-//           case 'F' => typeName = "float" ;   stop = true
-//           case 'J' => typeName = "long" ;    stop = true
-//           case 'D' => typeName = "double" ;  stop = true
-//           case 'V' => typeName = "void" ;    stop = true
-//           case 'L' => state = 1
-//           case _ => stop
-//         case 1 => c match
-//           case '/' => typeNameBuff.append('.')
-//           case ';' => typeName = typeNameBuff.toString ; stop = true
-//           case   _ => typeNameBuff.append(c)
-//     if typeName!=null then
-//       Some( (Parsed(typeName,dim), ptr+1) )
-//     else
-//       None
-// }
-
 /** 
 Маркер модели байт-кода 
 
