@@ -60,7 +60,7 @@ object MthOut:
       out.visitFieldInsn(
         code.op.code,
         code.owner.rawClassName,
-        code.name,
+        code.name.rawFieldName,
         code.desc.raw
       )
 
@@ -108,7 +108,7 @@ object MthOut:
     def write(out: MethodVisitor, code: MJumpInsn)(using ctx: MthOutCtx): Unit = 
       out.visitJumpInsn(
         code.op.code,
-        ctx.label(code.label)
+        ctx.label(code.label.rawLabel)
       )
 
   given MthOut[MLabel] with
@@ -140,8 +140,8 @@ object MthOut:
         code.name,
         code.desc.raw,
         code.sign.map(_.raw).orNull,
-        ctx.label(code.labelStart),
-        ctx.label(code.labelEnd),
+        ctx.label(code.labelStart.rawLabel),
+        ctx.label(code.labelEnd.rawLabel),
         code.index.rawVariable
       )
 

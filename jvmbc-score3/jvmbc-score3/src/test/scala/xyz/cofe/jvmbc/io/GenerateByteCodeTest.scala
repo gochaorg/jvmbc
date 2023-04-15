@@ -43,7 +43,7 @@ class GenerateByteCodeTest extends munit.FunSuite:
             MInvoke.Special(JavaName.raw("java/lang/Object"), "<init>", MDesc.unsafe("()V"), false),
             MInst(OpCode.RETURN),
             MLabel("end"),
-            MLocalVariable("this",clsName,None,"begin","end",0),
+            MLocalVariable("this",clsName,None,Label("begin"),Label("end"),Variable(0)),
             MMaxs(1,1),
             MEnd()
           )
@@ -85,8 +85,8 @@ class GenerateByteCodeTest extends munit.FunSuite:
 
             MLabel("end"),
 
-            MLocalVariable("a",strClsName,None,"begin","end",0),
-            MLocalVariable("b",strClsName,None,"begin","end",1),
+            MLocalVariable("a",strClsName,None,Label("begin"),Label("end"),Variable(0)),
+            MLocalVariable("b",strClsName,None,Label("begin"),Label("end"),Variable(1)),
 
             MMaxs(1,1),
             MEnd()

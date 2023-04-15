@@ -366,7 +366,7 @@ class MethodDump(
       MFieldInsn(
         OpCode.find(opcode).get,
         JavaName.raw(owner),
-        name,
+        FieldName(name),
         ft
       )
     }
@@ -445,7 +445,7 @@ class MethodDump(
    *     designates the instruction to which the jump instruction may jump.
    */
   override def visitJumpInsn(opcode:Int, label:Label):Unit = 
-    body = Right(MJumpInsn(OpCode.find(opcode).get, label.toString)) +: body
+    body = Right(MJumpInsn(OpCode.find(opcode).get, LBL(label.toString))) +: body
 
   /**
    * Visits a label. A label designates the instruction that will be visited just after it.
@@ -663,8 +663,8 @@ class MethodDump(
         name,
         ft,
         if signature!=null then Some(Sign(signature)) else None,
-        start.toString,
-        end.toString,
+        LBL(start.toString),
+        LBL(end.toString),
         Variable(index)
       )
     }

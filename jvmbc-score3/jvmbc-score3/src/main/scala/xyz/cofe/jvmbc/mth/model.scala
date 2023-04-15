@@ -374,7 +374,7 @@ case class MAnnotationDefault(annotations:Seq[AnnCode]) extends MethCode with Ne
 case class MFieldInsn(
   op:OpCode,
   owner:JavaName,
-  name:String, // TODO NewType
+  name:FieldName,
   desc:FieldType
 ) extends MethCode
 
@@ -737,7 +737,7 @@ case class MIntInsn(
  */
 case class MJumpInsn(
   op:OpCode,
-  label:String // new type
+  label:Label // new type
 ) extends MethCode
 
 /** 
@@ -860,8 +860,8 @@ case class MLocalVariable(
   name:String,
   desc:FieldType,
   sign:Option[Sign],
-  labelStart:String,
-  labelEnd:String,
+  labelStart:Label,
+  labelEnd:Label,
   index:Variable
 ) extends MethCode
 
@@ -2209,3 +2209,9 @@ object Label:
   def apply(raw:String):Label = raw
 extension (l:Label)
   def rawLabel:String = l
+
+opaque type FieldName = String
+object FieldName:
+  def apply(name:String):FieldName = name
+extension (fn:FieldName)
+  def rawFieldName:String = fn

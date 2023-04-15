@@ -111,6 +111,14 @@ given FromJson[Variable] with
   override def fromJson(j: AST): Either[DervError, Variable] = 
     summon[FromJson[Int]].fromJson(j).map(Variable(_))
 
+// FieldName
+given ToJson[FieldName] with
+  override def toJson(v: FieldName): Option[AST] = summon[ToJson[String]].toJson(v.rawFieldName)
+
+given FromJson[FieldName] with
+  override def fromJson(j: AST): Either[DervError, FieldName] = 
+    summon[FromJson[String]].fromJson(j).map(FieldName(_))
+
 given ToJson[Label] with
   override def toJson(v: Label): Option[AST] = summon[ToJson[String]].toJson(v.rawLabel)
 
