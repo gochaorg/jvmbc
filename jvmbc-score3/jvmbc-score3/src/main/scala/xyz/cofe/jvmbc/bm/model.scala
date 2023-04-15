@@ -34,7 +34,7 @@ enum Handle extends BootstrapArg:
       case InvokeInterface(owner, name, desc, iface) =>  org.objectweb.asm.Handle(H_INVOKEINTERFACE,  owner.rawClassName, name, desc.raw, iface) 
 
 object Handle:
-  def apply( h:org.objectweb.asm.Handle ):Either[String,Handle] =
+  def parse( h:org.objectweb.asm.Handle ):Either[String,Handle] =
     import org.objectweb.asm.Opcodes.*
 
     val mdesc : Either[String,MDesc] = MDesc.parse(h.getDesc());
@@ -55,7 +55,7 @@ object Handle:
         H_INVOKESTATIC, H_INVOKESPECIAL, H_NEWINVOKESPECIAL, H_INVOKEINTERFACE
       ))
 
-  def unsafe( h:org.objectweb.asm.Handle ):Handle = apply(h).getOrElse(throw new Error(s"can't parse org.objectweb.asm.Handle"))
+  def unsafe( h:org.objectweb.asm.Handle ):Handle = parse(h).getOrElse(throw new Error(s"can't parse org.objectweb.asm.Handle"))
 
 case class TypeArg(value:String) extends BootstrapArg:
   override def toAsm: Object = org.objectweb.asm.Type.getType(value)

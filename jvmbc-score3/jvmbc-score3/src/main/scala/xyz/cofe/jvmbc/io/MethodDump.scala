@@ -134,18 +134,23 @@ class MethodDump(
    *     interested in visiting this annotation.
    */
   override def visitTypeAnnotation(typeRef:Int, typePath:TypePath, descriptor:String, visible:Boolean):AnnotationVisitor =
-    AnnotationDump(_api, Some(abodyEt => {
-      body =
-        abodyEt.map { body => 
-          MTypeAnnotation(
-            MTypeRef(typeRef),
-            if typePath!=null then Some(typePath.toString) else None,
-            TDesc.unsafe(descriptor),
-            visible,
-            body
-          )
-        } +: body
-    }))
+    TDesc.parse(descriptor) match
+      case Left(err) => 
+        body = Left(s"visitAnnotation: can't parse $descriptor as TDesc") +: body
+        AnnotationDump(_api, None)
+      case Right(tdesc) =>      
+        AnnotationDump(_api, Some(abodyEt => {
+          body =
+            abodyEt.map { body => 
+              MTypeAnnotation(
+                MTypeRef(typeRef),
+                if typePath!=null then Some(typePath.toString) else None,
+                tdesc,
+                visible,
+                body
+              )
+            } +: body
+        }))
 
   /**
    * Visits the number of method parameters that can have annotations. By default (i.e. when this
@@ -181,17 +186,22 @@ class MethodDump(
    *     interested in visiting this annotation.
    */
   override def visitParameterAnnotation(parameter:Int, descriptor:String, visible:Boolean):AnnotationVisitor = 
-    AnnotationDump(_api, Some(abodyEt => {
-      body =
-        abodyEt.map { body => 
-          MParameterAnnotation(
-            parameter,
-            TDesc.unsafe(descriptor),
-            visible,
-            body
-          )
-        } +: body
-    }))
+    TDesc.parse(descriptor) match
+      case Left(err) => 
+        body = Left(s"visitAnnotation: can't parse $descriptor as TDesc") +: body
+        AnnotationDump(_api, None)
+      case Right(tdesc) =>      
+        AnnotationDump(_api, Some(abodyEt => {
+          body =
+            abodyEt.map { body => 
+              MParameterAnnotation(
+                parameter,
+                tdesc,
+                visible,
+                body
+              )
+            } +: body
+        }))
 
   /**
    * Visits a non standard attribute of this method.
@@ -392,13 +402,13 @@ class MethodDump(
     val inv = mdesc.flatMap( mdesc => 
       op.flatMap {
         case OpCode.INVOKEVIRTUAL => 
-          Right(MInvoke.Virtual(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+          Right(MInvoke.Virtual(JavaName.raw(owner), name, mdesc, isInterface))
         case OpCode.INVOKESPECIAL => 
-          Right(MInvoke.Special(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+          Right(MInvoke.Special(JavaName.raw(owner), name, mdesc, isInterface))
         case OpCode.INVOKESTATIC => 
-          Right(MInvoke.Static(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+          Right(MInvoke.Static(JavaName.raw(owner), name, mdesc, isInterface))
         case OpCode.INVOKEINTERFACE => 
-          Right(MInvoke.Iterface(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+          Right(MInvoke.Iterface(JavaName.raw(owner), name, mdesc, isInterface))
         case _ => 
           Left(s"opcode (${opcode}) not matched, expect one of: "+
             List( 
@@ -429,11 +439,12 @@ class MethodDump(
     val bmArgs:Seq[Either[String,bm.BootstrapArg]] = bootstrapMethodArguments.map { bm0 => 
       bm.BootstrapArg(bm0)
     }
-    val bmHdl = bm.Handle.unsafe(bootstrapMethodHandle)
-    
+
     val e = for {
-      args <- firstErr(bmArgs)
-    } yield MInvoke.Dynamic(name,MDesc.unsafe(descriptor),bmHdl,args)
+      bmHdl <- bm.Handle.parse(bootstrapMethodHandle)
+      args  <- firstErr(bmArgs)
+      mdesc <- MDesc.parse(descriptor)
+    } yield MInvoke.Dynamic(name,mdesc,bmHdl,args)
 
     body = e +: body
 
