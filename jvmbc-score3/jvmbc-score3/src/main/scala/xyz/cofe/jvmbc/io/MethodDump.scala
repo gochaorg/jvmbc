@@ -665,7 +665,7 @@ class MethodDump(
         if signature!=null then Some(Sign(signature)) else None,
         start.toString,
         end.toString,
-        index
+        Variable(index)
       )
     }
     body = v +: body

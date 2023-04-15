@@ -862,7 +862,7 @@ case class MLocalVariable(
   sign:Option[Sign],
   labelStart:String,
   labelEnd:String,
-  index:Int
+  index:Variable
 ) extends MethCode
 
 /** 

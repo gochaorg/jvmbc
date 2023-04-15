@@ -142,7 +142,7 @@ object MthOut:
         code.sign.map(_.raw).orNull,
         ctx.label(code.labelStart),
         ctx.label(code.labelEnd),
-        code.index
+        code.index.rawVariable
       )
 
   given MthOut[MLocalVariableAnnotation] with
