@@ -384,28 +384,30 @@ class MethodDump(
    * @param isInterface if the method's owner class is an interface.
    */
   override def visitMethodInsn(opcode:Int, owner:String, name:String, descriptor:String, isInterface:Boolean):Unit =
-    val inv:Option[MMethodInsn] = OpCode.find(opcode).flatMap {
-      case OpCode.INVOKEVIRTUAL => 
-        Some(MMethodInsn.InvokeVirtual(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
-      case OpCode.INVOKESPECIAL => 
-        Some(MMethodInsn.InvokeSpecial(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
-      case OpCode.INVOKESTATIC => 
-        Some(MMethodInsn.InvokeStatic(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
-      case OpCode.INVOKEINTERFACE => 
-        Some(MMethodInsn.InvokeIterface(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
-      case _ => None
-    }
-
-    body =
-      inv.toRight(
-        s"opcode (${opcode}) not matched, expect one of: "+
-        List( 
-          OpCode.INVOKEVIRTUAL.code, 
-          OpCode.INVOKESPECIAL.code, 
-          OpCode.INVOKESTATIC.code, 
-          OpCode.INVOKEINTERFACE.code, 
-        )
-      ) +: body
+    val mdesc = MDesc.parse(descriptor)
+    val op = OpCode.find(opcode).toRight(s"can't find OpCode($opcode)")
+    val inv = mdesc.flatMap( mdesc => 
+      op.flatMap {
+        case OpCode.INVOKEVIRTUAL => 
+          Right(MMethodInsn.InvokeVirtual(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+        case OpCode.INVOKESPECIAL => 
+          Right(MMethodInsn.InvokeSpecial(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+        case OpCode.INVOKESTATIC => 
+          Right(MMethodInsn.InvokeStatic(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+        case OpCode.INVOKEINTERFACE => 
+          Right(MMethodInsn.InvokeIterface(JavaName.raw(owner), name, MDesc.unsafe(descriptor), isInterface))
+        case _ => 
+          Left(s"opcode (${opcode}) not matched, expect one of: "+
+            List( 
+              OpCode.INVOKEVIRTUAL.code, 
+              OpCode.INVOKESPECIAL.code, 
+              OpCode.INVOKESTATIC.code, 
+              OpCode.INVOKEINTERFACE.code, 
+            )
+          )
+      }
+    )
+    body = inv +: body
 
   /**
    * Visits an invokedynamic instruction.
