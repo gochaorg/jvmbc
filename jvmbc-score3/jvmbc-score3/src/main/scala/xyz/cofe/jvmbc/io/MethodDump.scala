@@ -590,18 +590,23 @@ class MethodDump(
    *     interested in visiting this annotation.
    */
   override def visitInsnAnnotation(typeRef:Int, typePath:TypePath, descriptor:String, visible:Boolean):AnnotationVisitor = 
-    AnnotationDump(_api, Some(abodyEt => {
-      body =
-        abodyEt.map { body => 
-          MInsnAnnotation(
-            MTypeInsnRef(typeRef),
-            if typePath!=null then Some(typePath.toString) else None,
-            TDesc.unsafe(descriptor),
-            visible,
-            body
-          )
-        } +: body
-    }))
+    TDesc.parse(descriptor) match
+      case Left(err) => 
+        body = Left(s"visitAnnotation: can't parse $descriptor as TDesc") +: body
+        AnnotationDump(_api, None)
+      case Right(tdesc) =>      
+        AnnotationDump(_api, Some(abodyEt => {
+          body =
+            abodyEt.map { body => 
+              MInsnAnnotation(
+                MTypeInsnRef(typeRef),
+                if typePath!=null then Some(typePath.toString) else None,
+                tdesc,
+                visible,
+                body
+              )
+            } +: body
+        }))
 
   // -----------------------------------------------------------------------------------------------
   // Exceptions table entries, debug information, max stack and max locals
@@ -643,18 +648,23 @@ class MethodDump(
    *     interested in visiting this annotation.
    */
   override def visitTryCatchAnnotation(typeRef:Int, typePath:TypePath, descriptor:String, visible:Boolean):AnnotationVisitor = 
-    AnnotationDump(_api, Some(abodyEt => {
-      body =
-        abodyEt.map { body => 
-          MTryCatchAnnotation(
-            MTypeTryCatchRef(typeRef),
-            if typePath!=null then Some(typePath.toString) else None,
-            TDesc.unsafe(descriptor),
-            visible,
-            body
-          )
-        } +: body
-    }))
+    TDesc.parse(descriptor) match
+      case Left(err) => 
+        body = Left(s"visitAnnotation: can't parse $descriptor as TDesc") +: body
+        AnnotationDump(_api, None)
+      case Right(tdesc) =>      
+        AnnotationDump(_api, Some(abodyEt => {
+          body =
+            abodyEt.map { body => 
+              MTryCatchAnnotation(
+                MTypeTryCatchRef(typeRef),
+                if typePath!=null then Some(typePath.toString) else None,
+                tdesc,
+                visible,
+                body
+              )
+            } +: body
+        }))
 
   /**
    * Visits a local variable declaration.
@@ -712,21 +722,26 @@ class MethodDump(
     descriptor:String, 
     visible:Boolean
     ):AnnotationVisitor = 
-    AnnotationDump(_api, Some(abodyEt => {
-      body =
-        abodyEt.map { body => 
-          MLocalVariableAnnotation(
-            MTypeLocalVarRef(typeRef),
-            if typePath!=null then Some(typePath.toString) else None,
-            start.map(l => LBL(l.toString)),
-            end.map(l => LBL(l.toString)),
-            index,
-            TDesc.unsafe(descriptor),
-            visible,
-            body
-          )
-        } +: body
-    }))
+    TDesc.parse(descriptor) match
+      case Left(err) => 
+        body = Left(s"visitAnnotation: can't parse $descriptor as TDesc") +: body
+        AnnotationDump(_api, None)
+      case Right(tdesc) =>      
+        AnnotationDump(_api, Some(abodyEt => {
+          body =
+            abodyEt.map { body => 
+              MLocalVariableAnnotation(
+                MTypeLocalVarRef(typeRef),
+                if typePath!=null then Some(typePath.toString) else None,
+                start.map(l => LBL(l.toString)),
+                end.map(l => LBL(l.toString)),
+                index,
+                tdesc,
+                visible,
+                body
+              )
+            } +: body
+        }))
 
   /**
    * Visits a line number declaration.
