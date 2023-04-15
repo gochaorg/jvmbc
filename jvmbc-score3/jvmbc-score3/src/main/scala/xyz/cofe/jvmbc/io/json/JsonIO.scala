@@ -313,7 +313,7 @@ given constDyn2Json:ToJson[ConstDynamic] with
           "handle" -> summon[ToJson[Handle]].toJson(cd.handle),
           "args" -> Option(AST.JsArray(
             {cd.args.map {
-              case v@Handle(tag, desc, name, owner, iface) => summon[ToJson[Handle]].toJson(v)
+              case v:Handle => summon[ToJson[Handle]].toJson(v)
               case v@TypeArg(value) => summon[ToJson[TypeArg]].toJson(v)
               case v@StringArg(value) => summon[ToJson[StringArg]].toJson(v)
               case v@LongArg(value) => summon[ToJson[LongArg]].toJson(v)

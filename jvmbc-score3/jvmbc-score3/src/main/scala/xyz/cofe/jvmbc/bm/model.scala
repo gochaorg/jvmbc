@@ -2,6 +2,7 @@ package xyz.cofe.jvmbc
 package bm
 
 import xyz.cofe.jvmbc.parse.desc.{Method => MDesc}
+import xyz.cofe.jvmbc.parse.desc.{ObjectType => JavaName}
 
 /**
   * Байт-код аргументов INVOKE Dynamic
@@ -9,27 +10,65 @@ import xyz.cofe.jvmbc.parse.desc.{Method => MDesc}
 sealed trait BootstrapArg:
   def toAsm:Object
 
-case class Handle(tag:Int,desc:TDesc|MDesc,name:String,owner:String,iface:Boolean) extends BootstrapArg:
-  override def toAsm: org.objectweb.asm.Handle = org.objectweb.asm.Handle(
-    tag, 
-    owner, 
-    name, 
-    {
-      desc match
-        case m:MDesc => m.raw
-        case t:TDesc => t.raw
-    },
-    iface
-  )
+// case class Handle(tag:Int,desc:TDesc|MDesc,name:String,owner:String,iface:Boolean) extends BootstrapArg:
+//   override def toAsm: org.objectweb.asm.Handle = org.objectweb.asm.Handle(
+//     tag, 
+//     owner, 
+//     name, 
+//     {
+//       desc match
+//         case m:MDesc => m.raw
+//         case t:TDesc => t.raw
+//     },
+//     iface
+//   )
+
+enum Handle extends BootstrapArg:
+  case GetField ( owner:JavaName, name:String, desc:TDesc )
+  case GetStatic( owner:JavaName, name:String, desc:TDesc )
+  case PutField ( owner:JavaName, name:String, desc:TDesc )
+  case PutStatic( owner:JavaName, name:String, desc:TDesc )
+  case InvokeVirtual   ( owner:JavaName, name:String, desc:MDesc, iface:Boolean = false )
+  case InvokeStatic    ( owner:JavaName, name:String, desc:MDesc, iface:Boolean = false )
+  case InvokeSpecial   ( owner:JavaName, name:String, desc:MDesc, iface:Boolean = false )
+  case InvokeNewSpecial( owner:JavaName, name:String, desc:MDesc, iface:Boolean = false )
+  case InvokeInterface ( owner:JavaName, name:String, desc:MDesc, iface:Boolean = true )
+  def toAsm: org.objectweb.asm.Handle =
+    import org.objectweb.asm.Opcodes.*
+    this match
+      case GetField(owner, name, desc) =>                org.objectweb.asm.Handle(H_GETFIELD,         owner.rawClassName, name, desc.raw, false)
+      case GetStatic(owner, name, desc) =>               org.objectweb.asm.Handle(H_GETSTATIC,        owner.rawClassName, name, desc.raw, false) 
+      case PutField(owner, name, desc) =>                org.objectweb.asm.Handle(H_PUTFIELD,         owner.rawClassName, name, desc.raw, false) 
+      case PutStatic(owner, name, desc) =>               org.objectweb.asm.Handle(H_PUTSTATIC,        owner.rawClassName, name, desc.raw, false) 
+      case InvokeVirtual(owner, name, desc, iface) =>    org.objectweb.asm.Handle(H_INVOKEVIRTUAL,    owner.rawClassName, name, desc.raw, iface) 
+      case InvokeStatic(owner, name, desc, iface) =>     org.objectweb.asm.Handle(H_INVOKESTATIC,     owner.rawClassName, name, desc.raw, iface) 
+      case InvokeSpecial(owner, name, desc, iface) =>    org.objectweb.asm.Handle(H_INVOKESPECIAL,    owner.rawClassName, name, desc.raw, iface) 
+      case InvokeNewSpecial(owner, name, desc, iface) => org.objectweb.asm.Handle(H_NEWINVOKESPECIAL, owner.rawClassName, name, desc.raw, iface) 
+      case InvokeInterface(owner, name, desc, iface) =>  org.objectweb.asm.Handle(H_INVOKEINTERFACE,  owner.rawClassName, name, desc.raw, iface) 
 
 object Handle:
-  def unsafe( h:org.objectweb.asm.Handle ):Handle =
-    val desc1 : Either[String,TDesc|MDesc] = MDesc.parse(h.getDesc());
-    val desc2 : Either[String,TDesc|MDesc] = TDesc.parse(h.getDesc());     
-    val descEt : Either[String,TDesc|MDesc] = desc1.orElse( desc2 )
-    val desc = descEt.getOrElse( throw new Error(s"can't parse Handle from ${h.getDesc()}") )
+  def apply( h:org.objectweb.asm.Handle ):Either[String,Handle] =
+    import org.objectweb.asm.Opcodes.*
 
-    Handle(h.getTag, desc, h.getName, h.getOwner, h.isInterface)
+    val mdesc : Either[String,MDesc] = MDesc.parse(h.getDesc());
+    val tdesc : Either[String,TDesc] = TDesc.parse(h.getDesc());     
+
+    h.getTag() match
+      case H_GETFIELD => tdesc.map( d => Handle.GetField( JavaName.raw(h.getOwner()), h.getName(), d ))
+      case H_PUTFIELD => tdesc.map( d => Handle.PutField( JavaName.raw(h.getOwner()), h.getName(), d ))
+      case H_GETSTATIC => tdesc.map( d => Handle.GetStatic( JavaName.raw(h.getOwner()), h.getName(), d ))
+      case H_PUTSTATIC => tdesc.map( d => Handle.PutStatic( JavaName.raw(h.getOwner()), h.getName(), d ))
+      case H_INVOKEVIRTUAL =>    mdesc.map( d => Handle.InvokeVirtual   (JavaName.raw(h.getOwner()), h.getName(), d))
+      case H_INVOKESTATIC =>     mdesc.map( d => Handle.InvokeStatic    (JavaName.raw(h.getOwner()), h.getName(), d))
+      case H_INVOKESPECIAL =>    mdesc.map( d => Handle.InvokeSpecial   (JavaName.raw(h.getOwner()), h.getName(), d))
+      case H_NEWINVOKESPECIAL => mdesc.map( d => Handle.InvokeNewSpecial(JavaName.raw(h.getOwner()), h.getName(), d))
+      case H_INVOKEINTERFACE =>  mdesc.map( d => Handle.InvokeInterface (JavaName.raw(h.getOwner()), h.getName(), d))
+      case _ => Left(s"unexpected Handle.getTag() = ${h.getTag()}, expect="+List(
+        H_GETFIELD, H_PUTFIELD, H_GETSTATIC, H_PUTSTATIC, H_INVOKEVIRTUAL, 
+        H_INVOKESTATIC, H_INVOKESPECIAL, H_NEWINVOKESPECIAL, H_INVOKEINTERFACE
+      ))
+
+  def unsafe( h:org.objectweb.asm.Handle ):Handle = apply(h).getOrElse(throw new Error(s"can't parse org.objectweb.asm.Handle"))
 
 case class TypeArg(value:String) extends BootstrapArg:
   override def toAsm: Object = org.objectweb.asm.Type.getType(value)
