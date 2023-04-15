@@ -108,11 +108,14 @@ class MethodDump(
    *     interested in visiting this annotation.
    */
   override def visitAnnotation(descriptor:String, visible:Boolean):AnnotationVisitor = 
-    AnnotationDump(_api,Some(abodyEt => {
-      body = abodyEt.map { body => 
-        MAnnotation(TDesc.unsafe(descriptor),visible,body)
-      } +: body
-    }))
+    TDesc.parse(descriptor) match
+      case Left(err) => 
+        body = Left(s"visitAnnotation: can't parse $descriptor as TDesc") +: body
+        AnnotationDump(_api, None)
+      case Right(tdesc) =>      
+        AnnotationDump(_api,Some(abodyEt => {
+          body = abodyEt.map { body => MAnnotation(tdesc,visible,body) } +: body
+        }))
 
   /**
    * Visits an annotation on a type in the method signature.
